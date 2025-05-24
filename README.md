@@ -31,6 +31,7 @@ The scripts and library components provided here are for research and informatio
         *   [Step 3: Phylogenetic Inference (External Tools)](#step-3-phylogenetic-inference-external-tools)
         *   [Step 4: Tree Visualization and Basic Manipulation (Conceptual)](#step-4-tree-visualization-and-basic-manipulation-conceptual)
     *   [C. Guide to Accessing MHC Sequence Databases](#c-guide-to-accessing-mhc-sequence-databases)
+    *   [D. Guide to Interpreting Phylogenetic Trees with Python](#d-guide-to-interpreting-phylogenetic-trees-with-python)
 7.  [Detailed Script Usage](#detailed-script-usage)
 8.  [Testing](#testing)
 9.  [Development and Contributions](#development-and-contributions)
@@ -300,17 +301,11 @@ This phylogenetic workflow highlights how EvolCat-Python scripts primarily serve
 
 ### C. Guide to Accessing MHC Sequence Databases
 
-https://github.com/bob-friedman/EvolCat-Python/blob/main/mhc-database-guide.md
+[MHC Database Guide](https://github.com/bob-friedman/EvolCat-Python/blob/main/mhc-database-guide.md)
 
-## Detailed Script Usage
+### D. Guide to Interpreting Phylogenetic Trees with Python
 
-For detailed command-line options and examples for each script, please refer to:
-`docs/USAGE.md`
-
-You can also use the `-h` or `--help` flag with any script:
-```bash
-python3 pylib/scripts/script_name.py -h
-```
+[Phylogenetic Tree Interpretation](https://github.com/bob-friedman/EvolCat-Python/blob/main/phylogenetic-tree-interpretation.md)
 
 ## Testing
 
