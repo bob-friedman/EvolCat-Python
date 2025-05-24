@@ -20,9 +20,10 @@ See `docs/USAGE.md` for details on how to use individual scripts. Generally, man
 
 To access these scripts from a linux environment in supported versions of Windows, the first step to verify the installation of WSL. The next steps involve use of "pip" to manage packages in Python, but the default version with Ubuntu may not be compatible with it in WSL. To workaround the issue, it is possible to follow third-party procedures. These are not recommended, but I will describe steps below that worked for my system.
 
-1. In the Ubuntu shell: sudo apt install -y gcc make build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev liblzma-dev
+In the Ubuntu/WSL shell:
+1. sudo apt install -y gcc make build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev liblzma-dev
 2. curl https://pyenv.run | bash
-3. Add to .bashrc file:
+3. Add these lines to the .bashrc file:
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
