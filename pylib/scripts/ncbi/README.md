@@ -130,6 +130,8 @@ Below is a description of each script, its usage, and expected input/output.
 
 ## Running Tests
 
+Unit tests are provided for all NCBI scripts and are located within this directory (e.g., `test_blast_ncbi_seq_def.py`). These tests use Python's built-in `unittest` framework and mock external NCBI calls.
+
 Tests for NCBI scripts can be run using the project's general testing command (see the main `README.md` "Testing" section), or more specifically by targeting this directory from the project root:
 
 ```bash
@@ -139,8 +141,3 @@ python -m unittest discover pylib/scripts/ncbi/
 This command will automatically find and execute all files named `test_*.py` within the `pylib/scripts/ncbi/` directory. This includes tests for all scripts described herein, such as `test_blast_ncbi_seq_def.py`, `test_query_ncbi_gi.py`, `test_blast_ncbi_tabular.py`, and `test_query_ncbi_entrez.py`.
 
 Running these tests is recommended to verify script functionality, especially after any modifications.
-
-Alternatively, to run tests for specific files:
-```bash
-python -m unittest ncbi/test_blast_ncbi_seq_def.py ncbi/test_query_ncbi_gi.py
-```
