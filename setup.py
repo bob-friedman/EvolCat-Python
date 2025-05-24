@@ -45,6 +45,8 @@ setup(
             'calculate_dna_distances_py=pylib.scripts.calculate_dna_distances:main',
             'blast_ncbi_seq_def_py=pylib.scripts.ncbi.blast_ncbi_seq_def:main',
             'query_ncbi_gi_py=pylib.scripts.ncbi.query_ncbi_gi:main',
+            'blast_ncbi_tabular_py=pylib.scripts.ncbi.blast_ncbi_tabular:main',
+            'query_ncbi_entrez_py=pylib.scripts.ncbi.query_ncbi_entrez:main',
         ],
     },
     classifiers=[
