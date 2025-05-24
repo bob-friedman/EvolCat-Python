@@ -10,7 +10,8 @@ setup(
     packages=find_packages(where=".", include=['pylib', 'pylib.*']),
     install_requires=[
         "biopython>=1.79",  # Specify a reasonable version
-        "matplotlib>=3.0"   # Specify a reasonable version
+        "matplotlib>=3.0",   # Specify a reasonable version
+        "requests",
     ],
     entry_points={
         'console_scripts': [
@@ -42,6 +43,8 @@ setup(
             'find_blast_top_pairs_py=pylib.scripts.find_blast_top_pairs:main',
             'calculate_k2p_py=pylib.scripts.calculate_k2p:main',
             'calculate_dna_distances_py=pylib.scripts.calculate_dna_distances:main',
+            'blast_ncbi_seq_def_py=pylib.scripts.ncbi.blast_ncbi_seq_def:main',
+            'query_ncbi_gi_py=pylib.scripts.ncbi.query_ncbi_gi:main',
         ],
     },
     classifiers=[

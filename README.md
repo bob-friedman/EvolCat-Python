@@ -16,6 +16,36 @@ The scripts and library components provided here are for research and informatio
 
 See `docs/USAGE.md` for details on how to use individual scripts. Generally, many of the scripts depend on the pylib core utility modules. These scripts will find the modules by default when they are located in EvolCat-Python with pylib/utils as a subdirectory.
 
+## NCBI Tools
+
+This library includes tools for interacting with NCBI services. These tools are:
+- `blast_ncbi_seq_def_py`: Retrieves sequence definitions from NCBI based on BLAST results.
+- `query_ncbi_gi_py`: Queries NCBI using GenInfo Identifiers (GIs) to retrieve sequence data.
+
+### Installation of NCBI Tools
+
+The NCBI tools are included as part of the main package installation.
+
+**Using pip:**
+
+If you are installing the package from the root directory of this repository, you can install it along with all dependencies (including `requests` for the NCBI tools) by running:
+
+```bash
+pip install .
+```
+
+If the package were published to PyPI (e.g., as `bio_perl_conversion`), you would install it via:
+
+```bash
+pip install bio_perl_conversion
+```
+
+**Other Package Managers (conda, poetry, etc.):**
+
+If you are using other package managers like conda or poetry, ensure that `requests` and all other dependencies listed in `requirements.txt` (or `setup.py`) are installed in your environment. You may need to consult your package manager's documentation for the exact commands to install dependencies from these files.
+
+For more detailed information on the NCBI tools, please see `pylib/scripts/ncbi/README.md`.
+
 ## Access in a Windows OS with WSL
 
 To access these scripts from a linux environment in supported versions of Windows, the first step to verify the installation of WSL. The next steps involve use of "pip" to manage packages in Python, but the default version with Ubuntu may not be compatible with it in WSL. To workaround the issue, it is possible to follow third-party procedures. These are not recommended, but I will describe steps below that worked for my system.
@@ -38,12 +68,14 @@ pyenv local 3.10.0   # Set 3.10.0 as the version when running within the current
 
 ## Dependencies
 
-- Python 3.x
+The primary dependencies for this library are listed in the `requirements.txt` file and `setup.py`. Key dependencies include:
+
+- Python 3.7 or higher
 - Biopython
 - Matplotlib
-- (Other dependencies may be added as more scripts are converted)
+- Requests (specifically for the NCBI tools module)
 
-- EvolCat/Python/pylib/scripts/ncbi/ has experimental scripts to access NCBI sequence data, but also depends on a module Requests.
+Please refer to `requirements.txt` or `setup.py` for a complete list of dependencies and their versions.
 
 ## Development and Contributions
 
