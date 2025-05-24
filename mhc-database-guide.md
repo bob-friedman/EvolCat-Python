@@ -1,8 +1,3 @@
----
-layout: default # Or whatever layout your Jekyll theme uses, if any. 'default' is common.
-title: Accessing MHC Sequence Databases
----
-
 # Accessing MHC (Major Histocompatibility Complex) Sequence Databases
 
 Connecting to MHC (Major Histocompatibility Complex) sequence databases involves a few primary sources and methods. The most prominent databases are:
