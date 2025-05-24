@@ -353,6 +353,7 @@ if __name__ == "__main__":
     print("\nScript finished.")
     print("Remember to replace 'your_email@example.com' with your actual email for NCBI Entrez.")
     print("For higher NCBI request rates, consider getting an API key.")
+```
 
 ## Explanation and How to Use the Script
 
