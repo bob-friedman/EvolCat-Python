@@ -723,3 +723,68 @@ python3 pylib/scripts/calculate_dna_distances.py <input_fasta_file>
 python3 pylib/scripts/calculate_dna_distances.py aligned_sequences.fasta > dna_distances_summary.tsv
 ```
 ---
+
+## `pylib/scripts/calculate_ds_dn.py`
+
+Calculates synonymous (dS) and non-synonymous (dN) substitution rates (more accurately, counts of synonymous/non-synonymous substitutions and potential sites) between pairs of DNA sequences from a FASTA file. It can use either a standard or mitochondrial genetic code and can estimate the transition/transversion ratio (R) or use a provided one.
+
+**Usage:**
+```bash
+python3 pylib/scripts/calculate_ds_dn.py <input_fasta_file> [ratio] [--genetic_code <standard|mito>]
+```
+
+**Arguments:**
+- `<input_fasta_file>`: Path to the input FASTA file containing aligned DNA sequences. Sequences must be of equal length after removing gaps/Ns and be a multiple of 3.
+- `[ratio]`: Optional. The transition/transversion ratio (R). Can be a floating-point number (e.g., 0.5, 2.0) or the string 'R' to estimate the ratio from the data. Defaults to 0.5.
+- `--genetic_code <standard|mito>`: Optional. The genetic code to use. Choices are 'standard' or 'mito'. Defaults to 'standard'.
+
+**Output Format (Tab-delimited):**
+`gene1_name	gene2_name	formatted_R_ratio	syn_subs_count	nonsyn_subs_count	potential_syn_sites	potential_nonsyn_sites`
+- `formatted_R_ratio`: R value used, formatted to two decimal places, or "undef" if estimation failed.
+- `syn_subs_count`: Count of synonymous substitutions.
+- `nonsyn_subs_count`: Count of non-synonymous substitutions.
+- `potential_syn_sites`: Number of potential synonymous sites.
+- `potential_nonsyn_sites`: Number of potential non-synonymous sites.
+- If denominators are zero during calculation for a pair, specific messages like "denom_0_syn=..." may be printed for that pair instead of the counts.
+
+**Example:**
+```bash
+# Using a fixed R and standard code
+python3 pylib/scripts/calculate_ds_dn.py sequences.fasta 0.75
+
+# Estimating R and using mitochondrial code
+python3 pylib/scripts/calculate_ds_dn.py sequences.fasta R --genetic_code mito
+```
+---
+
+## `pylib/scripts/calculate_pnc_pnr.py`
+
+Calculates the proportion of conservative (pNc) and radical (pNr) non-synonymous substitutions, along with their standard errors, between pairs of DNA sequences. It uses a standard genetic code, an amino acid property file, and can estimate the transition/transversion ratio (R) or use a provided one.
+
+**Usage:**
+```bash
+python3 pylib/scripts/calculate_pnc_pnr.py <input_fasta_file> <property_file> [ratio]
+```
+
+**Arguments:**
+- `<input_fasta_file>`: Path to the input FASTA file containing aligned DNA sequences. Sequences must be of equal length after removing gaps/Ns and be a multiple of 3.
+- `<property_file>`: Path to the amino acid property file. This file should have a header line, followed by lines mapping one-letter amino acid codes to a numerical property value, separated by a tab. (e.g., `pylib/scripts/property_charge.txt`).
+- `[ratio]`: Optional. The transition/transversion ratio (R). Can be a floating-point number (e.g., 0.5, 2.0) or the string 'R' to estimate the ratio from the data. Defaults to 0.5.
+
+**Output Format (Tab-delimited):**
+The script first prints a header line: `Gene1	Gene2	PropertyHeader	Ratio	pNc	SEpNc	pNr	SEpNr`
+Then, for each pair of sequences:
+`gene1_name	gene2_name	property_file_header_value	formatted_R_ratio	pnc_value	SEpnc_value	pnr_value	SEpnr_value`
+- `property_file_header_value`: The header read from the first line of the property file.
+- `formatted_R_ratio`: R value used, formatted to two decimal places, or "undef" if estimation failed.
+- `pnc_value, SEpnc_value, pnr_value, SEpnr_value`: Calculated values formatted to four decimal places, or "NA" if calculation was not possible (e.g., due to zero denominators).
+
+**Example:**
+```bash
+# Using a fixed R and a property file
+python3 pylib/scripts/calculate_pnc_pnr.py sequences.fasta pylib/scripts/property_charge.txt 0.75
+
+# Estimating R
+python3 pylib/scripts/calculate_pnc_pnr.py sequences.fasta pylib/scripts/property_charge.txt R
+```
+---
