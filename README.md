@@ -30,6 +30,7 @@ The scripts and library components provided here are for research and informatio
         *   [Step 2: Alignment Curation](#step-2-alignment-curation)
         *   [Step 3: Phylogenetic Inference (External Tools)](#step-3-phylogenetic-inference-external-tools)
         *   [Step 4: Tree Visualization and Basic Manipulation (Conceptual)](#step-4-tree-visualization-and-basic-manipulation-conceptual)
+    *   [C. Guide to Accessing MHC Sequence Databases](#c-guide-to-accessing-mhc-sequence-databases)
 7.  [Detailed Script Usage](#detailed-script-usage)
 8.  [Testing](#testing)
 9.  [Development and Contributions](#development-and-contributions)
@@ -296,6 +297,10 @@ Once you have a tree file (e.g., in Newick format), you can visualize and analyz
 *   **Basic Tree Manipulation (Biopython):** Biopython's `Bio.Phylo` module allows for programmatic tree manipulation (e.g., re-rooting, extracting clades, calculating distances between tips). While `EvolCat-Python` might not have dedicated high-level scripts for all these manipulations yet, the underlying Biopython library provides these functions.
 
 This phylogenetic workflow highlights how EvolCat-Python scripts primarily serve as helper tools for preparing data for, and converting formats between, specialized external programs for MSA and tree inference.
+
+### C. Guide to Accessing MHC Sequence Databases
+
+https://github.com/bob-friedman/EvolCat-Python/blob/main/mhc-database-guide.md
 
 ## Detailed Script Usage
 
