@@ -14,7 +14,7 @@ The scripts and library components provided here are for research and informatio
 3.  [Installation](#installation)
     *   [General Python Environment Setup](#general-python-environment-setup)
     *   [Installing EvolCat-Python](#installing-evolcat-python)
-    *   [Access in a Windows OS with WSL](#access-in-a-windows-os-with-wsl)
+    *   [Access in a Windows OS with WSL](#access-in-a-windows-os-with-wsl-windows-subsystem-for-linux)
 4.  [General Script Usage](#general-script-usage)
 5.  [NCBI Tools](#ncbi-tools)
 6.  [Workflow Examples](#workflow-examples)
@@ -32,9 +32,9 @@ The scripts and library components provided here are for research and informatio
         *   [Step 4: Tree Visualization and Basic Manipulation (Conceptual)](#step-4-tree-visualization-and-basic-manipulation-conceptual)
     *   [C. Guide to Accessing MHC Sequence Databases](#c-guide-to-accessing-mhc-sequence-databases)
     *   [D. Guide to Interpreting Phylogenetic Trees with Python](#d-guide-to-interpreting-phylogenetic-trees-with-python)
-7.  [Detailed Script Usage](#detailed-script-usage)
-8.  [Testing](#testing)
-9.  [Development and Contributions](#development-and-contributions)
+    *   [E. Special Topic: Virus Genomics, Diversity, and Analysis](#e-special-topic-virus-genomics-diversity-and-analysis)
+7.  [Testing](#testing)
+8.  [Development and Contributions](#development-and-contributions)
 
 ## Overview
 
@@ -42,6 +42,8 @@ The library is organized into:
 
 *   `pylib/utils/`: Contains core utility modules for tasks like sequence parsing.
 *   `pylib/scripts/`: Contains executable Python scripts that replicate and extend the functionality of original bioinformatics command-line tools. Many of these scripts depend on the `pylib/utils/` core utility modules. The scripts are designed to find these modules by default when EvolCat-Python is structured with `pylib/utils/` as a subdirectory.
+    *   `pylib/scripts/ncbi/`: Contains tools specifically for interacting with NCBI.
+    *   `pylib/scripts/viral_tools/`: Contains tools specifically for viral genomics analysis.
 
 ## Dependencies
 
