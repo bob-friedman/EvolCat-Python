@@ -5,14 +5,15 @@ import sys
 
 # Adjust path to import the script from pylib/utils
 # Assuming this test file is in pylib/tests/
-utils_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'utils'))
+utils_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "utils"))
 if utils_dir not in sys.path:
     sys.path.insert(0, utils_dir)
 
 # Ensure blast_utils is loaded/reloaded with the correct path
-if 'blast_utils' in sys.modules:
-    del sys.modules['blast_utils']
+if "blast_utils" in sys.modules:
+    del sys.modules["blast_utils"]
 import blast_utils
+
 
 class TestBlastUtils(unittest.TestCase):
 
@@ -24,7 +25,7 @@ class TestBlastUtils(unittest.TestCase):
             self.hit_start = hit_start
             self.hit_end = hit_end
             if hit_strand is not None:
-                self.hit_strand = hit_strand # Biopython uses 1 for plus, -1 for minus
+                self.hit_strand = hit_strand  # Biopython uses 1 for plus, -1 for minus
 
     # --- Tests for format_blast_coordinates ---
     def test_format_blast_coordinates_typical(self):
@@ -45,7 +46,7 @@ class TestBlastUtils(unittest.TestCase):
         q_coords, h_coords = blast_utils.format_blast_coordinates(mock_hsp)
         self.assertEqual(q_coords, (6, 5))
         self.assertEqual(h_coords, (11, 10))
-        
+
     def test_format_blast_coordinates_query_inverted(self):
         # If query_start > query_end (e.g. for minus strand alignments if not already adjusted)
         # The function should still convert faithfully.
@@ -55,137 +56,198 @@ class TestBlastUtils(unittest.TestCase):
         # This function assumes start < end for its 0-exclusive to 1-inclusive logic.
         # Let's test a case where start > end and see how it behaves.
         # The function does: q_start = hsp.query_start + 1, q_end = hsp.query_end
-        mock_hsp = self.MockHSP(query_start=99, query_end=0, hit_start=109, hit_end=10) # query is 99..0
+        mock_hsp = self.MockHSP(
+            query_start=99, query_end=0, hit_start=109, hit_end=10
+        )  # query is 99..0
         q_coords, h_coords = blast_utils.format_blast_coordinates(mock_hsp)
-        self.assertEqual(q_coords, (100, 0)) # (99+1, 0)
-        self.assertEqual(h_coords, (110, 10)) # (109+1, 10)
-
+        self.assertEqual(q_coords, (100, 0))  # (99+1, 0)
+        self.assertEqual(h_coords, (110, 10))  # (109+1, 10)
 
     # --- Tests for get_hit_strand_str ---
     def test_get_hit_strand_str_minus(self):
-        mock_hsp = self.MockHSP(0,0,0,0, hit_strand=-1)
+        mock_hsp = self.MockHSP(0, 0, 0, 0, hit_strand=-1)
         self.assertEqual(blast_utils.get_hit_strand_str(mock_hsp), "Minus")
 
     def test_get_hit_strand_str_plus(self):
-        mock_hsp_plus_1 = self.MockHSP(0,0,0,0, hit_strand=1)
+        mock_hsp_plus_1 = self.MockHSP(0, 0, 0, 0, hit_strand=1)
         self.assertEqual(blast_utils.get_hit_strand_str(mock_hsp_plus_1), "Plus")
-        
-        # Test if other positive values also result in "Plus"
-        mock_hsp_plus_2 = self.MockHSP(0,0,0,0, hit_strand=2) # Biopython might use this for other strand info
-        self.assertEqual(blast_utils.get_hit_strand_str(mock_hsp_plus_2), "Plus")
 
+        # Test if other positive values also result in "Plus"
+        mock_hsp_plus_2 = self.MockHSP(
+            0, 0, 0, 0, hit_strand=2
+        )  # Biopython might use this for other strand info
+        self.assertEqual(blast_utils.get_hit_strand_str(mock_hsp_plus_2), "Plus")
 
     def test_get_hit_strand_str_zero_or_none(self):
         # Test case for hit_strand = 0 (unknown/not applicable)
-        mock_hsp_zero = self.MockHSP(0,0,0,0, hit_strand=0)
-        self.assertEqual(blast_utils.get_hit_strand_str(mock_hsp_zero), "Plus") # Default else "Plus"
+        mock_hsp_zero = self.MockHSP(0, 0, 0, 0, hit_strand=0)
+        self.assertEqual(
+            blast_utils.get_hit_strand_str(mock_hsp_zero), "Plus"
+        )  # Default else "Plus"
 
         # Test case for hit_strand = None (if attribute might be missing or None)
-        mock_hsp_none_strand = Mock() # A more generic mock
+        mock_hsp_none_strand = Mock()  # A more generic mock
         mock_hsp_none_strand.hit_strand = None
         self.assertEqual(blast_utils.get_hit_strand_str(mock_hsp_none_strand), "Plus")
 
         # Test if attribute is missing
-        mock_hsp_no_strand_attr = Mock(spec=[]) # Mock with no attributes defined by spec
+        mock_hsp_no_strand_attr = Mock(
+            spec=[]
+        )  # Mock with no attributes defined by spec
         # Based on the provided blast_utils.py (does not handle AttributeError for hit_strand)
         with self.assertRaises(AttributeError):
             blast_utils.get_hit_strand_str(mock_hsp_no_strand_attr)
-
 
     # --- Tests for format_evalue ---
     def test_format_evalue(self):
         self.assertEqual(blast_utils.format_evalue(0.0), ("0.00", "0"))
         self.assertEqual(blast_utils.format_evalue(1.23e-5), ("1.23", "-5"))
         self.assertEqual(blast_utils.format_evalue(1e-10), ("1.00", "-10"))
-        self.assertEqual(blast_utils.format_evalue(0.000456), ("4.56", "-4")) # 4.56e-04
-        self.assertEqual(blast_utils.format_evalue(7.89e+2), ("7.89", "2"))   # 7.89e+02
-        self.assertEqual(blast_utils.format_evalue(123.45), ("1.23", "2"))    # 1.2345e+02 -> 1.23e+02
-        self.assertEqual(blast_utils.format_evalue(999.0), ("9.99", "2"))     # 9.99e+02
+        self.assertEqual(
+            blast_utils.format_evalue(0.000456), ("4.56", "-4")
+        )  # 4.56e-04
+        self.assertEqual(blast_utils.format_evalue(7.89e2), ("7.89", "2"))  # 7.89e+02
+        self.assertEqual(
+            blast_utils.format_evalue(123.45), ("1.23", "2")
+        )  # 1.2345e+02 -> 1.23e+02
+        self.assertEqual(blast_utils.format_evalue(999.0), ("9.99", "2"))  # 9.99e+02
         self.assertEqual(blast_utils.format_evalue(1.0), ("1.00", "0"))
-        self.assertEqual(blast_utils.format_evalue(0.1), ("1.00", "-1"))     # 1.00e-01
+        self.assertEqual(blast_utils.format_evalue(0.1), ("1.00", "-1"))  # 1.00e-01
         self.assertEqual(blast_utils.format_evalue(1e-200), ("1.00", "-200"))
-        self.assertEqual(blast_utils.format_evalue(0.00999), ("1.00", "-2")) # 9.99e-03 -> 1.00e-02 (due to .2e formatting)
-        self.assertEqual(blast_utils.format_evalue(9.999e-3), ("1.00", "-2")) # Similar to above
+        self.assertEqual(
+            blast_utils.format_evalue(0.00999), ("1.00", "-2")
+        )  # 9.99e-03 -> 1.00e-02 (due to .2e formatting)
+        self.assertEqual(
+            blast_utils.format_evalue(9.999e-3), ("1.00", "-2")
+        )  # Similar to above
 
     # --- Tests for calculate_percent_metric ---
     def test_calculate_percent_metric(self):
         self.assertEqual(blast_utils.calculate_percent_metric(50, 100), "50.00")
         self.assertEqual(blast_utils.calculate_percent_metric(33, 99), "33.33")
         self.assertEqual(blast_utils.calculate_percent_metric(0, 100), "0.00")
-        self.assertEqual(blast_utils.calculate_percent_metric(100, 0), "0.00") # Division by zero
-        self.assertEqual(blast_utils.calculate_percent_metric(75, 150, decimals=3), "50.000")
-        self.assertEqual(blast_utils.calculate_percent_metric(1, 3, decimals=2), "33.33") # 0.3333...
-        self.assertEqual(blast_utils.calculate_percent_metric(2, 3, decimals=2), "66.67") # 0.6666... rounds up
-        self.assertEqual(blast_utils.calculate_percent_metric(1, 7, decimals=4), "14.2857") # Check rounding for more places
-
+        self.assertEqual(
+            blast_utils.calculate_percent_metric(100, 0), "0.00"
+        )  # Division by zero
+        self.assertEqual(
+            blast_utils.calculate_percent_metric(75, 150, decimals=3), "50.000"
+        )
+        self.assertEqual(
+            blast_utils.calculate_percent_metric(1, 3, decimals=2), "33.33"
+        )  # 0.3333...
+        self.assertEqual(
+            blast_utils.calculate_percent_metric(2, 3, decimals=2), "66.67"
+        )  # 0.6666... rounds up
+        self.assertEqual(
+            blast_utils.calculate_percent_metric(1, 7, decimals=4), "14.2857"
+        )  # Check rounding for more places
 
     # --- Tests for parse_ncbi_header ---
     def test_parse_ncbi_header(self):
         # Standard GenBank/EMBL/DDBJ style with GI
-        self.assertEqual(blast_utils.parse_ncbi_header("gi|12345|gb|U00001.1|LOCUS1 Human herpesvirus 1"), 
-                         ("U00001", "LOCUS1", "Human herpesvirus 1"))
+        self.assertEqual(
+            blast_utils.parse_ncbi_header(
+                "gi|12345|gb|U00001.1|LOCUS1 Human herpesvirus 1"
+            ),
+            ("U00001", "LOCUS1", "Human herpesvirus 1"),
+        )
         # SwissProt/TrEMBL style with GI
-        self.assertEqual(blast_utils.parse_ncbi_header("gi|123|sp|P12345|PROT_NAME Protein description"), 
-                         ("P12345", "PROT_NAME", "Protein description"))
+        self.assertEqual(
+            blast_utils.parse_ncbi_header(
+                "gi|123|sp|P12345|PROT_NAME Protein description"
+            ),
+            ("P12345", "PROT_NAME", "Protein description"),
+        )
         # SwissProt without GI
-        self.assertEqual(blast_utils.parse_ncbi_header("sp|P12345|PROT_NAME Protein description"), 
-                         ("P12345", "PROT_NAME", "Protein description"))
-        self.assertEqual(blast_utils.parse_ncbi_header("tr|Q12345|TR_NAME Another protein"), 
-                         ("Q12345", "TR_NAME", "Another protein"))
-        
+        self.assertEqual(
+            blast_utils.parse_ncbi_header("sp|P12345|PROT_NAME Protein description"),
+            ("P12345", "PROT_NAME", "Protein description"),
+        )
+        self.assertEqual(
+            blast_utils.parse_ncbi_header("tr|Q12345|TR_NAME Another protein"),
+            ("Q12345", "TR_NAME", "Another protein"),
+        )
+
         # RefSeq style with version
-        self.assertEqual(blast_utils.parse_ncbi_header("ref|XP_0012345.1| Hypothetical protein"),
-                         ("XP_0012345", "XP_0012345.1", "Hypothetical protein"))
-        self.assertEqual(blast_utils.parse_ncbi_header("ref|NP_012345.2| Protein name [organism]"),
-                         ("NP_012345", "NP_012345.2", "Protein name [organism]"))
-                         
+        self.assertEqual(
+            blast_utils.parse_ncbi_header("ref|XP_0012345.1| Hypothetical protein"),
+            ("XP_0012345", "XP_0012345.1", "Hypothetical protein"),
+        )
+        self.assertEqual(
+            blast_utils.parse_ncbi_header("ref|NP_012345.2| Protein name [organism]"),
+            ("NP_012345", "NP_012345.2", "Protein name [organism]"),
+        )
+
         # GenBank style without GI but with version
-        self.assertEqual(blast_utils.parse_ncbi_header("gb|L00002.2|SEGMENT_A Influenza virus segment A"), 
-                         ("L00002", "SEGMENT_A", "Influenza virus segment A"))
+        self.assertEqual(
+            blast_utils.parse_ncbi_header(
+                "gb|L00002.2|SEGMENT_A Influenza virus segment A"
+            ),
+            ("L00002", "SEGMENT_A", "Influenza virus segment A"),
+        )
 
         # No pipes, common for some viral sequences / UniProt
-        self.assertEqual(blast_utils.parse_ncbi_header("P0DTC2 ORF1ab polyprotein"), 
-                         ("P0DTC2", "P0DTC2", "ORF1ab polyprotein"))
+        self.assertEqual(
+            blast_utils.parse_ncbi_header("P0DTC2 ORF1ab polyprotein"),
+            ("P0DTC2", "P0DTC2", "ORF1ab polyprotein"),
+        )
 
         # Custom ID
-        self.assertEqual(blast_utils.parse_ncbi_header("my_custom_id Local sequence information"), 
-                         ("my_custom_id", "my_custom_id", "Local sequence information"))
-        
+        self.assertEqual(
+            blast_utils.parse_ncbi_header("my_custom_id Local sequence information"),
+            ("my_custom_id", "my_custom_id", "Local sequence information"),
+        )
+
         # lcl| ID (local ID)
-        self.assertEqual(blast_utils.parse_ncbi_header("lcl|Seq1 some sequence"), 
-                         ("lcl|Seq1", "lcl|Seq1", "some sequence"))
+        self.assertEqual(
+            blast_utils.parse_ncbi_header("lcl|Seq1 some sequence"),
+            ("lcl|Seq1", "lcl|Seq1", "some sequence"),
+        )
 
         # Missing locus and description with pipes (but accession present)
-        self.assertEqual(blast_utils.parse_ncbi_header("gi|54321|emb|AJ000001.1|"), 
-                         ("AJ000001", "AJ000001.1", "AJ000001.1"))
-        self.assertEqual(blast_utils.parse_ncbi_header("pdb|1XYZ|A"),
-                         ("1XYZ", "1XYZ", "A")) # Locus defaults to acc, title is chain or acc
-        self.assertEqual(blast_utils.parse_ncbi_header("sp|P12345|"),
-                         ("P12345", "P12345", "P12345"))
-
+        self.assertEqual(
+            blast_utils.parse_ncbi_header("gi|54321|emb|AJ000001.1|"),
+            ("AJ000001", "AJ000001.1", "AJ000001.1"),
+        )
+        self.assertEqual(
+            blast_utils.parse_ncbi_header("pdb|1XYZ|A"), ("1XYZ", "1XYZ", "A")
+        )  # Locus defaults to acc, title is chain or acc
+        self.assertEqual(
+            blast_utils.parse_ncbi_header("sp|P12345|"), ("P12345", "P12345", "P12345")
+        )
 
         # Only ID
-        self.assertEqual(blast_utils.parse_ncbi_header("JustAnID"), 
-                         ("JustAnID", "JustAnID", "JustAnID"))
+        self.assertEqual(
+            blast_utils.parse_ncbi_header("JustAnID"),
+            ("JustAnID", "JustAnID", "JustAnID"),
+        )
 
         # Empty string
-        self.assertEqual(blast_utils.parse_ncbi_header(""), 
-                         ("N/A", "", "")) 
+        self.assertEqual(blast_utils.parse_ncbi_header(""), ("N/A", "", ""))
 
         # Header that does not match any specific NCBI-like pattern, but is not empty
-        self.assertEqual(blast_utils.parse_ncbi_header("This is a simple description string"), 
-                         ("This", "This", "is a simple description string")) # First word logic
+        self.assertEqual(
+            blast_utils.parse_ncbi_header("This is a simple description string"),
+            ("This", "This", "is a simple description string"),
+        )  # First word logic
 
         # More complex GI line with extra info
-        self.assertEqual(blast_utils.parse_ncbi_header("gi|123|sp|P68807.1|ACTG_RABIT REC_ID=P68807;ALT_ACC=ALT123,ALT456; Actin, gamma-enteric smooth muscle"),
-                        ("P68807", "ACTG_RABIT", "REC_ID=P68807;ALT_ACC=ALT123,ALT456; Actin, gamma-enteric smooth muscle"))
+        self.assertEqual(
+            blast_utils.parse_ncbi_header(
+                "gi|123|sp|P68807.1|ACTG_RABIT REC_ID=P68807;ALT_ACC=ALT123,ALT456; Actin, gamma-enteric smooth muscle"
+            ),
+            (
+                "P68807",
+                "ACTG_RABIT",
+                "REC_ID=P68807;ALT_ACC=ALT123,ALT456; Actin, gamma-enteric smooth muscle",
+            ),
+        )
 
 
-if __name__ == '__main__':
-    unittest.main(argv=[sys.argv[0]] + sys.argv[1:], verbosity=2)
+if __name__ == "__main__":
+    unittest.main(argv=[sys.argv[0]] + sys.argv[1:], verbosity=2) # Ensure single newline at EOF
 
-```
-
+"""
 **Explanation of Test Case Design for `parse_ncbi_header`:**
 
 The `parse_ncbi_header` function in `blast_utils.py` uses a series of regular expressions to parse different styles of FASTA headers. The test cases are designed to cover each of these regex patterns and common header formats:
@@ -262,3 +324,4 @@ I've included:
 -   Test methods for `parse_ncbi_header`. For this function, I've used the expected outputs *as specified in the prompt*. If the actual implementation of `parse_ncbi_header` in `blast_utils.py` (which I cannot see) has different regex logic, these tests might fail and will need adjustment based on the script's true behavior. Specifically, the parsing of RefSeq IDs and complex UniProt headers might differ.
 
 I will now run the tests. If `blast_utils.py` is not available or some functions are not implemented as assumed by the test requirements, there will be errors. The `parse_ncbi_header` tests are most likely to need adjustments once the actual parsing logic is known/tested against.
+"""

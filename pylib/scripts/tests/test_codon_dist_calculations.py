@@ -5,8 +5,8 @@ import shutil
 import tempfile
 
 # Define the paths to the scripts to be tested
-SCRIPT_DS_DN = os.path.join(os.path.dirname(__file__), '..', 'calculate_ds_dn.py')
-SCRIPT_PNC_PNR = os.path.join(os.path.dirname(__file__), '..', 'calculate_pnc_pnr.py')
+SCRIPT_DS_DN = os.path.join(os.path.dirname(__file__), "..", "calculate_ds_dn.py")
+SCRIPT_PNC_PNR = os.path.join(os.path.dirname(__file__), "..", "calculate_pnc_pnr.py")
 
 # Make sure scripts are executable
 # This might be needed if running in certain environments or if files are newly created
@@ -27,13 +27,13 @@ class TestCodonDistCalculations(unittest.TestCase):
     def _create_temp_file(self, filename, content):
         """Helper to create a temporary file with given content."""
         filepath = os.path.join(self.test_dir, filename)
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             f.write(content)
         return filepath
 
     def _run_script(self, script_path, args):
         """Helper to run a script and return its output."""
-        cmd = ['python', script_path] + args
+        cmd = ["python", script_path] + args
         process = subprocess.run(cmd, capture_output=True, text=True, check=False)
         return process
 
@@ -47,7 +47,7 @@ ATGGCG
 ATGGCG
 """
         fasta_file = self._create_temp_file("identical.fasta", fasta_content)
-        
+
         # Expected: R=0.50, syn=0.00, nonsyn=0.00
         # Potential sites need manual calculation based on ATGGCG (M-A)
         # Codon ATG (M): calculate_syn_site("ATG", STANDARD_GENETIC_CODE, 0.5) -> 0.0
@@ -57,22 +57,21 @@ ATGGCG
         # potential_syn = (1.0 + 1.0) / 2.0 = 1.0
         # num_codons = 2
         # potential_nonsyn = (2 * 3.0) - 1.0 = 5.0
-        
+
         process = self._run_script(SCRIPT_DS_DN, [fasta_file, "0.5"])
         self.assertEqual(process.returncode, 0, f"Script failed: {process.stderr}")
-        
-        lines = process.stdout.strip().split('\n')
-        self.assertEqual(len(lines), 1) # One pair comparison
-        
-        parts = lines[0].split('\t')
+
+        lines = process.stdout.strip().split("\n")
+        self.assertEqual(len(lines), 1)  # One pair comparison
+
+        parts = lines[0].split("\t")
         self.assertEqual(parts[0], "seq1")
         self.assertEqual(parts[1], "seq2")
-        self.assertAlmostEqual(float(parts[2]), 0.50) # R
-        self.assertAlmostEqual(float(parts[3]), 0.00) # syn_codons
-        self.assertAlmostEqual(float(parts[4]), 0.00) # nonsyn_codons
-        self.assertAlmostEqual(float(parts[5]), 1.00, places=2) # potential_syn
-        self.assertAlmostEqual(float(parts[6]), 5.00, places=2) # potential_nonsyn
-
+        self.assertAlmostEqual(float(parts[2]), 0.50)  # R
+        self.assertAlmostEqual(float(parts[3]), 0.00)  # syn_codons
+        self.assertAlmostEqual(float(parts[4]), 0.00)  # nonsyn_codons
+        self.assertAlmostEqual(float(parts[5]), 1.00, places=2)  # potential_syn
+        self.assertAlmostEqual(float(parts[6]), 5.00, places=2)  # potential_nonsyn
 
     def test_dsdn_single_synonymous_change(self):
         """Test calculate_ds_dn.py with a single synonymous change."""
@@ -84,13 +83,13 @@ TTC
 """
         fasta_file = self._create_temp_file("single_syn.fasta", fasta_content)
         r_val = 0.5
-        
+
         # Manual calculation for TTT vs TTC (R=0.5)
         # Difference at 3rd position: T vs C (Transversion, weight = 1.0)
         # Change is TTT (F) -> TTC (F), which is synonymous.
         # syn_codons = 1.0
         # nonsyn_codons = 0.0
-        
+
         # Potential sites:
         # Codon TTT (F): calculate_syn_site("TTT", STANDARD_GENETIC_CODE, 0.5)
         #   - TTT -> TCT (S), TTA (L), TTG (L) (3 changes)
@@ -145,21 +144,23 @@ TTC
         #     potential_syn = (0.4 + 0.4) / 2.0 = 0.4
         #     num_codons = 1
         #     potential_nonsyn = (1 * 3.0) - 0.4 = 2.6
-        
+
         process = self._run_script(SCRIPT_DS_DN, [fasta_file, str(r_val)])
         self.assertEqual(process.returncode, 0, f"Script failed: {process.stderr}")
-        
-        lines = process.stdout.strip().split('\n')
+
+        lines = process.stdout.strip().split("\n")
         self.assertEqual(len(lines), 1)
-        
-        parts = lines[0].split('\t')
+
+        parts = lines[0].split("\t")
         self.assertEqual(parts[0], "seqA")
         self.assertEqual(parts[1], "seqB")
-        self.assertAlmostEqual(float(parts[2]), r_val)      # R
-        self.assertAlmostEqual(float(parts[3]), 1.00)      # syn_codons (Tv change, weight 1)
-        self.assertAlmostEqual(float(parts[4]), 0.00)      # nonsyn_codons
-        self.assertAlmostEqual(float(parts[5]), 0.40, places=2) # potential_syn
-        self.assertAlmostEqual(float(parts[6]), 2.60, places=2) # potential_nonsyn
+        self.assertAlmostEqual(float(parts[2]), r_val)  # R
+        self.assertAlmostEqual(
+            float(parts[3]), 1.00
+        )  # syn_codons (Tv change, weight 1)
+        self.assertAlmostEqual(float(parts[4]), 0.00)  # nonsyn_codons
+        self.assertAlmostEqual(float(parts[5]), 0.40, places=2)  # potential_syn
+        self.assertAlmostEqual(float(parts[6]), 2.60, places=2)  # potential_nonsyn
 
     def test_dsdn_single_nonsynonymous_change(self):
         """Test calculate_ds_dn.py with a single non-synonymous change."""
@@ -177,7 +178,7 @@ CTT
         # Change is TTT (F) -> CTT (L), which is non-synonymous.
         # syn_codons = 0.0
         # nonsyn_codons = 1.0
-        
+
         # Potential sites: (SA_Nei for TTT is 0.4, SB_Nei for CTT is different)
         # calculate_syn_site("CTT", ..., 0.5):
         #   CTT (L). Mutations:
@@ -204,21 +205,23 @@ CTT
         #   potential_syn = (0.4 + 1.2333) / 2.0 = 1.6333 / 2.0 = 0.81665
         #   num_codons = 1
         #   potential_nonsyn = (1 * 3.0) - 0.81665 = 2.18335
-        
+
         process = self._run_script(SCRIPT_DS_DN, [fasta_file, str(r_val)])
         self.assertEqual(process.returncode, 0, f"Script failed: {process.stderr}")
-        
-        lines = process.stdout.strip().split('\n')
+
+        lines = process.stdout.strip().split("\n")
         self.assertEqual(len(lines), 1)
-        
-        parts = lines[0].split('\t')
+
+        parts = lines[0].split("\t")
         self.assertEqual(parts[0], "seqX")
         self.assertEqual(parts[1], "seqY")
-        self.assertAlmostEqual(float(parts[2]), r_val)      # R
-        self.assertAlmostEqual(float(parts[3]), 0.00)      # syn_codons
-        self.assertAlmostEqual(float(parts[4]), 1.00)      # nonsyn_codons (Tv change, weight 1)
-        self.assertAlmostEqual(float(parts[5]), 0.8167, places=3) # potential_syn
-        self.assertAlmostEqual(float(parts[6]), 2.1833, places=3) # potential_nonsyn
+        self.assertAlmostEqual(float(parts[2]), r_val)  # R
+        self.assertAlmostEqual(float(parts[3]), 0.00)  # syn_codons
+        self.assertAlmostEqual(
+            float(parts[4]), 1.00
+        )  # nonsyn_codons (Tv change, weight 1)
+        self.assertAlmostEqual(float(parts[5]), 0.8167, places=3)  # potential_syn
+        self.assertAlmostEqual(float(parts[6]), 2.1833, places=3)  # potential_nonsyn
 
     def test_dsdn_mitochondrial_code(self):
         """Test calculate_ds_dn.py with mitochondrial genetic code."""
@@ -234,7 +237,7 @@ TGAATA
 TGGATG
 """
         fasta_file = self._create_temp_file("mito_test.fasta", fasta_content)
-        r_val = 0.7 # Using a different R for variety
+        r_val = 0.7  # Using a different R for variety
 
         # Manual calculation for TGAATA vs TGGATG (mito code, R=0.7)
         # Codon 1: TGA (W) vs TGG (W). Change A->G (3rd pos). Synonymous. Transition. Weight = 0.7
@@ -268,20 +271,24 @@ TGGATG
         # num_codons = 2
         # potential_nonsyn = (2 * 3.0) - 0.5185 = 5.4815
 
-        process = self._run_script(SCRIPT_DS_DN, [fasta_file, str(r_val), "--genetic_code", "mito"])
-        self.assertEqual(process.returncode, 0, f"Script failed for mito: {process.stderr}")
-        
-        lines = process.stdout.strip().split('\n')
+        process = self._run_script(
+            SCRIPT_DS_DN, [fasta_file, str(r_val), "--genetic_code", "mito"]
+        )
+        self.assertEqual(
+            process.returncode, 0, f"Script failed for mito: {process.stderr}"
+        )
+
+        lines = process.stdout.strip().split("\n")
         self.assertEqual(len(lines), 1)
-        
-        parts = lines[0].split('\t')
+
+        parts = lines[0].split("\t")
         self.assertEqual(parts[0], "seqM1")
         self.assertEqual(parts[1], "seqM2")
         self.assertAlmostEqual(float(parts[2]), r_val)
-        self.assertAlmostEqual(float(parts[3]), 1.40, places=2) # syn_codons
-        self.assertAlmostEqual(float(parts[4]), 0.00, places=2) # nonsyn_codons
-        self.assertAlmostEqual(float(parts[5]), 0.5185, places=3) # potential_syn
-        self.assertAlmostEqual(float(parts[6]), 5.4815, places=3) # potential_nonsyn
+        self.assertAlmostEqual(float(parts[3]), 1.40, places=2)  # syn_codons
+        self.assertAlmostEqual(float(parts[4]), 0.00, places=2)  # nonsyn_codons
+        self.assertAlmostEqual(float(parts[5]), 0.5185, places=3)  # potential_syn
+        self.assertAlmostEqual(float(parts[6]), 5.4815, places=3)  # potential_nonsyn
 
     def test_dsdn_estimate_r(self):
         """Test calculate_ds_dn.py with R estimation."""
@@ -327,7 +334,7 @@ TTTGCG
         # val_s = 1 - 2*0.5 - 0.5 = 1 - 1 - 0.5 = -0.5 (Still error)
         # The condition is 2P' + Q' < 1 and 2Q' < 1.
         # This means P' < 0.5 - Q'/2. If Q'=0.5, P' < 0.25.
-        
+
         # Using the example from the provided solution for calculate_ds_dn.py's R estimation test
         # if one were available, or a textbook example.
         # For now, let's assume a scenario where R estimation works.
@@ -337,7 +344,7 @@ TTTGCG
         # s_rate = 0.5 * log(1/0.75) = 0.5 * log(1.3333) = 0.5 * 0.2877 = 0.1438
         # v_rate = 0.25 * log(1/0.9) = 0.25 * log(1.1111) = 0.25 * 0.1054 = 0.02635
         # estimated_r = 0.1438 / 0.02635 = 5.457 (approx)
-        
+
         # Let's create a FASTA that gives P'=0.1, Q'=0.05
         # Needs many sites. 20 sites: 2 Transitions (P'=0.1), 1 Transversion (Q'=0.05). 17 same.
         # SeqT1: AAAAAAAAAAAAAAAAAAAACCCCGTGTGT (20 codons, using only 3rd pos for R)
@@ -358,15 +365,21 @@ TTTGCGAAAAAA
         # Pair (R1,R2): 3rd: (T,C Tv), (C,A Tv). Other 3rd As are same. Total 2 diffs, both Tv. P'=0, Q'=1. (val_s < 0) -> R=undef
         # This will result in "undef" R.
 
-        fasta_file_simple_r = self._create_temp_file("simple_r_undef.fasta", fasta_content_simple_r)
+        fasta_file_simple_r = self._create_temp_file(
+            "simple_r_undef.fasta", fasta_content_simple_r
+        )
         process_undef_r = self._run_script(SCRIPT_DS_DN, [fasta_file_simple_r, "R"])
-        self.assertEqual(process_undef_r.returncode, 0, f"Script failed for R undef: {process_undef_r.stderr}")
-        lines_undef = process_undef_r.stdout.strip().split('\n')
+        self.assertEqual(
+            process_undef_r.returncode,
+            0,
+            f"Script failed for R undef: {process_undef_r.stderr}",
+        )
+        lines_undef = process_undef_r.stdout.strip().split("\n")
         # Expect 3 pairs: R1-R2, R1-R3, R2-R3
-        self.assertEqual(len(lines_undef), 3) 
+        self.assertEqual(len(lines_undef), 3)
         for line in lines_undef:
-            parts = line.split('\t')
-            self.assertEqual(parts[2], "undef") # R value should be undef
+            parts = line.split("\t")
+            self.assertEqual(parts[2], "undef")  # R value should be undef
 
         # A case where R should be calculable:
         # SeqA: ATATATATA (I Y I Y I) (3rd pos: A A A)
@@ -389,13 +402,16 @@ TTTGCGAAAAAA
 
         # Test with a fixed R value for sequences used in R estimation to see other outputs
         process_fixed_r = self._run_script(SCRIPT_DS_DN, [fasta_file_simple_r, "0.5"])
-        self.assertEqual(process_fixed_r.returncode, 0, f"Script failed for R fixed: {process_fixed_r.stderr}")
-        lines_fixed = process_fixed_r.stdout.strip().split('\n')
+        self.assertEqual(
+            process_fixed_r.returncode,
+            0,
+            f"Script failed for R fixed: {process_fixed_r.stderr}",
+        )
+        lines_fixed = process_fixed_r.stdout.strip().split("\n")
         self.assertEqual(len(lines_fixed), 3)
         for line in lines_fixed:
-            parts = line.split('\t')
+            parts = line.split("\t")
             self.assertAlmostEqual(float(parts[2]), 0.50)
-
 
     def test_dsdn_denom_zero(self):
         """Test calculate_ds_dn.py for a scenario that might lead to denom 0."""
@@ -417,10 +433,12 @@ ATGTGG
 """
         fasta_file = self._create_temp_file("denom_zero_syn.fasta", fasta_content)
         process = self._run_script(SCRIPT_DS_DN, [fasta_file, "0.5"])
-        self.assertEqual(process.returncode, 0, f"Script failed for denom zero syn: {process.stderr}")
-        lines = process.stdout.strip().split('\n')
+        self.assertEqual(
+            process.returncode, 0, f"Script failed for denom zero syn: {process.stderr}"
+        )
+        lines = process.stdout.strip().split("\n")
         self.assertEqual(len(lines), 1)
-        parts = lines[0].split('\t')
+        parts = lines[0].split("\t")
         self.assertEqual(parts[3], "denom_0_syn=0.00_nonsyn=6.00")
 
         # To make N_sites zero, S_sites must be 3*num_codons.
@@ -467,9 +485,13 @@ ATGGCG
 """
         fasta_file = self._create_temp_file("args.fasta", fasta_content)
 
-        process_bad_code = self._run_script(SCRIPT_DS_DN, [fasta_file, "0.5", "--genetic_code", "invalid_code"])
+        process_bad_code = self._run_script(
+            SCRIPT_DS_DN, [fasta_file, "0.5", "--genetic_code", "invalid_code"]
+        )
         self.assertNotEqual(process_bad_code.returncode, 0)
-        self.assertIn("invalid choice: 'invalid_code'", process_bad_code.stderr) # argparse error
+        self.assertIn(
+            "invalid choice: 'invalid_code'", process_bad_code.stderr
+        )  # argparse error
 
         process_bad_r = self._run_script(SCRIPT_DS_DN, [fasta_file, "not_a_number"])
         self.assertNotEqual(process_bad_r.returncode, 0)
@@ -498,7 +520,7 @@ TCCACG
 """
         fasta_file = self._create_temp_file("mixed.fasta", fasta_content)
         r_val = 0.5
-        
+
         # Expected syn_subs = 1.0, nonsyn_subs = 2.0
 
         # Potential sites:
@@ -520,20 +542,21 @@ TCCACG
         # potential_nonsyn = (2 * 3.0) - 1.43335 = 6.0 - 1.43335 = 4.56665
 
         process = self._run_script(SCRIPT_DS_DN, [fasta_file, str(r_val)])
-        self.assertEqual(process.returncode, 0, f"Script failed for mixed changes: {process.stderr}")
-        
-        lines = process.stdout.strip().split('\n')
+        self.assertEqual(
+            process.returncode, 0, f"Script failed for mixed changes: {process.stderr}"
+        )
+
+        lines = process.stdout.strip().split("\n")
         self.assertEqual(len(lines), 1)
-        
-        parts = lines[0].split('\t')
+
+        parts = lines[0].split("\t")
         self.assertEqual(parts[0], "seqMix1")
         self.assertEqual(parts[1], "seqMix2")
         self.assertAlmostEqual(float(parts[2]), r_val)
-        self.assertAlmostEqual(float(parts[3]), 1.00, places=2) # syn_codons
-        self.assertAlmostEqual(float(parts[4]), 2.00, places=2) # nonsyn_codons
-        self.assertAlmostEqual(float(parts[5]), 1.4333, places=3) # potential_syn
-        self.assertAlmostEqual(float(parts[6]), 4.5667, places=3) # potential_nonsyn
-
+        self.assertAlmostEqual(float(parts[3]), 1.00, places=2)  # syn_codons
+        self.assertAlmostEqual(float(parts[4]), 2.00, places=2)  # nonsyn_codons
+        self.assertAlmostEqual(float(parts[5]), 1.4333, places=3)  # potential_syn
+        self.assertAlmostEqual(float(parts[6]), 4.5667, places=3)  # potential_nonsyn
 
     # --- calculate_pnc_pnr.py Tests ---
 
@@ -555,26 +578,26 @@ G 2.0
 """
         fasta_file = self._create_temp_file("pnc_identical.fasta", fasta_content)
         prop_file = self._create_dummy_property_file("pnc_identical.prop", prop_content)
-        
-        r_val = "0.5" # Fixed R
+
+        r_val = "0.5"  # Fixed R
         process = self._run_script(SCRIPT_PNC_PNR, [fasta_file, prop_file, r_val])
-        
+
         self.assertEqual(process.returncode, 0, f"Script failed: {process.stderr}")
-        
+
         # Skip header line
-        lines = process.stdout.strip().split('\n')
+        lines = process.stdout.strip().split("\n")
         self.assertTrue(len(lines) > 1, "Output is missing data lines.")
-        parts = lines[1].split('\t') # First data line
-        
+        parts = lines[1].split("\t")  # First data line
+
         self.assertEqual(parts[0], "seq1")
         self.assertEqual(parts[1], "seq2")
-        self.assertEqual(parts[2], "Property_Name") # Property header
-        self.assertAlmostEqual(float(parts[3]), 0.50) # R
+        self.assertEqual(parts[2], "Property_Name")  # Property header
+        self.assertAlmostEqual(float(parts[3]), 0.50)  # R
         # For identical sequences, pNc and pNr are NA as no substitutions.
-        self.assertEqual(parts[4], "NA") # pNc
-        self.assertEqual(parts[5], "NA") # SEpNc
-        self.assertEqual(parts[6], "NA") # pNr
-        self.assertEqual(parts[7], "NA") # SEpnr
+        self.assertEqual(parts[4], "NA")  # pNc
+        self.assertEqual(parts[5], "NA")  # SEpNc
+        self.assertEqual(parts[6], "NA")  # pNr
+        self.assertEqual(parts[7], "NA")  # SEpnr
 
     def test_pncpnr_single_conservative_change(self):
         """Test calculate_pnc_pnr.py with a single conservative change."""
@@ -622,7 +645,7 @@ S 4.0
         #   Assume SA_Nei = 0.2, SB_Nei = 0.8 for illustration.
         #   potential_syn_total = (0.2 + 0.8)/2 = 0.5
         #   potential_nonsyn_total = 1*3 - 0.5 = 2.5
-        
+
         # avg_potential_total_conservative_sites (ConSite):
         #   calc_pot_conserv_sites("AAA", K=1.0, R=1.0):
         #     Site 0: A->C(N,2), A->G(E,2), A->T(N,2). No conserv.
@@ -637,7 +660,7 @@ S 4.0
         #       Site 1 conservative fraction = R / (R+2) = 0.2
         #   ConSite_AGA = 0.2 (approx)
         #   avg_potential_total_conservative_sites = (0.2+0.2)/2 = 0.2
-        
+
         #   pnc = actual_conserv_subs / avg_potential_total_conservative_sites = 0.5 / 0.2 = 2.5 (This is > 1, problematic calculation here)
         #   The manual calculation of ConSite is very tricky. The test will rely on the script's output consistency.
         #   If pNc > 1, the script should cap it or handle it. The python script caps to "NA" if val_pnc > 1 + 1e-6.
@@ -645,20 +668,28 @@ S 4.0
         # For this test, let's use specific values that might come from a simplified, known output
         # or trust the script's internal calculation and check for plausible output types (float/NA).
         # The key is that actual_conserv_subs > 0.
-        
+
         process = self._run_script(SCRIPT_PNC_PNR, [fasta_file, prop_file, r_val_str])
         self.assertEqual(process.returncode, 0, f"Script failed: {process.stderr}")
-        lines = process.stdout.strip().split('\n')
+        lines = process.stdout.strip().split("\n")
         self.assertTrue(len(lines) > 1)
-        parts = lines[1].split('\t')
+        parts = lines[1].split("\t")
 
-        self.assertAlmostEqual(float(parts[3]), r_val_float) # R
+        self.assertAlmostEqual(float(parts[3]), r_val_float)  # R
         # Expect pNc to be a positive value, SEpNc also calculable.
         # pNr should be 0 or NA as no radical changes.
-        self.assertTrue(parts[4] != "NA" and float(parts[4]) > 0, "pNc should be > 0 for conservative change")
+        self.assertTrue(
+            parts[4] != "NA" and float(parts[4]) > 0,
+            "pNc should be > 0 for conservative change",
+        )
         self.assertTrue(parts[5] != "NA", "SEpNc should be calculable")
-        if parts[6] != "NA": # pNr
-             self.assertAlmostEqual(float(parts[6]), 0.0, places=2, msg="pNr should be ~0 for only conservative change")
+        if parts[6] != "NA":  # pNr
+            self.assertAlmostEqual(
+                float(parts[6]),
+                0.0,
+                places=2,
+                msg="pNr should be ~0 for only conservative change",
+            )
         # SEpnr might be NA if pNr is 0 or 1.
 
     def test_pncpnr_single_radical_change(self):
@@ -669,7 +700,7 @@ S 4.0
 AAA
 >seqF_rad
 TAA
-""" # TAA is stop, let's use TTA (L)
+"""  # TAA is stop, let's use TTA (L)
         fasta_content = """>seqK_rad
 AAA
 >seqL_rad
@@ -697,15 +728,23 @@ S 4.0
 
         process = self._run_script(SCRIPT_PNC_PNR, [fasta_file, prop_file, r_val_str])
         self.assertEqual(process.returncode, 0, f"Script failed: {process.stderr}")
-        lines = process.stdout.strip().split('\n')
+        lines = process.stdout.strip().split("\n")
         self.assertTrue(len(lines) > 1)
-        parts = lines[1].split('\t')
+        parts = lines[1].split("\t")
 
-        self.assertAlmostEqual(float(parts[3]), r_val_float) # R
+        self.assertAlmostEqual(float(parts[3]), r_val_float)  # R
         # Expect pNr to be positive, pNc to be 0 or NA.
-        if parts[4] != "NA": # pNc
-            self.assertAlmostEqual(float(parts[4]), 0.0, places=2, msg="pNc should be ~0 for only radical change")
-        self.assertTrue(parts[6] != "NA" and float(parts[6]) > 0, "pNr should be > 0 for radical change")
+        if parts[4] != "NA":  # pNc
+            self.assertAlmostEqual(
+                float(parts[4]),
+                0.0,
+                places=2,
+                msg="pNc should be ~0 for only radical change",
+            )
+        self.assertTrue(
+            parts[6] != "NA" and float(parts[6]) > 0,
+            "pNr should be > 0 for radical change",
+        )
         self.assertTrue(parts[7] != "NA", "SEpNr should be calculable")
 
     def test_pncpnr_estimate_r(self):
@@ -728,24 +767,30 @@ L 5.0
 T 6.0
 G 7.0
 C 7.0 
-""" # Added more AAs to avoid issues with codons in fasta
+"""  # Added more AAs to avoid issues with codons in fasta
         fasta_file = self._create_temp_file("pnc_estimate_r_undef.fasta", fasta_content)
-        prop_file = self._create_dummy_property_file("pnc_estimate_r_undef.prop", prop_content)
+        prop_file = self._create_dummy_property_file(
+            "pnc_estimate_r_undef.prop", prop_content
+        )
 
         process = self._run_script(SCRIPT_PNC_PNR, [fasta_file, prop_file, "R"])
-        self.assertEqual(process.returncode, 0, f"Script failed for R undef: {process.stderr}")
-        
-        lines = process.stdout.strip().split('\n')
-        self.assertTrue(len(lines) > 3, "Should have output for 3 pairs plus header") # 3 pairs
-        
-        for i in range(1, 4): # Check data lines
-            parts = lines[i].split('\t')
-            self.assertEqual(parts[3], "undef") # R value
-            self.assertEqual(parts[4], "NA")    # pNc
-            self.assertEqual(parts[5], "NA")    # SEpNc
-            self.assertEqual(parts[6], "NA")    # pNr
-            self.assertEqual(parts[7], "NA")    # SEpnr
-            
+        self.assertEqual(
+            process.returncode, 0, f"Script failed for R undef: {process.stderr}"
+        )
+
+        lines = process.stdout.strip().split("\n")
+        self.assertTrue(
+            len(lines) > 3, "Should have output for 3 pairs plus header"
+        )  # 3 pairs
+
+        for i in range(1, 4):  # Check data lines
+            parts = lines[i].split("\t")
+            self.assertEqual(parts[3], "undef")  # R value
+            self.assertEqual(parts[4], "NA")  # pNc
+            self.assertEqual(parts[5], "NA")  # SEpNc
+            self.assertEqual(parts[6], "NA")  # pNr
+            self.assertEqual(parts[7], "NA")  # SEpnr
+
     def test_pncpnr_different_property_file(self):
         """Test calculate_pnc_pnr.py with a different property file."""
         # Using AAA (K) vs AGA (R) again
@@ -777,25 +822,37 @@ S 4.0
 
         # Run with property file 1 (K, R are conservative)
         process1 = self._run_script(SCRIPT_PNC_PNR, [fasta_file, prop_file1, r_val_str])
-        self.assertEqual(process1.returncode, 0, f"Script failed with prop1: {process1.stderr}")
-        lines1 = process1.stdout.strip().split('\n')
-        parts1 = lines1[1].split('\t')
+        self.assertEqual(
+            process1.returncode, 0, f"Script failed with prop1: {process1.stderr}"
+        )
+        lines1 = process1.stdout.strip().split("\n")
+        parts1 = lines1[1].split("\t")
         self.assertEqual(parts1[2], "Charge")
         # pNc should be positive, pNr should be ~0 or NA
-        self.assertTrue(parts1[4] != "NA" and float(parts1[4]) > 0, "pNc should be >0 with prop1")
+        self.assertTrue(
+            parts1[4] != "NA" and float(parts1[4]) > 0, "pNc should be >0 with prop1"
+        )
         if parts1[6] != "NA":
-            self.assertAlmostEqual(float(parts1[6]), 0.0, places=2, msg="pNr should be ~0 with prop1")
+            self.assertAlmostEqual(
+                float(parts1[6]), 0.0, places=2, msg="pNr should be ~0 with prop1"
+            )
 
         # Run with property file 2 (K, R are radical)
         process2 = self._run_script(SCRIPT_PNC_PNR, [fasta_file, prop_file2, r_val_str])
-        self.assertEqual(process2.returncode, 0, f"Script failed with prop2: {process2.stderr}")
-        lines2 = process2.stdout.strip().split('\n')
-        parts2 = lines2[1].split('\t')
+        self.assertEqual(
+            process2.returncode, 0, f"Script failed with prop2: {process2.stderr}"
+        )
+        lines2 = process2.stdout.strip().split("\n")
+        parts2 = lines2[1].split("\t")
         self.assertEqual(parts2[2], "Volume")
         # pNc should be ~0 or NA, pNr should be positive
         if parts2[4] != "NA":
-            self.assertAlmostEqual(float(parts2[4]), 0.0, places=2, msg="pNc should be ~0 with prop2")
-        self.assertTrue(parts2[6] != "NA" and float(parts2[6]) > 0, "pNr should be >0 with prop2")
+            self.assertAlmostEqual(
+                float(parts2[4]), 0.0, places=2, msg="pNc should be ~0 with prop2"
+            )
+        self.assertTrue(
+            parts2[6] != "NA" and float(parts2[6]) > 0, "pNr should be >0 with prop2"
+        )
 
     def test_pncpnr_argument_errors(self):
         """Test invalid arguments for calculate_pnc_pnr.py."""
@@ -809,16 +866,27 @@ AGA
         prop_file = self._create_dummy_property_file("pnc_args.prop", prop_content)
 
         # Missing property file
-        process_missing_prop = self._run_script(SCRIPT_PNC_PNR, [fasta_file]) # Missing prop and R
+        process_missing_prop = self._run_script(
+            SCRIPT_PNC_PNR, [fasta_file]
+        )  # Missing prop and R
         self.assertNotEqual(process_missing_prop.returncode, 0)
-        self.assertIn("the following arguments are required: property_file", process_missing_prop.stderr)
+        self.assertIn(
+            "the following arguments are required: property_file",
+            process_missing_prop.stderr,
+        )
 
         # Malformed property file (e.g. not enough columns)
-        malformed_prop_content = "Header\nAA_only" # Missing value
-        malformed_prop_file = self._create_dummy_property_file("pnc_malformed.prop", malformed_prop_content)
-        process_mal_prop = self._run_script(SCRIPT_PNC_PNR, [fasta_file, malformed_prop_file, "0.5"])
+        malformed_prop_content = "Header\nAA_only"  # Missing value
+        malformed_prop_file = self._create_dummy_property_file(
+            "pnc_malformed.prop", malformed_prop_content
+        )
+        process_mal_prop = self._run_script(
+            SCRIPT_PNC_PNR, [fasta_file, malformed_prop_file, "0.5"]
+        )
         self.assertNotEqual(process_mal_prop.returncode, 0)
-        self.assertIn("Error parsing property file", process_mal_prop.stderr) # Custom error from script
+        self.assertIn(
+            "Error parsing property file", process_mal_prop.stderr
+        )  # Custom error from script
         self.assertIn("Malformed line", process_mal_prop.stderr)
 
     def test_pncpnr_mixed_changes(self):
@@ -852,7 +920,7 @@ D 4.0
         # 1. AAA(K,p=2) -> AAG(K,p=2): Synonymous. actual_syn_subs += R (0.5)
         # 2. TTT(F,p=1) -> TCT(S,p=1): Non-synonymous, Conservative. actual_nonsyn_subs += R (0.5), actual_conserv_subs += R (0.5)
         # 3. GGG(G,p=3) -> GAT(D,p=4): Non-synonymous, Radical. actual_nonsyn_subs += 1 (G->A is Tv), actual_rad_subs += 1
-        
+
         # Total actuals:
         # actual_syn_subs = 0.5
         # actual_nonsyn_subs = 0.5 (from F->S) + 1.0 (from G->D) = 1.5
@@ -860,35 +928,50 @@ D 4.0
         # actual_rad_subs = 1.0 (since actual_nonsyn_subs - actual_conserv_subs = 1.5 - 0.5 = 1.0)
 
         process = self._run_script(SCRIPT_PNC_PNR, [fasta_file, prop_file, r_val_str])
-        self.assertEqual(process.returncode, 0, f"Script failed for mixed changes: {process.stderr}")
-        
-        lines = process.stdout.strip().split('\n')
-        self.assertTrue(len(lines) > 1, "Output is missing data lines for mixed changes.")
-        parts = lines[1].split('\t')
-        
+        self.assertEqual(
+            process.returncode, 0, f"Script failed for mixed changes: {process.stderr}"
+        )
+
+        lines = process.stdout.strip().split("\n")
+        self.assertTrue(
+            len(lines) > 1, "Output is missing data lines for mixed changes."
+        )
+        parts = lines[1].split("\t")
+
         self.assertEqual(parts[0], "seqM1")
         self.assertEqual(parts[1], "seqM2")
         self.assertEqual(parts[2], "MixProp")
-        self.assertAlmostEqual(float(parts[3]), r_val_float) # R
+        self.assertAlmostEqual(float(parts[3]), r_val_float)  # R
 
         # For pNc and pNr, we need ConSite and RadSite. These are complex.
         # We will check if the values are plausible (0 to 1, or NA).
         # Based on the actual subs, we expect both pNc and pNr to be positive if sites are available.
-        
+
         pnc_val_str = parts[4]
         pnr_val_str = parts[6]
 
-        self.assertTrue(pnc_val_str == "NA" or 0 <= float(pnc_val_str) <= 1.0001, f"pNc value out of range: {pnc_val_str}")
-        self.assertTrue(pnr_val_str == "NA" or 0 <= float(pnr_val_str) <= 1.0001, f"pNr value out of range: {pnr_val_str}")
+        self.assertTrue(
+            pnc_val_str == "NA" or 0 <= float(pnc_val_str) <= 1.0001,
+            f"pNc value out of range: {pnc_val_str}",
+        )
+        self.assertTrue(
+            pnr_val_str == "NA" or 0 <= float(pnr_val_str) <= 1.0001,
+            f"pNr value out of range: {pnr_val_str}",
+        )
 
         # Check if actual_conserv_subs > 0 implies pNc is positive (if ConSite > 0)
         # Check if actual_rad_subs > 0 implies pNr is positive (if RadSite > 0)
         # This level of detail requires deeper inspection of script's output which is hard without running it.
         # For now, accept a valid numeric output or NA.
         if pnc_val_str != "NA":
-             self.assertTrue(float(pnc_val_str) > 0, "pNc expected to be > 0 due to conservative changes")
+            self.assertTrue(
+                float(pnc_val_str) > 0,
+                "pNc expected to be > 0 due to conservative changes",
+            )
         if pnr_val_str != "NA":
-             self.assertTrue(float(pnr_val_str) > 0, "pNr expected to be > 0 due to radical changes")
+            self.assertTrue(
+                float(pnr_val_str) > 0, "pNr expected to be > 0 due to radical changes"
+            )
 
     def test_pncpnr_edge_denom_zero(self):
         """Test pnc_pnr for cases that might lead to zero denominators for pNc/pNr."""
@@ -900,20 +983,22 @@ D 4.0
 ATG
 >seqW_only
 TGG
-""" # M vs W, non-syn
+"""  # M vs W, non-syn
         prop_content_unique = """UniqueProps
 M 1.0
 W 2.0
 A 3.0 
 G 4.0
-""" # M, W have different props. No other AAs for conservative changes from M or W.
+"""  # M, W have different props. No other AAs for conservative changes from M or W.
         fasta_file = self._create_temp_file("pnc_denom0_consc.fasta", fasta_content)
-        prop_file = self._create_dummy_property_file("pnc_denom0_consc.prop", prop_content_unique)
-        
+        prop_file = self._create_dummy_property_file(
+            "pnc_denom0_consc.prop", prop_content_unique
+        )
+
         process = self._run_script(SCRIPT_PNC_PNR, [fasta_file, prop_file, "0.5"])
         self.assertEqual(process.returncode, 0, f"Script failed: {process.stderr}")
-        lines = process.stdout.strip().split('\n')
-        parts = lines[1].split('\t')
+        lines = process.stdout.strip().split("\n")
+        parts = lines[1].split("\t")
         # Expect pNc = NA because ConSite is likely 0 or very small.
         # actual_conserv_subs will be 0.
         self.assertEqual(parts[4], "NA", "pNc should be NA if ConSite is 0")
@@ -927,7 +1012,7 @@ G 4.0
 AAA
 >seqE_allcons
 GAA
-""" # K vs E. Assume K, E are conservative by property file.
+"""  # K vs E. Assume K, E are conservative by property file.
         prop_content_all_conserv = """BroadGroup
 K 1.0
 R 1.0
@@ -936,20 +1021,34 @@ D 1.0
 F 2.0 
 S 3.0
 """
-        fasta_file_ac = self._create_temp_file("pnc_denom0_radc.fasta", fasta_content_all_conserv)
-        prop_file_ac = self._create_dummy_property_file("pnc_denom0_radc.prop", prop_content_all_conserv)
-        process_ac = self._run_script(SCRIPT_PNC_PNR, [fasta_file_ac, prop_file_ac, "0.5"])
-        self.assertEqual(process_ac.returncode, 0, f"Script failed: {process_ac.stderr}")
-        lines_ac = process_ac.stdout.strip().split('\n')
-        parts_ac = lines_ac[1].split('\t')
+        fasta_file_ac = self._create_temp_file(
+            "pnc_denom0_radc.fasta", fasta_content_all_conserv
+        )
+        prop_file_ac = self._create_dummy_property_file(
+            "pnc_denom0_radc.prop", prop_content_all_conserv
+        )
+        process_ac = self._run_script(
+            SCRIPT_PNC_PNR, [fasta_file_ac, prop_file_ac, "0.5"]
+        )
+        self.assertEqual(
+            process_ac.returncode, 0, f"Script failed: {process_ac.stderr}"
+        )
+        lines_ac = process_ac.stdout.strip().split("\n")
+        parts_ac = lines_ac[1].split("\t")
         # If GAG (E) is conservative from AAA (K), and all non-syn paths from AAA lead to conservative changes,
         # then RadSite could be 0.
         # actual_conserv_subs > 0, actual_rad_subs = 0.
         # Expect pNr = NA if RadSite is 0.
-        self.assertEqual(parts_ac[6], "NA", "pNr should be NA if RadSite is 0 and actual_rad_subs is 0")
+        self.assertEqual(
+            parts_ac[6],
+            "NA",
+            "pNr should be NA if RadSite is 0 and actual_rad_subs is 0",
+        )
         # pNc should be positive here.
-        self.assertTrue(parts_ac[4] != "NA" and float(parts_ac[4]) >= 0, "pNc should be >=0")
+        self.assertTrue(
+            parts_ac[4] != "NA" and float(parts_ac[4]) >= 0, "pNc should be >=0"
+        )
 
 
-if __name__ == '__main__':
-    unittest.main(argv=['first-arg-is-ignored'], exit=False)
+if __name__ == "__main__":
+    unittest.main(argv=["first-arg-is-ignored"], exit=False) # Ensure single newline at EOF
