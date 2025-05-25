@@ -34,8 +34,7 @@ The scripts and library components provided here are for research and informatio
     *   [D. Guide to Interpreting Phylogenetic Trees with Python](#d-guide-to-interpreting-phylogenetic-trees-with-python)
     *   [E. Special Topic: Virus Genomics, Diversity, and Analysis](#e-special-topic-virus-genomics-diversity-and-analysis)
 7.  [Detailed Script Usage](#detailed-script-usage)
-8.  [Testing](#testing)
-9.  [Development and Contributions](#development-and-contributions)
+8.  [Development and Contributions](#development-and-contributions)
 
 ## Overview
 
@@ -322,23 +321,6 @@ For detailed command-line options and examples for each script, please refer to:
 You can also use the `-h` or `--help` flag with any script:
 ```bash
 python3 pylib/scripts/script_name.py -h
-```
-
-## Testing
-
-This project uses Python's built-in `unittest` framework for testing. Unit tests are located alongside the scripts they test within the `pylib/scripts/` directory (e.g., tests for NCBI scripts are in `pylib/scripts/ncbi/`).
-
-To discover and run all tests from the root directory of the project, use the following command:
-
-```bash
-python -m unittest discover -s pylib/scripts/ -p "test_*.py"
-```
-
-This command will find and execute all files named `test_*.py` within the `pylib/scripts/` directory and its subdirectories (like `pylib/scripts/ncbi/`), ensuring that all components of the library are checked.
-
-For more specific testing, such as running tests for a particular module or script, unit tests can target specific files or directories. For example, to run only the NCBI-related tests, use the following command:
-```bash
-python -m unittest discover pylib/scripts/ncbi/
 ```
 
 ## Development and Contributions
