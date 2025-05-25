@@ -307,6 +307,10 @@ This phylogenetic workflow highlights how EvolCat-Python scripts primarily serve
 
 [Phylogenetic Tree Interpretation](https://github.com/bob-friedman/EvolCat-Python/blob/main/phylogenetic-tree-interpretation.md)
 
+### E. Special Topic: Virus Genomics, Diversity, and Analysis
+
+[Guide to Virus Genomics, Diversity, and Analysis](virus_genomics_guide.md)
+
 ## Testing
 
 This project uses Python's built-in `unittest` framework for testing. Unit tests are located alongside the scripts they test within the `pylib/scripts/` directory (e.g., tests for NCBI scripts are in `pylib/scripts/ncbi/`).
