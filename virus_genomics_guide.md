@@ -12,6 +12,7 @@
 ## Tools and Resources
 (Placeholder for content: List relevant EvolCat-Python scripts that can be used for viral genomics. Also, list key external databases, software, and web resources for viral genomics research.)
 
+
 ### Site-Specific dN/dS Analysis (`calculate_site_specific_ds_dn.py`)
 
 This script serves as a Python wrapper for the `codeml` program from the PAML (Phylogenetic Analysis by Maximum Likelihood) package. Its primary purpose is to automate and simplify the process of identifying natural selection acting at individual codon sites within a set of aligned coding sequences.
@@ -38,6 +39,8 @@ The script generates several output files prefixed by a user-defined string. The
 **Crucially, this script requires PAML (specifically the `codeml` executable) to be installed on your system.** `codeml` must either be accessible in your system's PATH environment variable, or its direct path must be provided to the script using the `--paml_path` argument.
 
 The `calculate_site_specific_ds_dn.py` script automates the creation of `codeml` control files, executes `codeml`, and parses its often complex output files into a more structured and user-friendly TSV format, facilitating the identification of codons potentially under selection.
+
+=======
 
 ## Example Workflow: Analyzing a Viral Dataset
 (Placeholder for content: Outline a hypothetical step-by-step workflow for analyzing a small viral dataset, from sequence retrieval to diversity calculation and phylogenetic tree construction, mentioning which tools (EvolCat-Python or external) would be used at each step.)
