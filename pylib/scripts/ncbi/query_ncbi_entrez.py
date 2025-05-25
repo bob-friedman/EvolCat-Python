@@ -13,31 +13,17 @@ import sys
 import os
 
 # Add the parent directory of 'ncbi' to sys.path to allow importing utility_functions
-# This assumes the script is in 'pylib/scripts/ncbi/' and 'utility_functions.py' is in 'pylib/utils/'
+# This assumes the script is in 'pylib/scripts/ncbi/'
 current_dir = os.path.dirname(os.path.abspath(__file__))
 pylib_scripts_dir = os.path.dirname(current_dir)
 pylib_dir = os.path.dirname(pylib_scripts_dir)
 if pylib_dir not in sys.path:
     sys.path.insert(0, pylib_dir)
 
-try:
-    from utils import utility_functions
-except ImportError:
-    try:
-        utils_path = os.path.join(pylib_dir, 'utils')
-        if utils_path not in sys.path:
-            sys.path.insert(0, utils_path)
-        import utility_functions
-    except ImportError:
-        print("Error: Unable to import utility_functions. Ensure it's in the correct utils directory relative to scripts.", file=sys.stderr)
-        # Fallback to a generic user agent if utility_functions cannot be imported
-        utility_functions = type('obj', (object,), {'get_user_agent' : lambda: "Python/Eutils"})()
-
-
 # --- Global Request Settings ---
 # These can be modified by command-line arguments
 BASE_EUTILS_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/'
-USER_AGENT = utility_functions.get_user_agent()
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
 REQUEST_COUNT = 0 # To track requests for delays
 
 def get_request_delay(api_key_provided):
