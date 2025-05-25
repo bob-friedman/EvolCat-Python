@@ -304,15 +304,15 @@ This phylogenetic workflow highlights how EvolCat-Python scripts primarily serve
 
 ### C. Guide to Accessing MHC Sequence Databases
 
-[MHC Database Guide](https://github.com/bob-friedman/EvolCat-Python/blob/main/mhc-database-guide.md)
+[MHC Database Guide](https://github.com/bob-friedman/EvolCat-Python/blob/main/docs/mhc-database-guide.md)
 
 ### D. Guide to Interpreting Phylogenetic Trees with Python
 
-[Phylogenetic Tree Interpretation](https://github.com/bob-friedman/EvolCat-Python/blob/main/phylogenetic-tree-interpretation.md)
+[Phylogenetic Tree Interpretation](https://github.com/bob-friedman/EvolCat-Python/blob/main/docs/phylogenetic-tree-interpretation.md)
 
 ### E. Special Topic: Virus Genomics, Diversity, and Analysis
 
-[Guide to Virus Genomics, Diversity, and Analysis](virus_genomics_guide.md)
+[Guide to Virus Genomics, Diversity, and Analysis](docs/virus_genomics_guide.md)
 
 ## Detailed Script Usage
 
@@ -331,14 +331,14 @@ This project uses Python's built-in `unittest` framework for testing. Unit tests
 To discover and run all tests from the root directory of the project, use the following command:
 
 ```bash
-python -m unittest discover -s pylib/scripts/ -p "test_*.py"
+python -m unittest discover -s tests/ -p "test_*.py"
 ```
 
-This command will find and execute all files named `test_*.py` within the `pylib/scripts/` directory and its subdirectories (like `pylib/scripts/ncbi/`), ensuring that all components of the library are checked.
+This command will find and execute all files named `test_*.py` within the `tests/` directory and its subdirectories (like `tests/scripts/ncbi/`), ensuring that all components of the library are checked.
 
 For more specific testing, such as running tests for a particular module or script, unit tests can target specific files or directories. For example, to run only the NCBI-related tests, use the following command:
 ```bash
-python -m unittest discover pylib/scripts/ncbi/
+python -m unittest discover tests/scripts/ncbi/ -p "test_*.py"
 ```
 
 ## Development and Contributions
