@@ -33,8 +33,9 @@ The scripts and library components provided here are for research and informatio
     *   [C. Guide to Accessing MHC Sequence Databases](#c-guide-to-accessing-mhc-sequence-databases)
     *   [D. Guide to Interpreting Phylogenetic Trees with Python](#d-guide-to-interpreting-phylogenetic-trees-with-python)
     *   [E. Special Topic: Virus Genomics, Diversity, and Analysis](#e-special-topic-virus-genomics-diversity-and-analysis)
-7.  [Testing](#testing)
-8.  [Development and Contributions](#development-and-contributions)
+7.  [Detailed Script Usage](#detailed-script-usage)
+8.  [Testing](#testing)
+9.  [Development and Contributions](#development-and-contributions)
 
 ## Overview
 
@@ -312,6 +313,16 @@ This phylogenetic workflow highlights how EvolCat-Python scripts primarily serve
 ### E. Special Topic: Virus Genomics, Diversity, and Analysis
 
 [Guide to Virus Genomics, Diversity, and Analysis](virus_genomics_guide.md)
+
+## Detailed Script Usage
+
+For detailed command-line options and examples for each script, please refer to:
+`docs/USAGE.md`
+
+You can also use the `-h` or `--help` flag with any script:
+```bash
+python3 pylib/scripts/script_name.py -h
+```
 
 ## Testing
 
