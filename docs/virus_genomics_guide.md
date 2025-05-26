@@ -549,14 +549,14 @@ This section highlights specific EvolCat-Python scripts relevant to viral genomi
 ### EvolCat Python Scripts for Viral Genomics
 
 *   **`calculate_site_specific_ds_dn.py`**:
-    *   **Purpose:** A Python wrapper for the `codeml` (or yn00) program from the PAML package. It automates identifying natural selection at individual codon sites in aligned coding sequences.
+    *   **Purpose:** A Python wrapper for the `yn00` program from the PAML package. It automates identifying natural selection at individual codon sites in aligned coding sequences.
     *   **dN/dS Ratio:**
         *   `dN/dS > 1`: Positive (Darwinian) selection.
         *   `dN/dS < 1`: Purifying (negative) selection.
         *   `dN/dS = 1`: Neutral evolution.
     *   **Inputs:** Coding sequence alignment (FASTA), phylogenetic tree (Newick), PAML model (e.g., M0, M1a, M2a, M8).
     *   **Output:** Generates several files, most importantly `<outfile_prefix>_site_analysis.tsv`, which includes site number, dN/dS, and Bayes Empirical Bayes (BEB) posterior probabilities for identifying sites under positive selection.
-    *   **Dependency:** Requires PAML (`codeml` executable) to be installed and accessible. This tool is particularly relevant for understanding selective pressures discussed in [Friedman, 2024](#references) concerning pathogen adaptation.
+    *   **Dependency:** Requires PAML (`yn00` executable) to be installed and accessible. This tool is particularly relevant for understanding selective pressures discussed in [Friedman, 2024](#references) concerning pathogen adaptation.
 
 *   **`pylib/scripts/calculate_nucleotide_diversity.py`**: Calculates nucleotide diversity (π) from a FASTA alignment.
 *   **`pylib/scripts/calculate_dna_distances.py`**: Computes pairwise genetic distances between sequences using various substitution models.
