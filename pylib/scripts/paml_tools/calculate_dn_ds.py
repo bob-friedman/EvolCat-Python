@@ -22,6 +22,13 @@ PAML Dependency:
   found, the script will output an error. PAML can be obtained from:
   http://abacus.gene.ucl.ac.uk/software/paml.html
 
+  Note on PAML programs: This script uses `yn00` from PAML, which is designed
+  for pairwise calculation of dN/dS rates. For more complex analyses, such as
+  detecting positive selection at specific codon sites or using different
+  evolutionary models, PAML's `codeml` program is a more comprehensive tool.
+  This script focuses on the pairwise estimation provided by `yn00` via the
+  BioPython wrapper.
+
 Simulation Mode:
   The script can run in a simulation mode for development or testing purposes
   without requiring PAML. This is controlled by the `SIMULATE_PAML` environment
