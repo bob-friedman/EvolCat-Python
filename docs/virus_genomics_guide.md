@@ -549,7 +549,7 @@ This section highlights specific EvolCat-Python scripts relevant to viral genomi
 ### EvolCat Python Scripts for Viral Genomics
 
 *   **`calculate_site_specific_ds_dn.py`**:
-    *   **Purpose:** A Python wrapper for the `yn00` program from the PAML package. It automates identifying natural selection at individual codon sites in aligned coding sequences.
+    *   **Purpose:** A Python wrapper for the `codeml` program from the PAML package. It automates identifying natural selection at individual codon sites in aligned coding sequences.
     *   **dN/dS Ratio:**
         *   `dN/dS > 1`: Positive (Darwinian) selection.
         *   `dN/dS < 1`: Purifying (negative) selection.
@@ -558,6 +558,7 @@ This section highlights specific EvolCat-Python scripts relevant to viral genomi
     *   **Output:** Generates several files, most importantly `<outfile_prefix>_site_analysis.tsv`, which includes site number, dN/dS, and Bayes Empirical Bayes (BEB) posterior probabilities for identifying sites under positive selection.
     *   **Dependency:** Requires PAML (`yn00` executable) to be installed and accessible. This tool is particularly relevant for understanding selective pressures discussed in [Friedman, 2024](#references) concerning pathogen adaptation.
 
+*   **`pylib/scripts/paml_tools/calculate_dn_ds.py`**: A Python wrapper for the `yn00` program from the PAML package. Calculates dN/dS.
 *   **`pylib/scripts/calculate_nucleotide_diversity.py`**: Calculates nucleotide diversity (π) from a FASTA alignment.
 *   **`pylib/scripts/calculate_dna_distances.py`**: Computes pairwise genetic distances between sequences using various substitution models.
 *   **`pylib/scripts/calculate_k2p.py`**: Calculates pairwise Kimura 2-Parameter (K2P) distances.
@@ -672,7 +673,7 @@ This section outlines a hypothetical step-by-step workflow to illustrate how a r
 
 ### Step 7 Test for Selection using Site Specific dN dS Analysis
 
-*   Use `pylib/scripts/paml_tools/calculate_site_specific_ds_dn.py` (requires PAML's `codeml` or `yn00`).
+*   Use `pylib/scripts/paml_tools/calculate_site_specific_ds_dn.py` (requires PAML's `codeml`).
     ```bash
     # Ensure curated_alignment.afa contains in-frame coding sequences.
     python3 pylib/scripts/paml_tools/calculate_site_specific_ds_dn.py \
