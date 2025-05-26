@@ -175,7 +175,7 @@ Measuring viral diversity is crucial for understanding the adaptability of virus
 *   **Nucleotide Diversity (π):**
     *   **Definition:** Nucleotide diversity (often represented by the Greek letter pi, π) is defined as the average number of nucleotide differences per site between any two sequences chosen randomly from the sample population.
     *   **Interpretation:** It is a common measure of the extent of genetic variation within a population at the nucleotide level. A higher π value indicates greater genetic diversity.
-    *   **EvolCat-Python Tool:** The script `pylib/scripts/viral_tools/calculate_nucleotide_diversity.py` can be used to compute nucleotide diversity from a FASTA alignment file.
+    *   **EvolCat-Python Tool:** The script `pylib/scripts/calculate_nucleotide_diversity.py` can be used to compute nucleotide diversity from a FASTA alignment file.
 
 *   **Haplotype Diversity (Hd):**
     *   **Definition:** A haplotype is a unique sequence in a given dataset. Haplotype diversity measures the uniqueness of these haplotypes in a sample. It is calculated based on the frequencies of these unique sequences and ranges from 0 (all sequences in the sample are identical) to 1 (all sequences in the sample are unique).
@@ -549,7 +549,7 @@ This section highlights specific EvolCat-Python scripts relevant to viral genomi
 ### EvolCat Python Scripts for Viral Genomics
 
 *   **`calculate_site_specific_ds_dn.py`**:
-    *   **Purpose:** A Python wrapper for the `codeml` program from the PAML package. It automates identifying natural selection at individual codon sites in aligned coding sequences.
+    *   **Purpose:** A Python wrapper for the `codeml` (or yn00) program from the PAML package. It automates identifying natural selection at individual codon sites in aligned coding sequences.
     *   **dN/dS Ratio:**
         *   `dN/dS > 1`: Positive (Darwinian) selection.
         *   `dN/dS < 1`: Purifying (negative) selection.
@@ -558,7 +558,7 @@ This section highlights specific EvolCat-Python scripts relevant to viral genomi
     *   **Output:** Generates several files, most importantly `<outfile_prefix>_site_analysis.tsv`, which includes site number, dN/dS, and Bayes Empirical Bayes (BEB) posterior probabilities for identifying sites under positive selection.
     *   **Dependency:** Requires PAML (`codeml` executable) to be installed and accessible. This tool is particularly relevant for understanding selective pressures discussed in [Friedman, 2024](#references) concerning pathogen adaptation.
 
-*   **`pylib/scripts/viral_tools/calculate_nucleotide_diversity.py`**: Calculates nucleotide diversity (π) from a FASTA alignment.
+*   **`pylib/scripts/calculate_nucleotide_diversity.py`**: Calculates nucleotide diversity (π) from a FASTA alignment.
 *   **`pylib/scripts/calculate_dna_distances.py`**: Computes pairwise genetic distances between sequences using various substitution models.
 *   **`pylib/scripts/calculate_k2p.py`**: Calculates pairwise Kimura 2-Parameter (K2P) distances.
 *   **`pylib/scripts/clean_fasta_name.py`**: Standardizes FASTA sequence headers.
@@ -643,9 +643,9 @@ This section outlines a hypothetical step-by-step workflow to illustrate how a r
 
 ### Step 5 Calculate Genetic Diversity
 
-*   Use `pylib/scripts/viral_tools/calculate_nucleotide_diversity.py`:
+*   Use `pylib/scripts/calculate_nucleotide_diversity.py`:
     ```bash
-    python3 pylib/scripts/viral_tools/calculate_nucleotide_diversity.py curated_alignment.afa > nucleotide_diversity_report.txt
+    python3 pylib/scripts/calculate_nucleotide_diversity.py curated_alignment.afa > nucleotide_diversity_report.txt
     ```
 *   **Optional: Pairwise Distances:**
     ```bash
@@ -672,10 +672,10 @@ This section outlines a hypothetical step-by-step workflow to illustrate how a r
 
 ### Step 7 Test for Selection using Site Specific dN dS Analysis
 
-*   Use `pylib/scripts/viral_tools/calculate_site_specific_ds_dn.py` (requires PAML's `codeml`).
+*   Use `pylib/scripts/paml_tools/calculate_site_specific_ds_dn.py` (requires PAML's `codeml` or `yn00`).
     ```bash
     # Ensure curated_alignment.afa contains in-frame coding sequences.
-    python3 pylib/scripts/viral_tools/calculate_site_specific_ds_dn.py \
+    python3 pylib/scripts/paml_tools/calculate_site_specific_ds_dn.py \
         --alignment curated_alignment.afa \
         --tree viral_phylogeny.treefile \
         --model M8 \
