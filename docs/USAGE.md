@@ -768,3 +768,85 @@ PAML Dependency:
 **Example:**
 See TESTING_GUIDE in the directory containing this script.
 ```
+
+---
+
+## `pylib/scripts/calculate_nucleotide_diversity.py`
+
+Calculates nucleotide diversity (pi) from a FASTA alignment file.
+
+Nucleotide diversity (pi) is defined as "the average number of nucleotide differences per site between any two DNA sequences chosen randomly from the sample population".
+
+**Dependencies:** BioPython
+
+**Usage:**
+```bash
+python3 pylib/scripts/calculate_nucleotide_diversity.py <fasta_file>
+```
+- `<fasta_file>`: Path to the input FASTA alignment file. The sequences within this file must be aligned (i.e., all sequences must have the same length).
+
+**Output:**
+The script prints the following information to standard output:
+- Number of sequences
+- Alignment length
+- Total pairwise differences
+- Number of pairs
+- Nucleotide diversity (pi) (formatted to 6 decimal places)
+
+**Example Output:**
+```
+Number of sequences: 3
+Alignment length: 100
+Total pairwise differences: 15
+Number of pairs: 3
+Nucleotide diversity (pi): 0.050000
+```
+
+---
+
+## `pylib/scripts/paml_tools/calculate_site_specific_ds_dn.py`
+
+This script wraps PAML's `codeml` program to perform site-specific dN/dS (ratio of non-synonymous to synonymous substitution rates) analysis on coding sequence alignments. It helps in identifying amino acid sites that may be under positive selection.
+
+**Prerequisites:**
+- PAML (specifically the `codeml` executable) must be installed and accessible in the system's PATH, or its location must be provided using the `--paml_path` argument.
+- Python dependency: BioPython.
+
+**Command-Line Usage:**
+```bash
+python pylib/scripts/paml_tools/calculate_site_specific_ds_dn.py \
+       --alignment <path_to_fasta_alignment> \
+       --tree <path_to_newick_tree> \
+       --model <paml_model> \
+       --outfile_prefix <prefix_for_outputs> \
+       [options]
+```
+
+**Input Arguments:**
+- `--alignment <path_to_fasta_alignment>` (required): Path to the input coding sequence alignment file in FASTA format.
+- `--tree <path_to_newick_tree>` (required): Path to the phylogenetic tree file in Newick format. (Must be compatible with the alignment).
+- `--model <paml_model>` (required): The PAML model. Supported models:
+    - `M0` (one-ratio): Assumes a single dN/dS ratio across all sites.
+    - `M1a` (neutral): Assumes two classes of sites: conserved (0 < ω0 < 1) and strictly neutral (ω1 = 1).
+    - `M2a` (selection): Extends M1a by adding a third class of sites allowing for positive selection (ω2 > 1).
+    - `M3` (discrete): Allows dN/dS to vary among sites, with k discrete categories of ratios.
+    - `M7` (beta): Assumes a beta distribution for dN/dS ratios between 0 and 1.
+    - `M8` (beta&w>1): Extends M7 by adding an extra site class that allows for positive selection (ωs > 1).
+- `--outfile_prefix <prefix_for_outputs>` (required): Prefix for naming output files (e.g., `my_analysis` results in `my_analysis.mlc`, `my_analysis_site_analysis.tsv`).
+
+**Optional Arguments:**
+- `--paml_path <path_to_codeml>`: Specify the path to the `codeml` executable.
+- `--verbose`: Enable detailed PAML `codeml` output.
+- `--cleandata <0_or_1>`: PAML `cleandata` option (default: 1, removes alignment sites with gaps/ambiguities before analysis).
+- `--num_site_categories <integer>`: Number of site categories for the M3 (discrete) model (default: 3).
+
+**Output:**
+- Main output files:
+    - `<outfile_prefix>.mlc`: The primary, detailed output file from PAML `codeml`.
+    - `<outfile_prefix>_site_analysis.tsv`: A tab-separated summary of site-specific dN/dS ratios. For models like M2a and M8, this includes Bayes Empirical Bayes (BEB) posterior probabilities for sites identified as potentially under positive selection. Example columns: "Site", "AminoAcid", "dN_dS", "PosteriorProbability_PositiveSelection", "Note".
+- Standard Output: The script prints a summary of model parameters (e.g., log-likelihood (lnL), kappa, omega values) to the console.
+- Other Files: PAML may generate additional files (e.g., `rst`, `rub`, `2NG.dN`, `2NG.dS`) in the working directory.
+
+**Important Considerations:**
+- Interpreting dN/dS ratios: dN/dS > 1 suggests positive (Darwinian) selection; dN/dS = 1 suggests neutral evolution; dN/dS < 1 suggests purifying (negative) selection.
+- The choice of PAML model is critical and should be guided by the specific biological questions and hypotheses. Model comparison using Likelihood Ratio Tests (LRTs) is common practice (e.g., comparing M1a vs. M2a, or M7 vs. M8) but is not performed by this script directly.
