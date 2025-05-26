@@ -701,7 +701,16 @@ Always remember to consult the documentation for specific tools and databases, a
 
 ## Acknowledgements
 
-This guide has been developed with significant assistance from an AI language model (Claude 3 Opus, from Anthropic). Its contributions were invaluable in structuring content, drafting text for various sections, generating Python code examples, formatting for Markdown, integrating research, and iteratively refining the document. While the AI provided substantial support, the overall scientific direction, specific script development for EvolCat-Python, and final editorial decisions remain the work of the human author.
+This guide has been developed with significant assistance from an AI language model. I would like to acknowledge the contributions of **Gemini AI (v2.5 Pro)** in the creation of this document.
+
+The AI's assistance was invaluable in:
+*   **Structuring and Organizing Content:** Helping to outline the guide and create a navigable Table of Contents.
+*   **Drafting and Composing Text:** Generating initial drafts for various sections, including explanations of complex topics, Python code examples, and lists of databases/tools.
+*   **Markdown Formatting:** Assisting with the correct Markdown syntax for display on GitHub Pages, including the iterative troubleshooting of Table of Contents links.
+*   **Integrating Research:** Incorporating details from the author's published academic papers into relevant sections of the guide.
+*   **Iterative Refinement:** Responding to feedback and making revisions to improve clarity, accuracy, and completeness.
+
+While the AI provided substantial support in these areas, the overall direction, core scientific insights, specific script development (for EvolCat-Python), and final editorial decisions for this guide remain the work of the human author. This collaborative effort aimed to produce a comprehensive and helpful resource for the community.
 
 ## References
 1.  Friedman, R. (2022). A Hierarchy of Interactions between Pathogenic Virus and Vertebrate Host. *Symmetry*, 14(11), 2274. [https://doi.org/10.3390/sym14112274](https://doi.org/10.3390/sym14112274)
