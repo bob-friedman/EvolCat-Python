@@ -755,8 +755,6 @@ Number of pairs: 3
 Nucleotide diversity (pi): 0.050000
 ```
 
----
-
 ## `pylib/scripts/paml_tools/calculate_dn_ds.py`
 
 Calculates pairwise dN/dS (non-synonymous to synonymous substitution rates) ratios for sequences from an aligned FASTA file. It uses the `yn00` program from the PAML package.
@@ -786,6 +784,42 @@ If `SIMULATE_PAML=true` (or is not set), you can also set the `MOCK_YN00_FILE_PA
 Note: This script is designed for pairwise dN/dS estimation using `yn00`. For more complex analyses, such as detecting positive selection at specific codon sites or using different evolutionary models along a phylogeny, consider using the `pylib/scripts/paml_tools/calculate_site_specific_ds_dn.py` script (which uses PAML's `codeml` program).
 
 ---
+=======
+**Example:**
+See TESTING_GUIDE in the directory containing this script.
+
+---
+
+## `pylib/scripts/calculate_nucleotide_diversity.py`
+
+Calculates nucleotide diversity (pi) from a FASTA alignment file.
+
+Nucleotide diversity (pi) is defined as "the average number of nucleotide differences per site between any two DNA sequences chosen randomly from the sample population".
+
+**Dependencies:** BioPython
+
+**Usage:**
+```bash
+python3 pylib/scripts/calculate_nucleotide_diversity.py <fasta_file>
+```
+- `<fasta_file>`: Path to the input FASTA alignment file. The sequences within this file must be aligned (i.e., all sequences must have the same length).
+
+**Output:**
+The script prints the following information to standard output:
+- Number of sequences
+- Alignment length
+- Total pairwise differences
+- Number of pairs
+- Nucleotide diversity (pi) (formatted to 6 decimal places)
+
+**Example Output:**
+```
+Number of sequences: 3
+Alignment length: 100
+Total pairwise differences: 15
+Number of pairs: 3
+Nucleotide diversity (pi): 0.050000
+```
 
 ## `pylib/scripts/paml_tools/calculate_site_specific_ds_dn.py`
 
