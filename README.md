@@ -43,7 +43,7 @@ The library is organized into:
 *   `pylib/utils/`: Contains core utility modules for tasks like sequence parsing.
 *   `pylib/scripts/`: Contains executable Python scripts that replicate and extend the functionality of original bioinformatics command-line tools. Many of these scripts depend on the `pylib/utils/` core utility modules. The scripts are designed to find these modules by default when EvolCat-Python is structured with `pylib/utils/` as a subdirectory.
     *   `pylib/scripts/ncbi/`: Contains tools specifically for interacting with NCBI.
-    *   `pylib/scripts/viral_tools/`: Contains tools specifically for viral genomics analysis.
+    *   `pylib/scripts/paml_tools/`: Contains tools specifically for PAML genomics analysis.
 
 ## Dependencies
 
