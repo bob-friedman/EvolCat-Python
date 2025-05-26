@@ -768,3 +768,36 @@ PAML Dependency:
 **Example:**
 See TESTING_GUIDE in the directory containing this script.
 ```
+
+---
+
+## `pylib/scripts/calculate_nucleotide_diversity.py`
+
+Calculates nucleotide diversity (pi) from a FASTA alignment file.
+
+Nucleotide diversity (pi) is defined as "the average number of nucleotide differences per site between any two DNA sequences chosen randomly from the sample population".
+
+**Dependencies:** BioPython
+
+**Usage:**
+```bash
+python3 pylib/scripts/calculate_nucleotide_diversity.py <fasta_file>
+```
+- `<fasta_file>`: Path to the input FASTA alignment file. The sequences within this file must be aligned (i.e., all sequences must have the same length).
+
+**Output:**
+The script prints the following information to standard output:
+- Number of sequences
+- Alignment length
+- Total pairwise differences
+- Number of pairs
+- Nucleotide diversity (pi) (formatted to 6 decimal places)
+
+**Example Output:**
+```
+Number of sequences: 3
+Alignment length: 100
+Total pairwise differences: 15
+Number of pairs: 3
+Nucleotide diversity (pi): 0.050000
+```
