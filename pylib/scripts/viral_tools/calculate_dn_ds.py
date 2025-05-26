@@ -47,7 +47,7 @@ import os
 import subprocess
 import tempfile
 from Bio import SeqIO
-from Bio.Phylo.PAML import yn00, PamlError
+from Bio.Phylo.PAML import yn00
 
 
 def parse_yn00_output(output_file_path, seq_id_map):
@@ -266,15 +266,6 @@ def main():
                 print(f"ERROR: PAML executable 'yn00' not found in PATH. "
                       f"Please ensure PAML is installed and 'yn00' is accessible in your PATH.")
                 print(f"Details: {e}")
-                return
-            except PamlError as e: # Biopython's PAML specific error
-                print(f"ERROR: An error occurred during PAML yn00 execution (PamlError reported by BioPython):")
-                print(str(e))
-                # PamlError often includes stderr, which can be very informative
-                if hasattr(e, 'stderr') and e.stderr:
-                    print("\n--- PAML yn00 stderr output ---")
-                    print(e.stderr)
-                    print("--- End of PAML yn00 stderr ---")
                 return
             except subprocess.CalledProcessError as e:
                 print(f"ERROR: PAML yn00 execution failed (CalledProcessError): {e}")
