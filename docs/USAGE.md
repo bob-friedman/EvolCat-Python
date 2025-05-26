@@ -767,7 +767,6 @@ PAML Dependency:
 
 **Example:**
 See TESTING_GUIDE in the directory containing this script.
-```
 
 ---
 
