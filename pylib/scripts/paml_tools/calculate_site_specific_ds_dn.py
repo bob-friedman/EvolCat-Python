@@ -9,6 +9,10 @@ This script automates the process of:
 5. Summarizing key results and site-specific dN/dS estimates,
    including Bayes Empirical Bayes (BEB) probabilities for positive selection.
 
+Note: This script is focused on site-specific dN/dS analysis using PAML's `codeml`.
+For simple pairwise dN/dS calculations between sequences, consider using the
+`calculate_dn_ds.py` script in this directory, which utilizes PAML's `yn00` program.
+
 Requires PAML (specifically the 'codeml' executable) to be installed and
 either in the system PATH or its location provided via --paml_path.
 """
