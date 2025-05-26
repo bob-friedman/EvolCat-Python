@@ -556,7 +556,7 @@ This section highlights specific EvolCat-Python scripts relevant to viral genomi
         *   `dN/dS = 1`: Neutral evolution.
     *   **Inputs:** Coding sequence alignment (FASTA), phylogenetic tree (Newick), PAML model (e.g., M0, M1a, M2a, M8).
     *   **Output:** Generates several files, most importantly `<outfile_prefix>_site_analysis.tsv`, which includes site number, dN/dS, and Bayes Empirical Bayes (BEB) posterior probabilities for identifying sites under positive selection.
-    *   **Dependency:** Requires PAML (`yn00` executable) to be installed and accessible. This tool is particularly relevant for understanding selective pressures discussed in [Friedman, 2024](#references) concerning pathogen adaptation.
+    *   **Dependency:** Requires PAML (`codeml` executable) to be installed and accessible. This tool is particularly relevant for understanding selective pressures discussed in [Friedman, 2024](#references) concerning pathogen adaptation.
 
 *   **`pylib/scripts/paml_tools/calculate_dn_ds.py`**: A Python wrapper for the `yn00` program from the PAML package. Calculates dN/dS.
 *   **`pylib/scripts/calculate_nucleotide_diversity.py`**: Calculates nucleotide diversity (π) from a FASTA alignment.
