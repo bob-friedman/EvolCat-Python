@@ -35,6 +35,7 @@ The scripts and library components provided here are for research and informatio
     *   [E. Special Topic: Virus Genomics, Diversity, and Analysis](#e-special-topic-virus-genomics-diversity-and-analysis)
 7.  [Detailed Script Usage](#detailed-script-usage)
 8.  [Development and Contributions](#development-and-contributions)
+9.  [Citation](#citation)
 
 ## Overview
 
