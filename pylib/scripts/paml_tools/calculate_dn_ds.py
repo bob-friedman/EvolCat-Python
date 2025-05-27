@@ -11,6 +11,9 @@ rate), and omega (dN/dS ratio) for each pair of sequences.
 Usage:
   python calculate_dn_ds.py <path_to_aligned_fasta_file>
 
+Example (using the provided sample file):
+  python calculate_dn_ds.py text_files/sample_aligned.fasta
+
 Arguments:
   fasta_file: Path to the input FASTA file. This file must contain two or more
               coding sequences that have already been aligned.
@@ -212,43 +215,53 @@ def main():
             print("INFO: SIMULATE_PAML is active. Simulating PAML yn00 execution and output.")
             print("INFO: To run actual PAML, set environment variable SIMULATE_PAML=false")
             
-            mock_file_path = os.getenv("MOCK_YN00_FILE_PATH")
-            if mock_file_path:
-                print(f"INFO: MOCK_YN00_FILE_PATH is set to '{mock_file_path}'. Attempting to use it.")
-                try:
-                    with open(mock_file_path, "r") as mock_f, open(yn00_run.out_file, "w") as out_f:
-                        out_f.write(mock_f.read())
-                    print(f"INFO: Successfully used mock file '{mock_file_path}' for simulation.")
-                except FileNotFoundError:
-                    print(f"WARNING: Mock file '{mock_file_path}' not found. Falling back to internal dummy data.")
-                    # Fallback to internal dummy data (optional, or could error)
-                    # For this exercise, let's keep the original internal dummy data generation as a fallback.
-                    dummy_output_content = f"yn00: Yang & Nielsen (2000)\n(Pairwise comparison of sequences)\n\n"
-                    dummy_output_content += f"{seq_ids_ordered[0]} vs {seq_ids_ordered[1]}\n\n"
-                    dummy_output_content += "seq. seq.    S         N        t   kappa   omega     dN    dS   dN/dS\n"
-                    dummy_output_content += "1   2    100.0      300.0     0.50    2.0    0.20   0.010 0.050  0.200\n"
-                    if len(seq_ids_ordered) > 2: # Simplified for brevity, original had more pairs
-                        dummy_output_content += "1   3    120.0      280.0     0.60    2.1    0.15   0.008 0.053  0.151\n"
-                        dummy_output_content += "2   3     90.0      310.0     0.40    1.9    0.25   0.012 0.048  0.250\n"
-                    with open(yn00_run.out_file, "w") as f_out:
-                        f_out.write(dummy_output_content)
-            else:
-                print("INFO: MOCK_YN00_FILE_PATH not set. Using internal dummy data for simulation.")
-                # Internal dummy data generation (original logic)
+            mock_file_path_env = os.getenv("MOCK_YN00_FILE_PATH")
+            used_mock_file_source = None # To track where the mock data came from
+
+            if mock_file_path_env:
+                print(f"INFO: MOCK_YN00_FILE_PATH environment variable is set to '{mock_file_path_env}'. Attempting to use it.")
+                if os.path.exists(mock_file_path_env):
+                    try:
+                        with open(mock_file_path_env, "r") as mock_f, open(yn00_run.out_file, "w") as out_f:
+                            out_f.write(mock_f.read())
+                        print(f"INFO: Successfully used mock file '{mock_file_path_env}' (from environment variable) for simulation.")
+                        used_mock_file_source = mock_file_path_env
+                    except Exception as e:
+                        print(f"WARNING: Failed to read mock file '{mock_file_path_env}' from environment variable. Error: {e}. Falling back.")
+                else:
+                    print(f"WARNING: Mock file '{mock_file_path_env}' (from environment variable) not found. Falling back.")
+            
+            if not used_mock_file_source:
+                # MOCK_YN00_FILE_PATH was not set, or was invalid. Try default path.
+                script_dir = os.path.dirname(__file__)
+                default_mock_file_path = os.path.join(script_dir, "text_files", "mock_yn00_output.txt")
+                print(f"INFO: MOCK_YN00_FILE_PATH not used. Checking default mock file: '{default_mock_file_path}'")
+
+                if os.path.exists(default_mock_file_path):
+                    try:
+                        with open(default_mock_file_path, "r") as mock_f, open(yn00_run.out_file, "w") as out_f:
+                            out_f.write(mock_f.read())
+                        print(f"INFO: Successfully used default mock file '{default_mock_file_path}' for simulation.")
+                        used_mock_file_source = default_mock_file_path
+                    except Exception as e:
+                        print(f"WARNING: Failed to read default mock file '{default_mock_file_path}'. Error: {e}. Falling back to internal dummy data.")
+                else:
+                    print(f"INFO: Default mock file '{default_mock_file_path}' not found. Falling back to internal dummy data for simulation.")
+
+            if not used_mock_file_source:
+                # Fallback to internal dummy data generation
+                print("INFO: Using internal dummy data for PAML yn00 simulation.")
                 dummy_output_content = f"yn00: Yang & Nielsen (2000)\n(Pairwise comparison of sequences)\n\n"
-                dummy_output_content += f"{seq_ids_ordered[0]} vs {seq_ids_ordered[1]}\n\n" # Placeholder for actual sequence IDs
+                dummy_output_content += f"{seq_ids_ordered[0]} vs {seq_ids_ordered[1]}\n\n" # Placeholder
                 dummy_output_content += "seq. seq.    S         N        t   kappa   omega     dN    dS   dN/dS\n"
-                # Example for 2 sequences
                 dummy_output_content += "1   2    100.0      300.0     0.50    2.0    0.20   0.010 0.050  0.200\n"
-                # Add more pairs if more sequences, simplified for this example
                 if len(seq_ids_ordered) > 2:
                     dummy_output_content += f"1   3    120.0      280.0     0.60    2.1    0.15   0.008 0.053  0.151\n"
-                if len(seq_ids_ordered) > 3: # Example for 4 sequences like in sample_aligned.fasta
-                    dummy_output_content += f"1   4    130.0      270.0     0.65    2.2    0.15   0.009 0.045  0.150\n" # Made up
+                if len(seq_ids_ordered) > 3:
+                    dummy_output_content += f"1   4    130.0      270.0     0.65    2.2    0.15   0.009 0.045  0.150\n"
                     dummy_output_content += f"2   3     90.0      310.0     0.40    1.9    0.25   0.012 0.048  0.250\n"
-                    dummy_output_content += f"2   4    100.0      300.0     0.45    1.8    0.35   0.015 0.055  0.350\n" # Made up
-                    dummy_output_content += f"3   4    110.0      290.0     0.55    2.0    0.05   0.005 0.035  0.050\n" # Made up
-
+                    dummy_output_content += f"2   4    100.0      300.0     0.45    1.8    0.35   0.015 0.055  0.350\n"
+                    dummy_output_content += f"3   4    110.0      290.0     0.55    2.0    0.05   0.005 0.035  0.050\n"
                 with open(yn00_run.out_file, "w") as f_out:
                     f_out.write(dummy_output_content)
 

@@ -68,6 +68,15 @@ def main():
         formatter_class=argparse.RawTextHelpFormatter,
         epilog="""
 Requires PAML (codeml) to be installed and in PATH or specified via --paml_path.
+
+Example Usage (using the provided sample data):
+  python calculate_site_specific_ds_dn.py \\
+    --alignment text_files/sample_aligned.fasta \\
+    --tree your_tree_file.newick \\
+    --model M2a \\
+    --outfile_prefix M2a_results \\
+    --verbose
+
 Supported models:
   M0: one ratio for all sites
   M1a (neutral): nearly neutral (0 < w0 < 1) and conserved (w1 = 1) sites
