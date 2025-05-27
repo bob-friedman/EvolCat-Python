@@ -335,3 +335,9 @@ This library was primarily converted from its original Perl source using AI-assi
 *   Developing initial documentation.
 
 Human oversight and review are crucial for ensuring the accuracy and robustness of the converted code. This library is currently under development. Contributions, bug reports, and feature requests are welcome via GitHub Issues and Pull Requests.
+
+## Citation
+
+If you use EvolCat-Python in your research or find the repository useful, please cite the following paper:
+
+Friedman, R. EvolCat-Python: A Python Suite for Evolutionary and Comparative Genomics. Preprints 2025, 2025052059. https://www.preprints.org/manuscript/202505.2059/v1
