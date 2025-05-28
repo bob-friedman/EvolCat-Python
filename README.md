@@ -279,13 +279,21 @@ Phylogenetic analysis begins with a set of homologous sequences, typically in FA
     # muscle -in unaligned_sequences.fasta -out aligned_sequences.afa
     ```
 
-#### Step 2: Alignment Curation
+#### Step 2: Alignment Curation and Basic Analysis
 
 Raw alignments often need refinement.
 
 *   **EvolCat-Python `nogaps.py`:** Removes columns containing mostly gaps or ambiguous characters from your aligned FASTA file. This can improve the quality of phylogenetic inference.
     ```bash
     python3 pylib/scripts/nogaps.py aligned_sequences.afa > aligned_sequences_nogaps.afa
+    ```
+*   **EvolCat-Python `analyze_msa.py`:** After generating or obtaining an MSA, this script can be used to:
+    *   Calculate and view a consensus sequence.
+    *   Get basic statistics about the alignment (length, number of sequences, gap information).
+    *   Convert the MSA to other formats if needed for downstream tools.
+    ```bash
+    # Example: Get stats and consensus for an alignment in Clustal format
+    python3 pylib/scripts/analyze_msa.py my_alignment.aln --informat clustal --get_stats --get_consensus
     ```
 *   **Manual Inspection/Other Tools:** You might also use alignment viewers (e.g., Jalview, AliView) to manually inspect and edit the alignment.
 

@@ -938,3 +938,78 @@ python3 pylib/scripts/build_tree_from_distances.py my_distances.phy --method upg
   END;
   ```
 ---
+
+## `pylib/scripts/analyze_msa.py`
+
+Analyzes a Multiple Sequence Alignment (MSA) file to calculate a consensus sequence, derive basic statistics, or convert the alignment to a different file format.
+
+**Input:**
+- A Multiple Sequence Alignment (MSA) file in a format supported by Biopython's `Bio.Align.parse` (e.g., FASTA, Clustal, PHYLIP, Nexus, Stockholm).
+
+**Output:**
+- Text-based report (consensus sequence, statistics) printed to standard output or a specified file (`--output_report`).
+- Optionally, a new file containing the MSA in a different format (if conversion is requested).
+
+**Usage:**
+```bash
+python3 pylib/scripts/analyze_msa.py <msa_file> --informat <format> [task_options] [--output_report <report_file>]
+```
+
+**Arguments:**
+
+*   `<msa_file>`: (Required) Path to the input Multiple Sequence Alignment file.
+*   `--informat <format>`: (Required) Format of the input MSA file (e.g., `fasta`, `clustal`, `phylip`, `nexus`, `stockholm`).
+
+**Task Options (At least one task must be specified):**
+
+*   `--get_consensus`: Calculate and display the consensus sequence.
+    *   `--consensus_threshold <float>`: (Optional, default: 0.5) Minimum frequency for a character to be considered in the consensus for a column.
+    *   `--consensus_ambiguous_char <char>`: (Optional, default: 'X') Character to use for positions in the consensus where no single character meets the threshold, or where diversity meets `consensus_require_multiple`. The script attempts to change this to 'N' if the input is inferred as DNA/RNA and the default 'X' is active.
+    *   `--consensus_require_multiple <int>`: (Optional, default: 1) If the number of different characters at a position (excluding gaps) is greater than or equal to this value, the `consensus_ambiguous_char` will be used even if one character meets the `consensus_threshold`. This helps represent highly variable but not entirely ambiguous positions. Set to a high value (e.g., 100) to effectively disable this and rely solely on the threshold.
+
+*   `--get_stats`: Calculate and display basic MSA statistics. Output includes:
+    *   Number of sequences.
+    *   Alignment length (columns).
+    *   Overall GC content (if input is inferred as DNA/RNA, otherwise "N/A").
+    *   Percentage of columns consisting entirely of gaps.
+    *   Percentage of columns containing at least one gap.
+
+*   `--convert_to <output_format>`: Convert the input MSA to a different format.
+    *   `--outfile <converted_msa_filepath>`: (Required if `--convert_to` is used) Path to save the converted MSA file. The `<output_format>` should be a format supported by Biopython's `Bio.Align.write`.
+
+**General Optional Arguments:**
+
+*   `--output_report <report_filepath>`: Path to a file where the text-based output (consensus, statistics) will be written. If not provided, output is printed to the standard output.
+
+**Examples:**
+
+1.  **Get consensus sequence from a Clustal alignment:**
+    ```bash
+    python3 pylib/scripts/analyze_msa.py my_alignment.aln --informat clustal --get_consensus
+    ```
+
+2.  **Get consensus with a 70% threshold and 'N' as ambiguous character:**
+    ```bash
+    python3 pylib/scripts/analyze_msa.py my_dna_alignment.fasta --informat fasta --get_consensus --consensus_threshold 0.7 --consensus_ambiguous_char N
+    ```
+
+3.  **Get MSA statistics:**
+    ```bash
+    python3 pylib/scripts/analyze_msa.py my_alignment.phy --informat phylip --get_stats
+    ```
+
+4.  **Convert a FASTA alignment to PHYLIP format:**
+    ```bash
+    python3 pylib/scripts/analyze_msa.py my_alignment.fasta --informat fasta --convert_to phylip --outfile my_alignment.phy
+    ```
+
+5.  **Get both consensus and stats, and save the report to a file:**
+    ```bash
+    python3 pylib/scripts/analyze_msa.py my_alignment.stk --informat stockholm --get_consensus --get_stats --output_report analysis_report.txt
+    ```
+
+**Notes:**
+- The script processes the first alignment found in the input file.
+- Alphabet inference (DNA/RNA vs. Protein) is basic and used for GC content calculation and defaulting the ambiguous consensus character.
+- For consensus generation, gap characters (`-`, `.`) in a column are ignored when calculating frequencies but a column of only gaps will result in a gap in the consensus.
+=======
