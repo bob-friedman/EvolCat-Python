@@ -153,36 +153,6 @@ This library includes specific tools for interacting with NCBI services. These a
 
 These tools require the `requests` library, which will be installed if you use `pip install .`. For more detailed information on these specific NCBI tools, please see `pylib/scripts/ncbi/README.md` (if present) or use the `--help` flag with the scripts themselves.
 
-## Relationship with Biopython and Scope of Provided Scripts
-
-EvolCat-Python is built upon and requires [Biopython](https://biopython.org) as a core dependency. Many scripts in this suite act as convenient command-line wrappers or implement common workflows utilizing Biopython's underlying capabilities. This approach allows for rapid execution of specific tasks.
-
-However, Biopython itself is a comprehensive library with extensive functionalities. For more advanced, programmatic, or highly customized analyses, users are encouraged to leverage Biopython's modules directly. The following areas highlight some Biopython functionalities that are not currently implemented as standalone scripts within EvolCat-Python, or where Biopython offers significantly more depth:
-
-*   **Performing General Pairwise Alignments:**
-    *   While EvolCat-Python includes `approximate_string_match.py` for edit distance, Biopython's `Bio.Align.PairwiseAligner` provides robust tools for standard biological global (Needleman-Wunsch) and local (Smith-Waterman) alignments with full control over substitution matrices (e.g., BLOSUM, PAM) and affine gap penalties.
-
-*   **Advanced Multiple Sequence Alignment (MSA) Objects and Analysis:**
-    *   EvolCat-Python offers `nogaps.py` for basic MSA curation. Biopython's `Bio.Align` module (and the older `Bio.AlignIO`) provides rich `Alignment` objects for parsing numerous MSA formats, calculating consensus sequences, deriving conservation scores, and performing complex manipulations directly on MSA objects.
-
-*   **Comprehensive Phylogenetic Analysis (`Bio.Phylo`):**
-    *   EvolCat-Python scripts can generate distance matrices (`calculate_dna_distances.py`, `calculate_k2p.py`) for input into external tree-building programs and convert alignment formats (`fas2phy.py`).
-    *   Biopython's `Bio.Phylo` module offers extensive capabilities for parsing various tree formats (Newick, Nexus, NeXML), constructing trees (e.g., distance-based methods like NJ and UPGMA), advanced tree manipulation (rerooting, pruning, comparing topologies), and tree visualization.
-
-*   **Sequence Motif Discovery and Analysis (`Bio.motifs`):**
-    *   EvolCat-Python includes a specific tool for finding tandem repeats (`find_tandem_repeats.py`).
-    *   Biopython's `Bio.motifs` module provides tools for creating, representing (e.g., PWMs), and scanning for sequence motifs, as well as interfacing with motif databases and tools like MEME.
-
-*   **Direct dN/dS Calculation (Alternatives to PAML wrapping):**
-    *   EvolCat-Python provides excellent script-based wrappers for PAML's `yn00` and `codeml`.
-    *   Biopython's `Bio.Align.analysis` module also allows for the direct calculation of dN/dS ratios using several established methods (e.g., Nei-Gojobori, Li-Wu-Luo, Yang-Nielsen) within Python.
-
-*   **Flexible Parsing of Diverse Sequence Search Outputs (`Bio.SearchIO`):**
-    *   EvolCat-Python scripts parse text BLAST output.
-    *   Biopython's `Bio.SearchIO` module provides a modern, unified interface for parsing various output formats (including XML and tabular) from a wide range of sequence search tools (BLAST, HMMER, Exonerate, etc.), offering a more robust and extensible approach.
-
-Users familiar with Python programming can readily combine the convenience of EvolCat-Python scripts with the extensive library functionalities of Biopython to build sophisticated bioinformatics pipelines.
-
 ## Workflow Examples
 
 This section outlines general workflows, highlighting where EvolCat-Python scripts can be utilized.
@@ -296,22 +266,30 @@ Once you have a curated alignment, you can infer a phylogenetic tree. EvolCat-Py
         ```bash
         python3 pylib/scripts/fas2phy.py aligned_sequences_nogaps.afa > aligned_sequences.phy
         ```
-*   **Tree Building (External Tools):** Use specialized software for tree inference. Common choices include:
-    *   **Distance-based:** Phylip's `neighbor` program (Felsenstein 1989) (can use distance matrices, which EvolCat-Python can help calculate - see below).
-    *   **Maximum Likelihood (ML):** RAxML, IQ-TREE, PhyML (Yang 1997 for PAML which includes ML methods; Adachi and Hasegawa 1996 for Molphy).
-    *   **Bayesian Inference (BI):** MrBayes, BEAST.
-    These programs will take your PHYLIP (or FASTA) alignment and produce a tree file, typically in Newick format (e.g., `my_tree.nwk`).
-    ```bash
-    # Example using an external ML tool (conceptual)
-    # raxml-ng --msa aligned_sequences.phy --model GTR+G --prefix my_analysis --threads 2
-    # iqtree -s aligned_sequences.phy -m GTR+G -bb 1000
-    ```
 *   **Calculating Distance Matrices (Optional, for distance-based tree methods):**
     If you plan to use distance-based tree building methods (like Neighbor-Joining), you first need a distance matrix.
     *   **EvolCat-Python `calculate_dna_distances.py` or `calculate_k2p.py`:** These scripts can take your aligned FASTA file and produce a table of pairwise distances. This table would then need to be formatted appropriately for input into a distance-based tree program (e.g., Phylip `neighbor`).
         ```bash
         python3 pylib/scripts/calculate_dna_distances.py aligned_sequences_nogaps.afa > dna_distances.tsv
         ```
+    *   **Building a Tree from Distances (EvolCat-Python):**
+        *   Once you have a distance matrix (e.g., in PHYLIP format, potentially generated from the scripts above and formatted), you can use **EvolCat-Python's `pylib/scripts/build_tree_from_distances.py`** script to construct a tree using Neighbor-Joining (NJ) or UPGMA methods. This script outputs the tree in Newick format.
+            ```bash
+            # Example assuming my_distances.phy is your PHYLIP distance matrix
+            python3 pylib/scripts/build_tree_from_distances.py my_distances.phy --method nj --outfile my_tree.nwk
+            ```
+            This provides a direct way to generate a tree topology from your calculated distances within the EvolCat-Python suite.
+*   **Tree Building (Alternative External Tools for Advanced Methods):**
+    For more advanced phylogenetic models or methods (e.g., Maximum Likelihood, Bayesian Inference), or if you prefer other specialized distance-based programs, you can use external software. Common choices include:
+    *   **Distance-based (alternative):** Phylip's `neighbor` program (Felsenstein 1989).
+    *   **Maximum Likelihood (ML):** RAxML, IQ-TREE, PhyML.
+    *   **Bayesian Inference (BI):** MrBayes, BEAST.
+    These programs will typically take your curated alignment (e.g., PHYLIP or FASTA) or a distance matrix and produce a tree file (e.g., `my_tree.nwk`).
+    ```bash
+    # Example using an external ML tool (conceptual)
+    # raxml-ng --msa aligned_sequences.phy --model GTR+G --prefix my_analysis --threads 2
+    # iqtree -s aligned_sequences.phy -m GTR+G -bb 1000
+    ```
 
 #### Step 4: Tree Visualization and Basic Manipulation (Conceptual)
 
@@ -343,103 +321,6 @@ This phylogenetic workflow highlights how EvolCat-Python scripts primarily serve
 ### E. Special Topic: Virus Genomics, Diversity, and Analysis
 
 [Guide to Virus Genomics, Diversity, and Analysis](docs/virus_genomics_guide.md)
-
-### F. Conceptual Workflow: Performing a Standard Pairwise Sequence Alignment (Leveraging Biopython)
-
-A fundamental task in bioinformatics is aligning two sequences to identify regions of similarity, which can imply functional, structural, or evolutionary relationships. While EvolCat-Python provides `approximate_string_match.py` for edit distance, it does not currently offer a standalone script for performing standard biological pairwise alignments (e.g., Needleman-Wunsch global or Smith-Waterman local alignments) using comprehensive scoring systems (e.g., BLOSUM/PAM matrices for proteins, or specific match/mismatch scores for DNA, along with affine gap penalties).
-
-However, since EvolCat-Python depends on Biopython, you can easily perform these alignments by writing a short Python script that utilizes Biopython's `Bio.Align.PairwiseAligner`.
-
-**Objective:** To find the optimal alignment(s) between two sequences.
-
-**Steps:**
-
-1.  **Prepare Input Sequences:**
-    *   Ensure your two sequences (let's call them `sequence1` and `sequence2`) are in separate FASTA files (e.g., `seq1.fasta`, `seq2.fasta`). You can use EvolCat-Python scripts like `gb2fasta.py` or `extract_region.py` to prepare these files if needed.
-
-2.  **Create a Python Script for Alignment:**
-    *   Create a new Python file (e.g., `run_pairwise_alignment.py`).
-    *   The script will use Biopython modules. Below is a conceptual outline:
-
-    ```python
-    from Bio import SeqIO
-    from Bio import Align
-    from Bio.Align import substitution_matrices # If using predefined matrices like BLOSUM/PAM
-
-    # --- 1. Load your sequences ---
-    try:
-        seq_record1 = SeqIO.read("seq1.fasta", "fasta")
-        seq_record2 = SeqIO.read("seq2.fasta", "fasta")
-    except FileNotFoundError as e:
-        print(f"Error: One of the sequence files was not found: {e}")
-        exit()
-
-    sequence1 = seq_record1.seq
-    sequence2 = seq_record2.seq
-
-    # --- 2. Initialize the PairwiseAligner ---
-    aligner = Align.PairwiseAligner()
-
-    # --- 3. Configure Aligner Parameters ---
-    # Choose mode: 'global' (Needleman-Wunsch) or 'local' (Smith-Waterman)
-    aligner.mode = 'global'  # Or 'local'
-
-    # Example for Protein Alignment (using BLOSUM62):
-    # aligner.substitution_matrix = substitution_matrices.load("BLOSUM62")
-    # aligner.open_gap_score = -11  # Typical BLOSUM62 gap open penalty
-    # aligner.extend_gap_score = -1   # Typical BLOSUM62 gap extend penalty
-
-    # Example for DNA Alignment:
-    aligner.match_score = 2
-    aligner.mismatch_score = -1
-    aligner.open_gap_score = -2.5 # Example gap open
-    aligner.extend_gap_score = -1 # Example gap extend
-
-    # For more nuanced gap penalties (e.g., different end gap scores):
-    # aligner.target_end_gap_score = 0.0
-    # aligner.query_end_gap_score = 0.0
-
-    # --- 4. Perform the Alignment ---
-    print(f"Aligning {seq_record1.id} and {seq_record2.id}...")
-    alignments = aligner.align(sequence1, sequence2)
-
-    # --- 5. Print and Interpret Results ---
-    if not alignments:
-        print("No alignments found.")
-    else:
-        print(f"Number of optimal alignments: {len(alignments)}")
-        print(f"Alignment score: {alignments.score}") # All alignments in the iterator share the same score
-        
-        # Print the first optimal alignment (or loop through all alignments)
-        # For very large numbers of alignments, you might only want to print one or a few.
-        # Use list(alignments) with caution if len(alignments) is huge.
-        print("
-First alignment:")
-        print(alignments[0]) 
-        
-        # Example: To print all alignments if there are few:
-        # for i, alignment in enumerate(alignments):
-        #     print(f"
-Alignment {i+1}:")
-        #     print(alignment)
-        #     # You can also access coordinates, etc.
-        #     # print(alignment.coordinates)
-
-    print("
-Alignment complete.")
-    ```
-
-3.  **Run Your Python Script:**
-    ```bash
-    python3 run_pairwise_alignment.py
-    ```
-
-4.  **Interpret Results:**
-    *   The script will output the alignment score. Higher scores generally indicate better similarity.
-    *   The alignment itself will be printed, showing how the sequences align, with dashes (`-`) indicating gaps.
-    *   For local alignments, only the highest-scoring similar region(s) will be shown. For global alignments, the entire length of both sequences will be represented.
-
-This conceptual workflow demonstrates how to leverage the power of Biopython for a core bioinformatics task that is not currently available as a dedicated script in the EvolCat-Python suite. By creating simple scripts like the one outlined, users can easily extend the capabilities of their analysis environment.
 
 ## Detailed Script Usage
 
