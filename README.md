@@ -153,6 +153,36 @@ This library includes specific tools for interacting with NCBI services. These a
 
 These tools require the `requests` library, which will be installed if you use `pip install .`. For more detailed information on these specific NCBI tools, please see `pylib/scripts/ncbi/README.md` (if present) or use the `--help` flag with the scripts themselves.
 
+## Relationship with Biopython and Scope of Provided Scripts
+
+EvolCat-Python is built upon and requires [Biopython](https://biopython.org) as a core dependency. Many scripts in this suite act as convenient command-line wrappers or implement common workflows utilizing Biopython's underlying capabilities. This approach allows for rapid execution of specific tasks.
+
+However, Biopython itself is a comprehensive library with extensive functionalities. For more advanced, programmatic, or highly customized analyses, users are encouraged to leverage Biopython's modules directly. The following areas highlight some Biopython functionalities that are not currently implemented as standalone scripts within EvolCat-Python, or where Biopython offers significantly more depth:
+
+*   **Performing General Pairwise Alignments:**
+    *   While EvolCat-Python includes `approximate_string_match.py` for edit distance, Biopython's `Bio.Align.PairwiseAligner` provides robust tools for standard biological global (Needleman-Wunsch) and local (Smith-Waterman) alignments with full control over substitution matrices (e.g., BLOSUM, PAM) and affine gap penalties.
+
+*   **Advanced Multiple Sequence Alignment (MSA) Objects and Analysis:**
+    *   EvolCat-Python offers `nogaps.py` for basic MSA curation. Biopython's `Bio.Align` module (and the older `Bio.AlignIO`) provides rich `Alignment` objects for parsing numerous MSA formats, calculating consensus sequences, deriving conservation scores, and performing complex manipulations directly on MSA objects.
+
+*   **Comprehensive Phylogenetic Analysis (`Bio.Phylo`):**
+    *   EvolCat-Python scripts can generate distance matrices (`calculate_dna_distances.py`, `calculate_k2p.py`) for input into external tree-building programs and convert alignment formats (`fas2phy.py`).
+    *   Biopython's `Bio.Phylo` module offers extensive capabilities for parsing various tree formats (Newick, Nexus, NeXML), constructing trees (e.g., distance-based methods like NJ and UPGMA), advanced tree manipulation (rerooting, pruning, comparing topologies), and tree visualization.
+
+*   **Sequence Motif Discovery and Analysis (`Bio.motifs`):**
+    *   EvolCat-Python includes a specific tool for finding tandem repeats (`find_tandem_repeats.py`).
+    *   Biopython's `Bio.motifs` module provides tools for creating, representing (e.g., PWMs), and scanning for sequence motifs, as well as interfacing with motif databases and tools like MEME.
+
+*   **Direct dN/dS Calculation (Alternatives to PAML wrapping):**
+    *   EvolCat-Python provides excellent script-based wrappers for PAML's `yn00` and `codeml`.
+    *   Biopython's `Bio.Align.analysis` module also allows for the direct calculation of dN/dS ratios using several established methods (e.g., Nei-Gojobori, Li-Wu-Luo, Yang-Nielsen) within Python.
+
+*   **Flexible Parsing of Diverse Sequence Search Outputs (`Bio.SearchIO`):**
+    *   EvolCat-Python scripts parse text BLAST output.
+    *   Biopython's `Bio.SearchIO` module provides a modern, unified interface for parsing various output formats (including XML and tabular) from a wide range of sequence search tools (BLAST, HMMER, Exonerate, etc.), offering a more robust and extensible approach.
+
+Users familiar with Python programming can readily combine the convenience of EvolCat-Python scripts with the extensive library functionalities of Biopython to build sophisticated bioinformatics pipelines.
+
 ## Workflow Examples
 
 This section outlines general workflows, highlighting where EvolCat-Python scripts can be utilized.
