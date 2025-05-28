@@ -158,33 +158,38 @@ These tools require the `requests` library, which will be installed if you use `
 
 ## Relationship with Biopython and Scope of Provided Scripts
 
-EvolCat-Python is built upon and requires [Biopython](https://biopython.org) as a core dependency. Many scripts in this suite act as convenient command-line wrappers or implement common workflows utilizing Biopython's underlying capabilities. This approach allows for rapid execution of specific tasks.
+EvolCat-Python is built upon and requires [Biopython](https://biopython.org) as a core dependency. Many scripts in this suite act as convenient command-line wrappers or implement common workflows by intelligently utilizing Biopython's underlying capabilities. This approach allows for rapid execution of specific, often complex, tasks directly from the command line, making them powerful tools for bioinformatics analyses. The [Workflow Examples](#workflow-examples) section of this README further illustrates how these scripts can be combined to streamline multi-step processes.
 
-However, Biopython itself is a comprehensive library with extensive functionalities. For more advanced, programmatic, or highly customized analyses, users are encouraged to leverage Biopython's modules directly. The following areas highlight some Biopython functionalities that are not currently implemented as standalone scripts within EvolCat-Python, or where Biopython offers significantly more depth:
+While EvolCat-Python offers these targeted solutions, Biopython itself is a comprehensive library with vast functionalities. For highly advanced, programmatic, or uniquely customized analyses, users are encouraged to leverage Biopython's modules directly. The following areas highlight how EvolCat-Python's scripts provide useful functionalities, and also where Biopython offers significantly more depth for those wishing to delve deeper:
 
 *   **Performing General Pairwise Alignments:**
-    *   While EvolCat-Python includes `approximate_string_match.py` for edit distance, Biopython's `Bio.Align.PairwiseAligner` provides robust tools for standard biological global (Needleman-Wunsch) and local (Smith-Waterman) alignments with full control over substitution matrices (e.g., BLOSUM, PAM) and affine gap penalties.
+    *   While EvolCat-Python includes `approximate_string_match.py` for calculating edit distance (a measure of sequence dissimilarity), Biopython's `Bio.Align.PairwiseAligner` provides robust tools for standard biological global (Needleman-Wunsch) and local (Smith-Waterman) alignments with full control over substitution matrices (e.g., BLOSUM, PAM) and affine gap penalties.
 
 *   **Advanced Multiple Sequence Alignment (MSA) Objects and Analysis:**
-    *   EvolCat-Python offers `nogaps.py` for basic MSA curation. Biopython's `Bio.Align` module (and the older `Bio.AlignIO`) provides rich `Alignment` objects for parsing numerous MSA formats, calculating consensus sequences, deriving conservation scores, and performing complex manipulations directly on MSA objects.
+    *   EvolCat-Python offers `nogaps.py` for basic MSA curation and `analyze_msa.py` for obtaining alignment statistics and consensus sequences.
+    *   For more intricate MSA manipulations, Biopython's `Bio.Align` module (and the older `Bio.AlignIO`) provides rich `Alignment` objects for parsing numerous MSA formats, deriving detailed conservation scores, and performing complex operations directly on MSA objects.
 
-*   **Comprehensive Phylogenetic Analysis (`Bio.Phylo`):**
-    *   EvolCat-Python scripts can generate distance matrices (`calculate_dna_distances.py`, `calculate_k2p.py`) for input into external tree-building programs and convert alignment formats (`fas2phy.py`).
-    *   Biopython's `Bio.Phylo` module offers extensive capabilities for parsing various tree formats (Newick, Nexus, NeXML), constructing trees (e.g., distance-based methods like NJ and UPGMA), advanced tree manipulation (rerooting, pruning, comparing topologies), and tree visualization.
+*   **Phylogenetic Analysis:**
+    *   EvolCat-Python provides a suite of tools to facilitate phylogenetic analysis. Scripts like `calculate_dna_distances.py` and `calculate_k2p.py` generate distance matrices, and `fas2phy.py` aids in format conversion for external tree-building programs. Furthermore, `build_tree_from_distances.py` allows for direct construction of phylogenetic trees using NJ or UPGMA methods from a distance matrix, offering a convenient way to generate initial tree topologies.
+    *   For more comprehensive phylogenetic tasks, Biopython's `Bio.Phylo` module offers extensive capabilities, including parsing and manipulating various tree formats (Newick, Nexus, NeXML), implementing a wider array of tree construction algorithms, advanced tree operations (rerooting, pruning, comparing topologies), and sophisticated tree visualization.
 
-*   **Sequence Motif Discovery and Analysis (`Bio.motifs`):**
-    *   EvolCat-Python includes a specific tool for finding tandem repeats (`find_tandem_repeats.py`).
-    *   Biopython's `Bio.motifs` module provides tools for creating, representing (e.g., PWMs), and scanning for sequence motifs, as well as interfacing with motif databases and tools like MEME.
+*   **Sequence Analysis and Statistics:**
+    *   EvolCat-Python includes scripts for specific analyses such as `calculate_nucleotide_diversity.py`, which directly computes population genetics statistics from sequence data. This provides a ready-to-use tool for assessing genetic variation.
+    *   While such specific metrics can be computed using Biopython's foundational objects with custom scripting, Biopython's strength lies in providing the building blocks for a broader range of sequence analyses.
 
-*   **Direct dN/dS Calculation (Alternatives to PAML wrapping):**
-    *   EvolCat-Python provides excellent script-based wrappers for PAML's `yn00` and `codeml`.
-    *   Biopython's `Bio.Align.analysis` module also allows for the direct calculation of dN/dS ratios using several established methods (e.g., Nei-Gojobori, Li-Wu-Luo, Yang-Nielsen) within Python.
+*   **Sequence Motif Discovery and Analysis:**
+    *   EvolCat-Python includes `scan_sequences_for_motif.py` for searching for user-defined motifs (including IUPAC strings) within sequences, a valuable tool for identifying potential functional sites. It also offers `find_tandem_repeats.py` for a specific type of repeat.
+    *   Biopython's `Bio.motifs` module provides a more extensive toolkit for creating, representing (e.g., position-weight matrices - PWMs), and scanning for sequence motifs, as well as interfacing with motif databases and external tools like MEME.
+
+*   **Evolutionary Rate (dN/dS) Estimation:**
+    *   EvolCat-Python provides excellent script-based wrappers for PAML's `yn00` and `codeml` programs (via `calculate_dn_ds.py` and `calculate_site_specific_ds_dn.py`), simplifying the process of estimating dN/dS ratios. These are powerful additions for studying molecular evolution.
+    *   For users who prefer or need to implement alternative methods within Python, Biopython's `Bio.Align.analysis` module allows for the direct calculation of dN/dS ratios using several established algorithms (e.g., Nei-Gojobori, Li-Wu-Luo, Yang-Nielsen).
 
 *   **Flexible Parsing of Diverse Sequence Search Outputs (`Bio.SearchIO`):**
-    *   EvolCat-Python scripts parse text BLAST output.
-    *   Biopython's `Bio.SearchIO` module provides a modern, unified interface for parsing various output formats (including XML and tabular) from a wide range of sequence search tools (BLAST, HMMER, Exonerate, etc.), offering a more robust and extensible approach.
+    *   EvolCat-Python scripts such as `parse_blast_text.py` and `blast_to_table.py` are useful for processing standard text BLAST output.
+    *   For broader compatibility, Biopython's `Bio.SearchIO` module provides a modern, unified interface for parsing various output formats (including XML and tabular) from a wide range of sequence search tools (BLAST, HMMER, Exonerate, etc.), offering a more robust and extensible approach for diverse search result inputs.
 
-Users familiar with Python programming can readily combine the convenience of EvolCat-Python scripts with the extensive library functionalities of Biopython to build sophisticated bioinformatics pipelines.
+Users familiar with Python programming can readily combine the convenience and focused power of EvolCat-Python scripts with the extensive library functionalities of Biopython to build sophisticated and efficient bioinformatics pipelines.
 
 ## Workflow Examples
 
