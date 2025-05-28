@@ -1079,4 +1079,3 @@ A summary message indicating the total number of motifs found and sequences proc
 - The script converts the IUPAC motif string to a regular expression for searching.
 - Searches are case-insensitive.
 - The script will report all non-overlapping matches.
-=======
