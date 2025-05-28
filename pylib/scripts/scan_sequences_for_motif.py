@@ -1,69 +1,3 @@
-Scans sequences in a FASTA file for occurrences of a known motif (simple string or IUPAC degenerate string) on both strands.
-
-**Input:**
-- A FASTA file containing nucleotide sequences.
-- A motif string (e.g., `GATTACA` or `RRYYTGCAAW`).
-
-**Output:**
-- A tab-delimited text report listing each found motif occurrence, including sequence ID, motif, start and end positions (1-based), strand, and the matched sequence segment.
-- Output is to standard output by default, or to a specified file.
-
-**Usage:**
-```bash
-python3 pylib/scripts/scan_sequences_for_motif.py <sequence_file> --motif <motif_string> [--informat <format>] [--output_report <report_filepath>]
-```
-
-**Arguments:**
-
-*   `<sequence_file>`: (Required) Path to the input FASTA file containing sequences to scan.
-*   `--motif <motif_string>`: (Required) The motif to search for. This can be a simple DNA sequence (e.g., `AGCT`) or a degenerate IUPAC string (e.g., `RRYYNNNNNGATT`).
-*   `--informat <format>`: (Optional) Format of the input sequence file. Default: `fasta`. (This argument is passed to Biopython's `SeqIO.parse`).
-*   `--output_report <report_filepath>`: (Optional) Path to a file where the output report will be written. If not provided, the report is printed to standard output.
-
-**Output Report Format (Tab-delimited):**
-
-`Sequence_ID	Motif_Found	Start	End	Strand	Matched_Sequence`
-
--   `Sequence_ID`: Identifier of the sequence from the input FASTA file.
--   `Motif_Found`: The motif string provided by the user.
--   `Start`: 1-based start position of the motif match on the original forward strand.
--   `End`: 1-based end position of the motif match on the original forward strand.
--   `Strand`: `+` if found on the forward strand, `-` if found on the reverse complement strand.
--   `Matched_Sequence`: The actual DNA sequence segment that matched the motif.
-
-**Example:**
-
-Given a FASTA file `my_sequences.fasta`:
-```fasta
->SeqA
-GATTACAGATTACANNNRRYYTGCAAWGATTACA
->SeqB
-CCCTTTGCAAYYKMNNNGTAATCG
-```
-
-Command:
-```bash
-python3 pylib/scripts/scan_sequences_for_motif.py my_sequences.fasta --motif RRYYTGCAAW --output_report motif_scan_results.tsv
-```
-
-Expected content of `motif_scan_results.tsv` (example):
-```tsv
-Sequence_ID	Motif_Found	Start	End	Strand	Matched_Sequence
-SeqA	RRYYTGCAAW	19	28	+	AGCTTGCAAT
-SeqB	RRYYTGCAAW	7	16	-	ATTGCAAGGG
-```
-*(Note: The exact matched sequence for the reverse strand will be the sequence as it appeared on the reverse complement, matching the forward version of the motif string).*
-
-A summary message indicating the total number of motifs found and sequences processed will be printed to standard error.
-
-**Notes:**
-- The script converts the IUPAC motif string to a regular expression for searching.
-- Searches are case-insensitive.
-- The script will report all non-overlapping matches.
-
-THEN
-scan_sequences_for_motif.py
-
 #!/usr/bin/env python3
 
 """
@@ -199,4 +133,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-```
