@@ -938,7 +938,6 @@ python3 pylib/scripts/build_tree_from_distances.py my_distances.phy --method upg
   END;
   ```
 ---
----
 
 ## `pylib/scripts/analyze_msa.py`
 
@@ -1013,7 +1012,7 @@ python3 pylib/scripts/analyze_msa.py <msa_file> --informat <format> [task_option
 - The script processes the first alignment found in the input file.
 - Alphabet inference (DNA/RNA vs. Protein) is basic and used for GC content calculation and defaulting the ambiguous consensus character.
 - For consensus generation, gap characters (`-`, `.`) in a column are ignored when calculating frequencies but a column of only gaps will result in a gap in the consensus.
----
+
 ---
 
 ## `pylib/scripts/scan_sequences_for_motif.py`
@@ -1080,4 +1079,3 @@ A summary message indicating the total number of motifs found and sequences proc
 - The script converts the IUPAC motif string to a regular expression for searching.
 - Searches are case-insensitive.
 - The script will report all non-overlapping matches.
----
