@@ -868,3 +868,73 @@ python pylib/scripts/paml_tools/calculate_site_specific_ds_dn.py \
 - Interpreting dN/dS ratios: dN/dS > 1 suggests positive (Darwinian) selection; dN/dS = 1 suggests neutral evolution; dN/dS < 1 suggests purifying (negative) selection.
 - The choice of PAML model is critical and should be guided by the specific biological questions and hypotheses. Model comparison using Likelihood Ratio Tests (LRTs) is common practice (e.g., comparing M1a vs. M2a, or M7 vs. M8) but is not performed by this script directly.
 - Note: This script is designed for site-specific evolutionary analyses using PAML's `codeml` program. For straightforward pairwise dN/dS calculations between sequences, the `pylib/scripts/paml_tools/calculate_dn_ds.py` script (which uses PAML's `yn00`) is more direct.
+---
+---
+
+## `pylib/scripts/build_tree_from_distances.py`
+
+Builds a phylogenetic tree from a distance matrix file using Neighbor-Joining (NJ) or UPGMA methods.
+
+**Input:**
+- A distance matrix file. The script expects a PHYLIP-style distance matrix (square or lower-triangular). This can be a standalone file containing just the matrix, or a matrix embedded within a simple Nexus `DISTANCES` block.
+  Example of a standalone PHYLIP lower-triangular matrix (`my_distances.phy`):
+  ```
+     4
+  Alpha
+  Beta      0.20
+  Gamma     0.50  0.40
+  Delta     0.80  0.70  0.60
+  ```
+  Or a PHYLIP square matrix:
+  ```
+     4
+  Alpha     0.00  0.20  0.50  0.80
+  Beta      0.20  0.00  0.40  0.70
+  Gamma     0.50  0.40  0.00  0.60
+  Delta     0.80  0.70  0.60  0.00
+  ```
+  The script uses Biopython's Nexus parser, which is flexible for these formats. For best results with standalone PHYLIP files, ensure they strictly follow the format (number of taxa on the first line, then matrix data).
+
+**Output:**
+- A phylogenetic tree file in Newick format.
+
+**Usage:**
+```bash
+python3 pylib/scripts/build_tree_from_distances.py <distance_matrix_file> [--method <method>] [--outfile <output_tree_file>] [--informat <format>]
+```
+
+**Arguments:**
+- `<distance_matrix_file>`: (Required) Path to the input distance matrix file.
+- `--method <method>`: Tree construction method. Choices:
+    - `nj` (Neighbor-Joining, default)
+    - `upgma` (UPGMA)
+- `--outfile <output_tree_file>`: Output file name for the tree in Newick format. (Default: `phylogenetic_tree.nwk`)
+- `--informat <format>`: Input distance matrix file format.
+    - `nexus` (Default. Used for PHYLIP-style matrices, which can be standalone or within a Nexus `DISTANCES` block).
+
+**Example:**
+Assuming `my_distances.phy` contains a PHYLIP-formatted distance matrix:
+```bash
+# Build a Neighbor-Joining tree
+python3 pylib/scripts/build_tree_from_distances.py my_distances.phy --method nj --outfile nj_tree.nwk
+
+# Build a UPGMA tree
+python3 pylib/scripts/build_tree_from_distances.py my_distances.phy --method upgma --outfile upgma_tree.nwk
+```
+
+**Notes:**
+- This script relies on Biopython's `Bio.Phylo` and `Bio.Nexus` modules.
+- Ensure your input distance matrix is correctly formatted. The Nexus parser can be particular. If you have issues with a standalone PHYLIP file, wrapping it in a minimal Nexus block might help:
+  ```nexus
+  #NEXUS
+  BEGIN DISTANCES;
+    FORMAT TRIANGLE=LOWER NODIAGONAL;
+    MATRIX
+      Alpha
+      Beta      0.20
+      Gamma     0.50  0.40
+      Delta     0.80  0.70  0.60
+    ;
+  END;
+  ```
+---

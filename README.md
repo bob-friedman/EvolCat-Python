@@ -298,22 +298,30 @@ Once you have a curated alignment, you can infer a phylogenetic tree. EvolCat-Py
         ```bash
         python3 pylib/scripts/fas2phy.py aligned_sequences_nogaps.afa > aligned_sequences.phy
         ```
-*   **Tree Building (External Tools):** Use specialized software for tree inference. Common choices include:
-    *   **Distance-based:** Phylip's `neighbor` program (Felsenstein 1989) (can use distance matrices, which EvolCat-Python can help calculate - see below).
-    *   **Maximum Likelihood (ML):** RAxML, IQ-TREE, PhyML (Yang 1997 for PAML which includes ML methods; Adachi and Hasegawa 1996 for Molphy).
-    *   **Bayesian Inference (BI):** MrBayes, BEAST.
-    These programs will take your PHYLIP (or FASTA) alignment and produce a tree file, typically in Newick format (e.g., `my_tree.nwk`).
-    ```bash
-    # Example using an external ML tool (conceptual)
-    # raxml-ng --msa aligned_sequences.phy --model GTR+G --prefix my_analysis --threads 2
-    # iqtree -s aligned_sequences.phy -m GTR+G -bb 1000
-    ```
 *   **Calculating Distance Matrices (Optional, for distance-based tree methods):**
     If you plan to use distance-based tree building methods (like Neighbor-Joining), you first need a distance matrix.
     *   **EvolCat-Python `calculate_dna_distances.py` or `calculate_k2p.py`:** These scripts can take your aligned FASTA file and produce a table of pairwise distances. This table would then need to be formatted appropriately for input into a distance-based tree program (e.g., Phylip `neighbor`).
         ```bash
         python3 pylib/scripts/calculate_dna_distances.py aligned_sequences_nogaps.afa > dna_distances.tsv
         ```
+    *   **Building a Tree from Distances (EvolCat-Python):**
+        *   Once you have a distance matrix (e.g., in PHYLIP format, potentially generated from the scripts above and formatted), you can use **EvolCat-Python's `pylib/scripts/build_tree_from_distances.py`** script to construct a tree using Neighbor-Joining (NJ) or UPGMA methods. This script outputs the tree in Newick format.
+            ```bash
+            # Example assuming my_distances.phy is your PHYLIP distance matrix
+            python3 pylib/scripts/build_tree_from_distances.py my_distances.phy --method nj --outfile my_tree.nwk
+            ```
+            This provides a direct way to generate a tree topology from your calculated distances within the EvolCat-Python suite.
+*   **Tree Building (Alternative External Tools for Advanced Methods):**
+    For more advanced phylogenetic models or methods (e.g., Maximum Likelihood, Bayesian Inference), or if you prefer other specialized distance-based programs, you can use external software. Common choices include:
+    *   **Distance-based (alternative):** Phylip's `neighbor` program (Felsenstein 1989).
+    *   **Maximum Likelihood (ML):** RAxML, IQ-TREE, PhyML.
+    *   **Bayesian Inference (BI):** MrBayes, BEAST.
+    These programs will typically take your curated alignment (e.g., PHYLIP or FASTA) or a distance matrix and produce a tree file (e.g., `my_tree.nwk`).
+    ```bash
+    # Example using an external ML tool (conceptual)
+    # raxml-ng --msa aligned_sequences.phy --model GTR+G --prefix my_analysis --threads 2
+    # iqtree -s aligned_sequences.phy -m GTR+G -bb 1000
+    ```
 
 #### Step 4: Tree Visualization and Basic Manipulation (Conceptual)
 
