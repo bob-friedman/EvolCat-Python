@@ -344,6 +344,103 @@ This phylogenetic workflow highlights how EvolCat-Python scripts primarily serve
 
 [Guide to Virus Genomics, Diversity, and Analysis](docs/virus_genomics_guide.md)
 
+### F. Conceptual Workflow: Performing a Standard Pairwise Sequence Alignment (Leveraging Biopython)
+
+A fundamental task in bioinformatics is aligning two sequences to identify regions of similarity, which can imply functional, structural, or evolutionary relationships. While EvolCat-Python provides `approximate_string_match.py` for edit distance, it does not currently offer a standalone script for performing standard biological pairwise alignments (e.g., Needleman-Wunsch global or Smith-Waterman local alignments) using comprehensive scoring systems (e.g., BLOSUM/PAM matrices for proteins, or specific match/mismatch scores for DNA, along with affine gap penalties).
+
+However, since EvolCat-Python depends on Biopython, you can easily perform these alignments by writing a short Python script that utilizes Biopython's `Bio.Align.PairwiseAligner`.
+
+**Objective:** To find the optimal alignment(s) between two sequences.
+
+**Steps:**
+
+1.  **Prepare Input Sequences:**
+    *   Ensure your two sequences (let's call them `sequence1` and `sequence2`) are in separate FASTA files (e.g., `seq1.fasta`, `seq2.fasta`). You can use EvolCat-Python scripts like `gb2fasta.py` or `extract_region.py` to prepare these files if needed.
+
+2.  **Create a Python Script for Alignment:**
+    *   Create a new Python file (e.g., `run_pairwise_alignment.py`).
+    *   The script will use Biopython modules. Below is a conceptual outline:
+
+    ```python
+    from Bio import SeqIO
+    from Bio import Align
+    from Bio.Align import substitution_matrices # If using predefined matrices like BLOSUM/PAM
+
+    # --- 1. Load your sequences ---
+    try:
+        seq_record1 = SeqIO.read("seq1.fasta", "fasta")
+        seq_record2 = SeqIO.read("seq2.fasta", "fasta")
+    except FileNotFoundError as e:
+        print(f"Error: One of the sequence files was not found: {e}")
+        exit()
+
+    sequence1 = seq_record1.seq
+    sequence2 = seq_record2.seq
+
+    # --- 2. Initialize the PairwiseAligner ---
+    aligner = Align.PairwiseAligner()
+
+    # --- 3. Configure Aligner Parameters ---
+    # Choose mode: 'global' (Needleman-Wunsch) or 'local' (Smith-Waterman)
+    aligner.mode = 'global'  # Or 'local'
+
+    # Example for Protein Alignment (using BLOSUM62):
+    # aligner.substitution_matrix = substitution_matrices.load("BLOSUM62")
+    # aligner.open_gap_score = -11  # Typical BLOSUM62 gap open penalty
+    # aligner.extend_gap_score = -1   # Typical BLOSUM62 gap extend penalty
+
+    # Example for DNA Alignment:
+    aligner.match_score = 2
+    aligner.mismatch_score = -1
+    aligner.open_gap_score = -2.5 # Example gap open
+    aligner.extend_gap_score = -1 # Example gap extend
+
+    # For more nuanced gap penalties (e.g., different end gap scores):
+    # aligner.target_end_gap_score = 0.0
+    # aligner.query_end_gap_score = 0.0
+
+    # --- 4. Perform the Alignment ---
+    print(f"Aligning {seq_record1.id} and {seq_record2.id}...")
+    alignments = aligner.align(sequence1, sequence2)
+
+    # --- 5. Print and Interpret Results ---
+    if not alignments:
+        print("No alignments found.")
+    else:
+        print(f"Number of optimal alignments: {len(alignments)}")
+        print(f"Alignment score: {alignments.score}") # All alignments in the iterator share the same score
+        
+        # Print the first optimal alignment (or loop through all alignments)
+        # For very large numbers of alignments, you might only want to print one or a few.
+        # Use list(alignments) with caution if len(alignments) is huge.
+        print("
+First alignment:")
+        print(alignments[0]) 
+        
+        # Example: To print all alignments if there are few:
+        # for i, alignment in enumerate(alignments):
+        #     print(f"
+Alignment {i+1}:")
+        #     print(alignment)
+        #     # You can also access coordinates, etc.
+        #     # print(alignment.coordinates)
+
+    print("
+Alignment complete.")
+    ```
+
+3.  **Run Your Python Script:**
+    ```bash
+    python3 run_pairwise_alignment.py
+    ```
+
+4.  **Interpret Results:**
+    *   The script will output the alignment score. Higher scores generally indicate better similarity.
+    *   The alignment itself will be printed, showing how the sequences align, with dashes (`-`) indicating gaps.
+    *   For local alignments, only the highest-scoring similar region(s) will be shown. For global alignments, the entire length of both sequences will be represented.
+
+This conceptual workflow demonstrates how to leverage the power of Biopython for a core bioinformatics task that is not currently available as a dedicated script in the EvolCat-Python suite. By creating simple scripts like the one outlined, users can easily extend the capabilities of their analysis environment.
+
 ## Detailed Script Usage
 
 For detailed command-line options and examples for each script, please refer to:
