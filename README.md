@@ -28,13 +28,14 @@ The scripts and library components provided here are for research and informatio
         *   [Step 6: Merging and Organizing Your Local Database](#step-6-merging-and-organizing-your-local-database)
     *   [B. Performing a Phylogenetic Tree Analysis](#b-performing-a-phylogenetic-tree-analysis)
         *   [Step 1: Sequence Preparation and Alignment](#step-1-sequence-preparation-and-alignment)
-        *   [Step 2: Alignment Curation](#step-2-alignment-curation)
+        *   [Step 2: Alignment Curation and Basic Analysis](#step-2-alignment-curation-and-basic-analysis)
         *   [Step 3: Phylogenetic Inference (External Tools)](#step-3-phylogenetic-inference-external-tools)
         *   [Step 4: Tree Visualization and Basic Manipulation (Conceptual)](#step-4-tree-visualization-and-basic-manipulation-conceptual)
     *   [C. Performing a Standard Pairwise Sequence Alignment with Biopython](#c-performing-a-standard-pairwise-sequence-alignment-with-biopython)
-    *   [D. Guide to Accessing MHC Sequence Databases](#d-guide-to-accessing-mhc-sequence-databases)   
-    *   [E. Guide to Interpreting Phylogenetic Trees with Python](#e-guide-to-interpreting-phylogenetic-trees-with-python)
-    *   [F. Special Topic: Virus Genomics, Diversity, and Analysis](#f-special-topic-virus-genomics-diversity-and-analysis)
+    *   [D. Basic Motif Scanning](#d-basic-motif-scanning)
+    *   [E. Guide to Accessing MHC Sequence Databases](#e-guide-to-accessing-mhc-sequence-databases)   
+    *   [F. Guide to Interpreting Phylogenetic Trees with Python](#f-guide-to-interpreting-phylogenetic-trees-with-python)
+    *   [G. Special Topic: Virus Genomics, Diversity, and Analysis](#g-special-topic-virus-genomics-diversity-and-analysis)
 8.  [Detailed Script Usage](#detailed-script-usage)
 9.  [Development and Contributions](#development-and-contributions)
 10. [Citation](#citation)
@@ -419,20 +420,17 @@ However, since EvolCat-Python depends on Biopython, you can easily perform these
         # Print the first optimal alignment (or loop through all alignments)
         # For very large numbers of alignments, you might only want to print one or a few.
         # Use list(alignments) with caution if len(alignments) is huge.
-        print("
-First alignment:")
+        print("First alignment:")
         print(alignments[0]) 
         
         # Example: To print all alignments if there are few:
         # for i, alignment in enumerate(alignments):
-        #     print(f"
-Alignment {i+1}:")
+        #     print(f"Alignment {i+1}:")
         #     print(alignment)
         #     # You can also access coordinates, etc.
         #     # print(alignment.coordinates)
 
-    print("
-Alignment complete.")
+    print("Alignment complete.")
     ```
 
 3.  **Run the Python Script:**
@@ -447,15 +445,27 @@ Alignment complete.")
 
 This conceptual workflow demonstrates how to leverage the power of Biopython for a core bioinformatics task that is not currently available as a dedicated script in the EvolCat-Python suite. By creating simple scripts like the one outlined, users can easily extend the capabilities of their analysis environment.
 
-### D. Guide to Accessing MHC Sequence Databases
+### D. Basic Motif Scanning
+
+Identifying known motifs (e.g., transcription factor binding sites, short functional patterns) within a set of sequences is a common requirement.
+
+*   **Prepare Input Sequences:** Ensure your sequences are in a FASTA file (e.g., `promoter_regions.fasta`).
+*   **Scan for Motif:** Use **EvolCat-Python's `pylib/scripts/scan_sequences_for_motif.py`** to search for occurrences of a known motif (IUPAC string or simple sequence) on both strands.
+    ```bash
+    # Example: Scan for the motif 'TGACGTCA' in promoter_regions.fasta
+    python3 pylib/scripts/scan_sequences_for_motif.py promoter_regions.fasta --motif TGACGTCA --output_report found_motifs.tsv
+    ```
+    The script will output a tab-delimited file listing the sequence ID, motif, start, end, strand, and the matched sequence for each occurrence.
+
+### E. Guide to Accessing MHC Sequence Databases
 
 [MHC Database Guide](docs/mhc-database-guide.md)
 
-### E. Guide to Interpreting Phylogenetic Trees with Python
+### F. Guide to Interpreting Phylogenetic Trees with Python
 
 [Phylogenetic Tree Interpretation](docs//phylogenetic-tree-interpretation.md)
 
-### F. Special Topic: Virus Genomics, Diversity, and Analysis
+### G. Special Topic: Virus Genomics, Diversity, and Analysis
 
 [Guide to Virus Genomics, Diversity, and Analysis](docs/virus_genomics_guide.md)
 
