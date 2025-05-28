@@ -17,7 +17,8 @@ The scripts and library components provided here are for research and informatio
     *   [Access in a Windows OS with WSL](#access-in-a-windows-os-with-wsl-windows-subsystem-for-linux)
 4.  [General Script Usage](#general-script-usage)
 5.  [NCBI Tools](#ncbi-tools)
-6.  [Workflow Examples](#workflow-examples)
+6.  [Relationship with Biopython and Scope of Provided Scripts](#relationship-with-biopython-and-scope-of-provided-scripts)
+7.  [Workflow Examples](#workflow-examples)
     *   [A. Building a Local Sequence Database from NCBI](#a-building-a-local-sequence-database-from-ncbi)
         *   [Step 1: Identifying and Retrieving Initial Sequences](#step-1-identifying-and-retrieving-initial-sequences)
         *   [Step 2: Fetching Full Records for Retrieved IDs](#step-2-fetching-full-records-for-retrieved-ids)
@@ -30,12 +31,13 @@ The scripts and library components provided here are for research and informatio
         *   [Step 2: Alignment Curation](#step-2-alignment-curation)
         *   [Step 3: Phylogenetic Inference (External Tools)](#step-3-phylogenetic-inference-external-tools)
         *   [Step 4: Tree Visualization and Basic Manipulation (Conceptual)](#step-4-tree-visualization-and-basic-manipulation-conceptual)
-    *   [C. Guide to Accessing MHC Sequence Databases](#c-guide-to-accessing-mhc-sequence-databases)
-    *   [D. Guide to Interpreting Phylogenetic Trees with Python](#d-guide-to-interpreting-phylogenetic-trees-with-python)
-    *   [E. Special Topic: Virus Genomics, Diversity, and Analysis](#e-special-topic-virus-genomics-diversity-and-analysis)
-7.  [Detailed Script Usage](#detailed-script-usage)
-8.  [Development and Contributions](#development-and-contributions)
-9.  [Citation](#citation)
+    *   [C. Performing a Standard Pairwise Sequence Alignment with Biopython](#c-performing-a-standard-pairwise-sequence-alignment-with-biopython)
+    *   [D. Guide to Accessing MHC Sequence Databases](#d-guide-to-accessing-mhc-sequence-databases)   
+    *   [E. Guide to Interpreting Phylogenetic Trees with Python](#e-guide-to-interpreting-phylogenetic-trees-with-python)
+    *   [F. Special Topic: Virus Genomics, Diversity, and Analysis](#f-special-topic-virus-genomics-diversity-and-analysis)
+8.  [Detailed Script Usage](#detailed-script-usage)
+9.  [Development and Contributions](#development-and-contributions)
+10. [Citation](#citation)
 
 ## Overview
 
@@ -332,19 +334,7 @@ Once you have a tree file (e.g., in Newick format), you can visualize and analyz
 
 This phylogenetic workflow highlights how EvolCat-Python scripts primarily serve as helper tools for preparing data for, and converting formats between, specialized external programs for MSA and tree inference.
 
-### C. Guide to Accessing MHC Sequence Databases
-
-[MHC Database Guide](docs/mhc-database-guide.md)
-
-### D. Guide to Interpreting Phylogenetic Trees with Python
-
-[Phylogenetic Tree Interpretation](docs//phylogenetic-tree-interpretation.md)
-
-### E. Special Topic: Virus Genomics, Diversity, and Analysis
-
-[Guide to Virus Genomics, Diversity, and Analysis](docs/virus_genomics_guide.md)
-
-### F. Conceptual Workflow: Performing a Standard Pairwise Sequence Alignment (Leveraging Biopython)
+### C. Performing a Standard Pairwise Sequence Alignment with Biopython
 
 A fundamental task in bioinformatics is aligning two sequences to identify regions of similarity, which can imply functional, structural, or evolutionary relationships. While EvolCat-Python provides `approximate_string_match.py` for edit distance, it does not currently offer a standalone script for performing standard biological pairwise alignments (e.g., Needleman-Wunsch global or Smith-Waterman local alignments) using comprehensive scoring systems (e.g., BLOSUM/PAM matrices for proteins, or specific match/mismatch scores for DNA, along with affine gap penalties).
 
@@ -355,7 +345,7 @@ However, since EvolCat-Python depends on Biopython, you can easily perform these
 **Steps:**
 
 1.  **Prepare Input Sequences:**
-    *   Ensure your two sequences (let's call them `sequence1` and `sequence2`) are in separate FASTA files (e.g., `seq1.fasta`, `seq2.fasta`). You can use EvolCat-Python scripts like `gb2fasta.py` or `extract_region.py` to prepare these files if needed.
+    *   Verify that two sequences (such as `sequence1` and `sequence2`) are in separate FASTA files (e.g., `seq1.fasta`, `seq2.fasta`). Note that these files are also compatible with the EvolCat-Python scripts `gb2fasta.py` and `extract_region.py`.
 
 2.  **Create a Python Script for Alignment:**
     *   Create a new Python file (e.g., `run_pairwise_alignment.py`).
@@ -429,7 +419,7 @@ Alignment {i+1}:")
 Alignment complete.")
     ```
 
-3.  **Run Your Python Script:**
+3.  **Run the Python Script:**
     ```bash
     python3 run_pairwise_alignment.py
     ```
@@ -440,6 +430,18 @@ Alignment complete.")
     *   For local alignments, only the highest-scoring similar region(s) will be shown. For global alignments, the entire length of both sequences will be represented.
 
 This conceptual workflow demonstrates how to leverage the power of Biopython for a core bioinformatics task that is not currently available as a dedicated script in the EvolCat-Python suite. By creating simple scripts like the one outlined, users can easily extend the capabilities of their analysis environment.
+
+### D. Guide to Accessing MHC Sequence Databases
+
+[MHC Database Guide](docs/mhc-database-guide.md)
+
+### E. Guide to Interpreting Phylogenetic Trees with Python
+
+[Phylogenetic Tree Interpretation](docs//phylogenetic-tree-interpretation.md)
+
+### F. Special Topic: Virus Genomics, Diversity, and Analysis
+
+[Guide to Virus Genomics, Diversity, and Analysis](docs/virus_genomics_guide.md)
 
 ## Detailed Script Usage
 
