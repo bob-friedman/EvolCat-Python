@@ -474,6 +474,16 @@ Identifying known motifs (e.g., transcription factor binding sites, short functi
 
 [Guide to Virus Genomics, Diversity, and Analysis](docs/virus_genomics_guide.md)
 
+### H. VCF File Analysis and Filtering
+
+Variant Call Format (VCF) files are essential in genomics for storing data about genetic variations. The process of identifying these genetic differences between a sample genome and a reference is known as variant calling. A common and crucial step after obtaining VCF files is to filter them to retain only high-quality and reliable variants for downstream analysis.
+
+The `analyze_vcf.py` script, part of the EvolCat-Python suite, provides functionality for basic filtering of VCF files. This script allows users to filter variants based on metrics such as variant quality (QUAL) and read depth (DP).
+
+For a more comprehensive understanding of VCF files, the variant calling process, its diverse research applications, and a detailed look at the `analyze_vcf.py` script's role and capabilities, please refer to the dedicated README in the `vcf_analysis_tools` directory. (See [Background on VCF Analysis](vcf_analysis_tools/README.md) for more details).
+
+For specific command-line options and usage examples for the script, see [`analyze_vcf.py` usage](docs/USAGE.md#pylibscriptsanalyze_vcfpy).
+
 ## Detailed Script Usage
 
 For detailed command-line options and examples for each script, please refer to:
