@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define paths
-SCRIPT_PATH="pylib/scripts/analyze_vcf.py"
+SCRIPT_PATH="../pylib/scripts/analyze_vcf.py"
 INPUT_VCF="test_data/input.vcf"
 
 # Test Case 1: Filtered VCF
