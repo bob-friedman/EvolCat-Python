@@ -36,6 +36,7 @@ The scripts and library components provided here are for research and informatio
     *   [E. Guide to Accessing MHC Sequence Databases](#e-guide-to-accessing-mhc-sequence-databases)   
     *   [F. Guide to Interpreting Phylogenetic Trees with Python](#f-guide-to-interpreting-phylogenetic-trees-with-python)
     *   [G. Special Topic: Virus Genomics, Diversity, and Analysis](#g-special-topic-virus-genomics-diversity-and-analysis)
+    *   [H. VCF File Analysis and Filtering](#h-vcf-file-analysis-and-filtering)
 8.  [Detailed Script Usage](#detailed-script-usage)
 9.  [Development and Contributions](#development-and-contributions)
 10. [Citation](#citation)
