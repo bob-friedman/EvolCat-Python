@@ -1079,3 +1079,46 @@ A summary message indicating the total number of motifs found and sequences proc
 - The script converts the IUPAC motif string to a regular expression for searching.
 - Searches are case-insensitive.
 - The script will report all non-overlapping matches.
+
+---
+
+## `pylib/scripts/analyze_vcf.py`
+
+Filters a VCF (Variant Call Format) file based on variant quality (QUAL) and read depth (DP) criteria.
+It can output a new filtered VCF file and/or a tab-delimited summary report of the variants that pass the filters.
+This script uses internal logic for VCF parsing and does not require external libraries like PyVCF.
+
+**Usage:**
+```bash
+python3 pylib/scripts/analyze_vcf.py -i <input_vcf_file> [-o <output_vcf_file>] [-r <summary_report_file>] [-q <min_qual>] [-d <min_dp>]
+```
+
+**Arguments:**
+-   `-i, --vcf_file <input_vcf_file>`: (Required) Path to the input VCF file.
+-   `-o, --output_vcf <output_vcf_file>`: (Optional) Path to the output filtered VCF file. If not provided, no filtered VCF will be written.
+-   `-r, --summary_report <summary_report_file>`: (Optional) Path to the output summary report file (tab-delimited). If not provided, no summary report will be written.
+        The report will contain the columns: `CHROM POS ID REF ALT QUAL DP`.
+-   `-q, --min_qual <float>`: (Optional) Minimum variant quality score (QUAL) to keep a record. Default: `30.0`.
+-   `-d, --min_dp <integer>`: (Optional) Minimum total read depth (DP field in INFO) to keep a record. Default: `10`.
+
+**Important:**
+- At least one of `--output_vcf` or `--summary_report` must be specified.
+- The script expects the `DP` value to be present in the INFO field of VCF records.
+
+**Examples:**
+
+1.  **Filter VCF and get both filtered VCF and summary report:**
+    ```bash
+    python3 pylib/scripts/analyze_vcf.py -i variants.vcf -o filtered_variants.vcf -r report.tsv -q 50 -d 20
+    ```
+
+2.  **Filter VCF and get only the filtered VCF file, using default QUAL and DP:**
+    ```bash
+    python3 pylib/scripts/analyze_vcf.py -i variants.vcf -o filtered_variants.vcf
+    ```
+
+3.  **Filter VCF and get only the summary report with custom QUAL:**
+    ```bash
+    python3 pylib/scripts/analyze_vcf.py -i variants.vcf -r report.tsv -q 75
+    ```
+---

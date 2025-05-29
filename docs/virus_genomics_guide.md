@@ -357,37 +357,21 @@ def analyze_viral_genome_details(fasta_file):
 ### Variant Calling and Analysis
 1.  **Alignment:** Align reads to a reference (Bowtie2, BWA, Minimap2) -> SAM/BAM.
 2.  **Variant Calling:** Use bcftools, LoFreq, iVar -> VCF.
-3.  **Python for VCF Analysis (PyVCF):**
+3.  **VCF Analysis with `analyze_vcf.py` (EvolCat-Python):**
+    Once a VCF file is generated, the EvolCat-Python script `pylib/scripts/analyze_vcf.py` can be used for basic filtering and conversion. This script allows users to filter variants based on minimum quality (QUAL) scores and read depth (DP) information directly from the command line. It can produce a new, filtered VCF file or a tab-delimited summary report of the variants that pass the specified criteria. The script uses internal logic to parse VCF files.
 
-```python
-import vcf # Ensure: pip install pyvcf
-
-def analyze_vcf_details(vcf_filepath, min_qual=30, min_dp=10):
-    print(f"\n--- Analyzing VCF file: {vcf_filepath} ---")
-    try:
-        vcf_reader = vcf.Reader(open(vcf_filepath, 'r'))
-        count = 0
-        for record in vcf_reader:
-            qual_pass = record.QUAL is not None and record.QUAL >= min_qual
-            
-            dp_pass = False
-            depth_info = "N/A"
-            if 'DP' in record.INFO and isinstance(record.INFO.get('DP'), (int, float)) and record.INFO['DP'] >= min_dp:
-                dp_pass = True
-                depth_info = f"INFO DP: {record.INFO['DP']}"
-            elif hasattr(record, 'samples') and record.samples and 'DP' in record.samples[0].data._fields and \
-                 isinstance(record.samples[0]['DP'], (int,float)) and record.samples[0]['DP'] >= min_dp:
-                dp_pass = True
-                depth_info = f"Sample {record.samples[0].sample} DP: {record.samples[0]['DP']}"
-            
-            if qual_pass and dp_pass:
-                count += 1
-                print(f"  Variant at {record.CHROM}:{record.POS} {record.REF} -> {record.ALT}")
-                print(f"    Quality: {record.QUAL}, Depth: {depth_info}")
-        print(f"\nFound {count} variants passing filters (QUAL>={min_qual}, DP>={min_dp}).")
-    except Exception as e:
-        print(f"Error processing VCF file {vcf_filepath}: {e}")
-```
+    **Example usage:**
+    ```bash
+    # Filter input.vcf, keeping variants with QUAL >= 50 and DP >= 20
+    # Output a filtered VCF and a summary report
+    python pylib/scripts/analyze_vcf.py \\
+        --vcf_file input.vcf \\
+        --min_qual 50 \\
+        --min_dp 20 \\
+        --output_vcf filtered_variants.vcf \\
+        --summary_report variant_summary.tsv
+    ```
+    This script helps in narrowing down candidate variants for further investigation by removing lower-confidence calls. For more advanced VCF manipulation or annotation, users might explore libraries like `cyvcf2` or tools like `bcftools` further.
 
 ### Multiple Sequence Alignment MSA with Python Wrapper
 
@@ -567,6 +551,7 @@ This section highlights specific EvolCat-Python scripts relevant to viral genomi
 *   **`pylib/scripts/nogaps.py`**: Removes columns from an MSA that consist entirely or predominantly of gaps.
 *   **`pylib/scripts/fas2phy.py`**: Converts sequence alignments from FASTA to PHYLIP format.
 *   **(Conceptual) `pylib/scripts/extract_region.py`**: For extracting specific genomic regions (functionality may vary).
+*   **`pylib/scripts/analyze_vcf.py`**: Filters VCF (Variant Call Format) files based on quality (QUAL) and depth (DP) criteria. It can output a new filtered VCF file or a tab-delimited summary report of passing variants.
 
 ### Key External Databases and Resources Recap
 
