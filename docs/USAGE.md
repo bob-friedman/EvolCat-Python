@@ -1,3 +1,4 @@
+<a name="top"></a>
 # Script Usage Guide
 
 This document provides usage instructions for the converted Python scripts.
@@ -7,6 +8,9 @@ This document provides usage instructions for the converted Python scripts.
 - All scripts can be run from the command line using `python3 path/to/script.py [arguments]`.
 - Ensure you have Python 3 and the required libraries (Biopython, Matplotlib) installed.
 - Use the `-h` or `--help` flag with any script to see its specific command-line options.
+
+
+[Back to Top](#top)
 
 ---
 
@@ -25,6 +29,9 @@ python3 pylib/scripts/gb2fasta.py <input_genbank_file>
 ```bash
 python3 pylib/scripts/gb2fasta.py my_sequences.gb > my_sequences.fasta
 ```
+
+
+[Back to Top](#top)
 
 ---
 
@@ -46,6 +53,9 @@ python3 pylib/scripts/translate_seq.py --input_file <fasta_file> [--frame <1|2|3
 python3 pylib/scripts/translate_seq.py --input_file cds.fna --frame 1 --table 11 > proteins.faa
 ```
 
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/join_tables.py`
@@ -64,6 +74,9 @@ python3 pylib/scripts/join_tables.py <file1_path> <file2_path>
 ```bash
 python3 pylib/scripts/join_tables.py annotations.tsv metadata.tsv > combined_data.tsv
 ```
+
+
+[Back to Top](#top)
 
 ---
 
@@ -87,6 +100,10 @@ python3 pylib/scripts/dot_plot.py -1 <seqfile1> -2 <seqfile2> -w <wordlen> -s <s
 ```bash
 python3 pylib/scripts/dot_plot.py -1 seqA.fasta -2 seqB.fasta -w 10 -s 5 -o comparison.png -d matches.txt -t "SeqA vs SeqB"
 ```
+
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/fas2csv.py`
@@ -104,6 +121,10 @@ python3 pylib/scripts/fas2csv.py <input_fasta_file>
 ```bash
 python3 pylib/scripts/fas2csv.py my_sequences.fasta > my_sequences.csv
 ```
+
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/fas2meg.py`
@@ -121,6 +142,10 @@ python3 pylib/scripts/fas2meg.py <input_fasta_file>
 ```bash
 python3 pylib/scripts/fas2meg.py my_sequences.fasta > my_sequences.meg
 ```
+
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/fas2phy.py`
@@ -274,6 +299,10 @@ python3 pylib/scripts/rev_comp.py <input_fasta_file>
 ```bash
 python3 pylib/scripts/rev_comp.py my_sequences.fasta > my_sequences_rc.fasta
 ```
+
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/nogaps.py`
@@ -292,6 +321,10 @@ python3 pylib/scripts/nogaps.py <input_fasta_file>
 ```bash
 python3 pylib/scripts/nogaps.py my_aligned_sequences.fasta > my_aligned_sequences_nogaps.fasta
 ```
+
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/print_duplicate_column_values.py`
@@ -321,6 +354,9 @@ A
 B
 ```
 (Explanation: 'A' is printed when encountered the second time (in col2). 'B' is printed when encountered the second time (in col1 of the last row)).
+
+
+[Back to Top](#top)
 
 ---
 
@@ -352,6 +388,10 @@ Output:
 2.5
 10
 ```
+
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/transpose_text_matrix.py`
@@ -380,6 +420,10 @@ A D
 B E
 C F
 ```
+
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/iupac_to_regexp.py`
@@ -410,6 +454,9 @@ XG
 ```
 (A warning about 'X' would also be printed to stderr).
 
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/transpose_tsv.py`
@@ -437,6 +484,10 @@ A1	A2
 B1	B2
 C1	C2
 ```
+
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/table_to_binary.py`
@@ -466,6 +517,10 @@ Output:
 0	0	0	0
 1	1	0	0
 ```
+
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/count_kmers.py`
@@ -507,6 +562,9 @@ ACA:1
 ```
 (A warning for `seq3` would also be printed to stderr).
 
+
+[Back to Top](#top)
+
 ---
 
 ---
@@ -529,6 +587,10 @@ python3 pylib/scripts/approximate_string_match.py --pattern "ACTG" --text "ACGTX
 # To also print the distance matrix:
 # python3 pylib/scripts/approximate_string_match.py --pattern "ACTG" --text "ACGTXACTG" --print_matrix
 ```
+
+
+[Back to Top](#top)
+
 ---
 ---
 
@@ -557,6 +619,10 @@ Subject_ID:
 ```bash
 python3 pylib/scripts/parse_blast_text.py my_blast_run.txt
 ```
+
+
+[Back to Top](#top)
+
 ---
 ---
 
@@ -578,6 +644,10 @@ python3 pylib/scripts/blast_to_table.py <input_blast_file>
 ```bash
 python3 pylib/scripts/blast_to_table.py my_blast_run.txt > blast_summary.tsv
 ```
+
+
+[Back to Top](#top)
+
 ---
 ---
 
@@ -607,6 +677,10 @@ Assuming `blast_results.tsv` with QueryID, SubjectID, BitScore, AlignmentLength 
 ```bash
 python3 pylib/scripts/find_blast_top_pairs.py blast_results.tsv --filter_threshold 100
 ```
+
+
+[Back to Top](#top)
+
 ---
 ---
 
@@ -628,6 +702,10 @@ python3 pylib/scripts/calculate_k2p.py <input_fasta_file>
 ```bash
 python3 pylib/scripts/calculate_k2p.py aligned_sequences.fasta > k2p_results.tsv
 ```
+
+
+[Back to Top](#top)
+
 ---
 ---
 
@@ -649,6 +727,10 @@ python3 pylib/scripts/calculate_dna_distances.py <input_fasta_file>
 ```bash
 python3 pylib/scripts/calculate_dna_distances.py aligned_sequences.fasta > dna_distances_summary.tsv
 ```
+
+
+[Back to Top](#top)
+
 ---
 ---
 
@@ -680,6 +762,10 @@ Prints a summary of found repeat blocks:
 ```bash
 python3 pylib/scripts/find_tandem_repeats.py --pattern "CAT" --sequence "CATCATCATNNNCATCAT" --fudge 3
 ```
+
+
+[Back to Top](#top)
+
 ---
 ---
 
@@ -701,6 +787,10 @@ python3 pylib/scripts/calculate_k2p.py <input_fasta_file>
 ```bash
 python3 pylib/scripts/calculate_k2p.py aligned_sequences.fasta > k2p_results.tsv
 ```
+
+
+[Back to Top](#top)
+
 ---
 ---
 
@@ -722,6 +812,10 @@ python3 pylib/scripts/calculate_dna_distances.py <input_fasta_file>
 ```bash
 python3 pylib/scripts/calculate_dna_distances.py aligned_sequences.fasta > dna_distances_summary.tsv
 ```
+
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/calculate_nucleotide_diversity.py`
@@ -755,6 +849,9 @@ Number of pairs: 3
 Nucleotide diversity (pi): 0.050000
 ```
 
+
+[Back to Top](#top)
+
 ## `pylib/scripts/paml_tools/calculate_dn_ds.py`
 
 Calculates pairwise dN/dS (non-synonymous to synonymous substitution rates) ratios for sequences from an aligned FASTA file. It uses the `yn00` program from the PAML package.
@@ -782,6 +879,9 @@ If `SIMULATE_PAML=true` (or is not set), you can also set the `MOCK_YN00_FILE_PA
 
 **Guidance Note:**
 Note: This script is designed for pairwise dN/dS estimation using `yn00`. For more complex analyses, such as detecting positive selection at specific codon sites or using different evolutionary models along a phylogeny, consider using the `pylib/scripts/paml_tools/calculate_site_specific_ds_dn.py` script (which uses PAML's `codeml` program).
+
+
+[Back to Top](#top)
 
 ---
 =======
@@ -820,6 +920,9 @@ Total pairwise differences: 15
 Number of pairs: 3
 Nucleotide diversity (pi): 0.050000
 ```
+
+
+[Back to Top](#top)
 
 ## `pylib/scripts/paml_tools/calculate_site_specific_ds_dn.py`
 
@@ -868,6 +971,10 @@ python pylib/scripts/paml_tools/calculate_site_specific_ds_dn.py \
 - Interpreting dN/dS ratios: dN/dS > 1 suggests positive (Darwinian) selection; dN/dS = 1 suggests neutral evolution; dN/dS < 1 suggests purifying (negative) selection.
 - The choice of PAML model is critical and should be guided by the specific biological questions and hypotheses. Model comparison using Likelihood Ratio Tests (LRTs) is common practice (e.g., comparing M1a vs. M2a, or M7 vs. M8) but is not performed by this script directly.
 - Note: This script is designed for site-specific evolutionary analyses using PAML's `codeml` program. For straightforward pairwise dN/dS calculations between sequences, the `pylib/scripts/paml_tools/calculate_dn_ds.py` script (which uses PAML's `yn00`) is more direct.
+
+
+[Back to Top](#top)
+
 ---
 ---
 
@@ -937,6 +1044,10 @@ python3 pylib/scripts/build_tree_from_distances.py my_distances.phy --method upg
     ;
   END;
   ```
+
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/analyze_msa.py`
@@ -1013,6 +1124,9 @@ python3 pylib/scripts/analyze_msa.py <msa_file> --informat <format> [task_option
 - Alphabet inference (DNA/RNA vs. Protein) is basic and used for GC content calculation and defaulting the ambiguous consensus character.
 - For consensus generation, gap characters (`-`, `.`) in a column are ignored when calculating frequencies but a column of only gaps will result in a gap in the consensus.
 
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/scan_sequences_for_motif.py`
@@ -1080,6 +1194,9 @@ A summary message indicating the total number of motifs found and sequences proc
 - Searches are case-insensitive.
 - The script will report all non-overlapping matches.
 
+
+[Back to Top](#top)
+
 ---
 
 ## `pylib/scripts/analyze_vcf.py`
@@ -1121,4 +1238,8 @@ python3 pylib/scripts/analyze_vcf.py -i <input_vcf_file> [-o <output_vcf_file>] 
     ```bash
     python3 pylib/scripts/analyze_vcf.py -i variants.vcf -r report.tsv -q 75
     ```
+
+
+[Back to Top](#top)
+
 ---

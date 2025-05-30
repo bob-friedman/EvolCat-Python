@@ -1,3 +1,4 @@
+<a name="top"></a>
 # Accessing MHC (Major Histocompatibility Complex) Sequence Databases
 
 Connecting to MHC (Major Histocompatibility Complex) sequence databases involves a few primary sources and methods. The most prominent databases are:
@@ -8,6 +9,9 @@ Connecting to MHC (Major Histocompatibility Complex) sequence databases involves
 4.  **IEDB (Immune Epitope Database):** While primarily for epitopes, it contains MHC allele information and links to sequences, and offers tools for MHC binding prediction.
 
 Below is a Python script demonstrating programmatic access, primarily using NCBI's Entrez API (via Biopython) for broad querying, and discussing how to obtain data from IMGT/IPD (which often involves downloading datasets).
+
+
+[Back to Top](#top)
 
 ## Python Script for Accessing MHC Data
 
@@ -350,6 +354,9 @@ if __name__ == "__main__":
     print("For higher NCBI request rates, consider getting an API key.")
 ```
 
+
+[Back to Top](#top)
+
 ## Explanation and How to Use the Script
 
 1.  **Prerequisites:**
@@ -397,6 +404,9 @@ if __name__ == "__main__":
     *   IMGT/IPD download examples are commented out – you'll need to uncomment them and update paths to use them.
     *   The IEDB example demonstrates calling one of its tool APIs.
 
+
+[Back to Top](#top)
+
 ## Further Analysis (Beyond this script)
 
 Once you have the sequences (e.g., in a FASTA file from the script):
@@ -409,5 +419,8 @@ Once you have the sequences (e.g., in a FASTA file from the script):
 *   **Structural Analysis:** If you have protein sequences, predict structures (AlphaFold) or analyze existing PDB structures.
 
 This script provides a solid foundation for accessing MHC sequence data programmatically. Remember to consult the documentation of each database for the most up-to-date access methods and data formats.
+
+
+[Back to Top](#top)
 
 ---
