@@ -1,3 +1,4 @@
+<a name="top"></a>
 # EvolCat-Python: A Python Suite for Evolutionary and Comparative Genomics
 
 EvolCat-Python is a collection of Python-based scripts designed to facilitate common tasks in bioinformatics, particularly in the fields of evolutionary biology and comparative genomics. This project is a Python-based bioinformatics library converted from an existing collection of Perl scripts. It provides a set of tools for sequence manipulation, format conversion, analysis, and interaction with NCBI databases.
@@ -41,6 +42,9 @@ The scripts and library components provided here are for research and informatio
 9.  [Development and Contributions](#development-and-contributions)
 10. [Citation](#citation)
 
+
+[Back to Top](#top)
+
 ## Overview
 
 The library is organized into:
@@ -49,6 +53,9 @@ The library is organized into:
 *   `pylib/scripts/`: Contains executable Python scripts that replicate and extend the functionality of original bioinformatics command-line tools. Many of these scripts depend on the `pylib/utils/` core utility modules. The scripts are designed to find these modules by default when EvolCat-Python is structured with `pylib/utils/` as a subdirectory.
     *   `pylib/scripts/ncbi/`: Contains tools specifically for interacting with NCBI.
     *   `pylib/scripts/paml_tools/`: Contains tools specifically for PAML genomics analysis.
+
+
+[Back to Top](#top)
 
 ## Dependencies
 
@@ -61,6 +68,9 @@ The primary dependencies for this library are listed in the `requirements.txt` f
 *   (Other specific dependencies might be required by individual scripts or future additions. External phylogenetic software like ClustalW/MUSCLE/MAFFT, RAxML/IQ-TREE/PhyML will be needed for parts of the phylogenetic workflow).
 
 Please refer to `requirements.txt` or `setup.py` for a complete list of dependencies and their versions.
+
+
+[Back to Top](#top)
 
 ## Installation
 
@@ -79,6 +89,9 @@ source evolcat_env/bin/activate # On Unix/macOS
 ```
 Once your environment is activated, you can install dependencies.
 
+
+[Back to Top](#top)
+
 ### Installing EvolCat-Python
 
 1.  **Clone the repository:**
@@ -94,6 +107,9 @@ Once your environment is activated, you can install dependencies.
     This command reads `setup.py` and `requirements.txt` to install EvolCat-Python and its listed dependencies like Biopython, Matplotlib, and Requests.
 
     *(Note: If the package were published to PyPI, e.g., as `evolcat_python`, you would install it via `pip install evolcat_python`.)*
+
+
+[Back to Top](#top)
 
 ### Access in a Windows OS with WSL (Windows Subsystem for Linux)
 
@@ -135,6 +151,9 @@ In your Ubuntu/WSL shell:
     ```
     After setting the Python version with `pyenv`, `python3` and `pip` commands will use this version. You can then proceed with cloning the EvolCat-Python repository and installing it using `pip install .` as described above within your WSL environment.
 
+
+[Back to Top](#top)
+
 ## General Script Usage
 
 *   All executable scripts are located in the `pylib/scripts/` directory (and subdirectories like `pylib/scripts/ncbi/`).
@@ -148,6 +167,9 @@ In your Ubuntu/WSL shell:
     python3 pylib/scripts/gb2fasta.py -h
     ```
 
+
+[Back to Top](#top)
+
 ## NCBI Tools
 
 This library includes specific tools for interacting with NCBI services. These are located in `pylib/scripts/ncbi/` and include:
@@ -156,6 +178,9 @@ This library includes specific tools for interacting with NCBI services. These a
 *   `query_ncbi_gi_py` (likely `pylib/scripts/ncbi/query_ncbi_gi.py`): Queries NCBI using GenInfo Identifiers (GIs) to retrieve sequence data.
 
 These tools require the `requests` library, which will be installed if you use `pip install .`. For more detailed information on these specific NCBI tools, please see `pylib/scripts/ncbi/README.md` (if present) or use the `--help` flag with the scripts themselves.
+
+
+[Back to Top](#top)
 
 ## Relationship with Biopython and Scope of Provided Scripts
 
@@ -192,9 +217,15 @@ While EvolCat-Python offers these targeted solutions, Biopython itself is a comp
 
 Users familiar with Python programming can readily combine the convenience and focused power of EvolCat-Python scripts with the extensive library functionalities of Biopython to build sophisticated and efficient bioinformatics pipelines.
 
+
+[Back to Top](#top)
+
 ## Workflow Examples
 
 This section outlines general workflows, highlighting where EvolCat-Python scripts can be utilized.
+
+
+[Back to Top](#top)
 
 ### A. Building a Local Sequence Database from NCBI
 
@@ -266,6 +297,9 @@ If you have retrieved sequences from multiple searches or in multiple files, you
     python3 pylib/scripts/merge_fastas.py part1.fasta part2.fasta part3.fasta > local_database.fasta
     ```
     After merging, you will have a single FASTA file representing your initial local sequence database. You might want to organize sequences into sub-databases based on organism, gene family, etc., by further splitting this master file if needed (which could be done with custom scripting or standard command-line tools). You can then format this `local_database.fasta` using NCBI's `makeblastdb` (external tool) if you wish to BLAST against it locally.
+
+
+[Back to Top](#top)
 
 ### B. Performing a Phylogenetic Tree Analysis
 
@@ -356,6 +390,9 @@ Once you have a tree file (e.g., in Newick format), you can visualize and analyz
 *   **Basic Tree Manipulation (Biopython):** Biopython's `Bio.Phylo` module allows for programmatic tree manipulation (e.g., re-rooting, extracting clades, calculating distances between tips). While `EvolCat-Python` might not have dedicated high-level scripts for all these manipulations yet, the underlying Biopython library provides these functions.
 
 This phylogenetic workflow highlights how EvolCat-Python scripts primarily serve as helper tools for preparing data for, and converting formats between, specialized external programs for MSA and tree inference.
+
+
+[Back to Top](#top)
 
 ### C. Performing a Standard Pairwise Sequence Alignment with Biopython
 
@@ -451,6 +488,9 @@ However, since EvolCat-Python depends on Biopython, you can easily perform these
 
 This conceptual workflow demonstrates how to leverage the power of Biopython for a core bioinformatics task that is not currently available as a dedicated script in the EvolCat-Python suite. By creating simple scripts like the one outlined, users can easily extend the capabilities of their analysis environment.
 
+
+[Back to Top](#top)
+
 ### D. Basic Motif Scanning
 
 Identifying known motifs (e.g., transcription factor binding sites, short functional patterns) within a set of sequences is a common requirement.
@@ -463,17 +503,29 @@ Identifying known motifs (e.g., transcription factor binding sites, short functi
     ```
     The script will output a tab-delimited file listing the sequence ID, motif, start, end, strand, and the matched sequence for each occurrence.
 
+
+[Back to Top](#top)
+
 ### E. Guide to Accessing MHC Sequence Databases
 
 [MHC Database Guide](docs/mhc-database-guide.md)
+
+
+[Back to Top](#top)
 
 ### F. Guide to Interpreting Phylogenetic Trees with Python
 
 [Phylogenetic Tree Interpretation](docs//phylogenetic-tree-interpretation.md)
 
+
+[Back to Top](#top)
+
 ### G. Special Topic: Virus Genomics, Diversity, and Analysis
 
 [Guide to Virus Genomics, Diversity, and Analysis](docs/virus_genomics_guide.md)
+
+
+[Back to Top](#top)
 
 ### H. VCF File Analysis and Filtering
 
@@ -485,6 +537,9 @@ For a more comprehensive understanding of VCF files, the variant calling process
 
 For specific command-line options and usage examples for the script, see [`analyze_vcf.py` usage](docs/USAGE.md#pylibscriptsanalyze_vcfpy).
 
+
+[Back to Top](#top)
+
 ## Detailed Script Usage
 
 For detailed command-line options and examples for each script, please refer to:
@@ -494,6 +549,9 @@ You can also use the `-h` or `--help` flag with any script:
 ```bash
 python3 pylib/scripts/script_name.py -h
 ```
+
+
+[Back to Top](#top)
 
 ## Development and Contributions
 
@@ -508,8 +566,14 @@ This library was primarily converted from its original Perl source using AI-assi
 
 Human oversight and review are crucial for ensuring the accuracy and robustness of the converted code. This library is currently under development. Contributions, bug reports, and feature requests are welcome via GitHub Issues and Pull Requests.
 
+
+[Back to Top](#top)
+
 ## Citation
 
 If you use EvolCat-Python in your research or find the repository useful, please cite the following paper:
 
 Friedman, R. EvolCat-Python: A Python Suite for Evolutionary and Comparative Genomics. Preprints 2025, 2025052059. https://www.preprints.org/manuscript/202505.2059/v1
+
+
+[Back to Top](#top)
