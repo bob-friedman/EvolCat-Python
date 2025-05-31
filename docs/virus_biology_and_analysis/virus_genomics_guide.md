@@ -708,8 +708,7 @@ A powerful approach to understand the fitness consequences of mutations across t
 *   **Access to Findings:**
     *   The Bloom and Neher study provides interactive visualizations of their comprehensive SARS-CoV-2 mutation effect maps at [https://jbloomlab.github.io/SARS2-mut-fitness/](https://jbloomlab.github.io/SARS2-mut-fitness/) [Bloom and Neher, 2023; see Reference 13 for full details](#references). This resource allows for detailed exploration of the data for each viral protein.
 
-    This methodology represents a significant advancement in using large-scale genomic data to probe the evolutionary landscape of viruses.
-
+    This methodology represents a significant advancement in using large-scale genomic data to probe the evolutionary landscape of viruses. At this site there is also a related [Guide to Estimating Mutational Fitness Effects from Large-Scale Viral Sequence Data](https://github.com/bob-friedman/EvolCat-Python/blob/main/docs/virus_biology_and_analysis/estimating_mutation_fitness_effects_guide.md).
 
 
 [Back to Top](#top)
