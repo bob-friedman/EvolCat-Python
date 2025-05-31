@@ -36,7 +36,7 @@ The scripts and library components provided here are for research and informatio
     *   [D. Basic Motif Scanning](#d-basic-motif-scanning)
     *   [E. Guide to Accessing MHC Sequence Databases](#e-guide-to-accessing-mhc-sequence-databases)   
     *   [F. Guide to Interpreting Phylogenetic Trees with Python](#f-guide-to-interpreting-phylogenetic-trees-with-python)
-    *   [G. Special Topic: Virus Genomics, Diversity, and Analysis](#g-special-topic-virus-genomics-diversity-and-analysis)
+    *   [G. Special Topic: Virus Genomics, Diversity, and Analysis](docs/virus_biology_and_analysis/virus_genomics_guide.md)
     *   [H. VCF File Analysis and Filtering](#h-vcf-file-analysis-and-filtering)
 8.  [Detailed Script Usage](#detailed-script-usage)
 9.  [Development and Contributions](#development-and-contributions)
@@ -522,7 +522,7 @@ Identifying known motifs (e.g., transcription factor binding sites, short functi
 
 ### G. Special Topic: Virus Genomics, Diversity, and Analysis
 
-[Guide to Virus Genomics, Diversity, and Analysis](docs/virus_genomics_guide.md)
+[Guide to Virus Genomics, Diversity, and Analysis](docs/virus_biology_and_analysis/virus_genomics_guide.md)
 
 
 [Back to Top](#top)
