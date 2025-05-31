@@ -587,7 +587,7 @@ Identifying a recombination or reassortment event is often just the first step. 
 *   **Current Approaches (Data Dependent and Iterative):**
     *   **Comparative Genomics and Selection Analysis:**
         *   Once a recombinant/reassortant lineage is identified, its sequence (especially in the exchanged or newly combined regions) is compared to those of its putative parental strains and other related non-recombinant viruses.
-        *   dN/dS analysis (e.g., using `calculate_site_specific_ds_dn.py` as described in the [Tools and Resources](#tools-and-resources) section, which wraps PAML) can be applied to genes within the exchanged regions. Evidence of positive selection (dN/dS > 1) might suggest that the new genetic combination confers an adaptive advantage that is being selected for [Friedman, 2024](#referenc
+        *   dN/dS analysis (e.g., using `calculate_site_specific_ds_dn.py` as described in the [Tools and Resources](#tools-and-resources) section, which wraps PAML) can be applied to genes within the exchanged regions. Evidence of positive selection (dN/dS > 1) might suggest that the new genetic combination confers an adaptive advantage that is being selected for [Friedman, 2024](#references).
         *   Track specific mutations within the exchanged regions that are known from other studies to affect phenotype (e.g., mutations in receptor-binding sites, polymerase active sites, or known antigenic epitopes).
     *   **Structural Modeling and Functional Predictions:**
         *   If protein-coding regions are involved, predict the 3D structure of the new chimeric or reassorted protein (e.g., using AlphaFold or other modeling tools).
