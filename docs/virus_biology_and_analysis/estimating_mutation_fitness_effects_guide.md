@@ -15,7 +15,7 @@ This methodology relies heavily on a large, comprehensive, and accurately constr
 
 *   **Specific Data Used in Bloom and Neher (2023):**
     *   **UShER Tree File:** `http://vhgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/2023/05/11/public-2023-05-11.all.masked.nextclade.pangolin.pb.gz`
-        *   More recent versions of the dataset (McBroome et al. 2021) are available: `http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/1`
+        *   More recent versions of the dataset (McBroome et al. 2021) are available: `http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/`
     *   **Contents:** This compressed file contains a mutation-annotated tree representing approximately 7 million public SARS-CoV-2 sequences available as of May 11, 2023. The tree includes annotations of nucleotide mutations on its branches.
 *   **UShER Toolkit:** The [UShER (Ultrafast Sample placement on Existing tRee)](https://usher-wiki.readthedocs.io/en/latest/) toolkit, particularly programs like `matUtils`, is essential for working with these `.pb` (protobuf) tree files. [matUtils](https://usher-wiki.readthedocs.io/en/latest/matUtils.html) can be used to extract information about mutations, samples, and phylogenetic relationships from the tree.
 
