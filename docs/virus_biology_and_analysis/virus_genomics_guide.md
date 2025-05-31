@@ -612,21 +612,21 @@ A powerful approach to understand the fitness consequences of mutations across t
 *   **Key Findings (from SARS-CoV-2 example):**
     *   **Correlation with Experiments:** The estimated fitness effects correlate well with experimental data from deep mutational scanning (DMS) for proteins like Spike and Mpro.
     *   **Mutation Class Effects:**
-       *   Most synonymous mutations are found to be nearly neutral.
-       *   The majority of stop-codon mutations are highly deleterious.
-       *   Amino acid (nonsynonymous) mutations exhibit a wide spectrum of effects, from neutral to highly deleterious, with some being slightly beneficial.
-    *    **Protein-Specific Constraints:**
-       *   Essential viral proteins (e.g., nonstructural proteins like the polymerase, and structural proteins like Spike, M, N, E) generally show strong purifying selection, meaning most amino acid changes are detrimental.
-       *   In contrast, many viral accessory proteins (e.g., ORF7a, ORF8 in SARS-CoV-2) appear to be under little to no selection pressure, tolerating even stop-codon mutations. ORF3a was an exception among accessory proteins, showing clear selection against stop codons.
+        *   Most synonymous mutations are found to be nearly neutral.
+        *   The majority of stop-codon mutations are highly deleterious.
+        *   Amino acid (nonsynonymous) mutations exhibit a wide spectrum of effects, from neutral to highly deleterious, with some being slightly beneficial.
+    *   **Protein-Specific Constraints:**
+        *   Essential viral proteins (e.g., nonstructural proteins like the polymerase, and structural proteins like Spike, M, N, E) generally show strong purifying selection, meaning most amino acid changes are detrimental.
+        *   In contrast, many viral accessory proteins (e.g., ORF7a, ORF8 in SARS-CoV-2) appear to be under little to no selection pressure, tolerating even stop-codon mutations. ORF3a was an exception among accessory proteins, showing clear selection against stop codons.
     *    **Epistasis and Evolution:** The approach can also shed light on how mutation effects can change in different viral backgrounds (epistasis) by comparing estimates across different viral clades. Mutations that become fixed in expanding viral clades typically show neutral or beneficial fitness effects in this analysis.
 
 *   **Significance of the Approach:**
-   *   **Comprehensive Fitness Maps:** Enables the generation of detailed maps of mutational fitness effects across all viral proteins, including those that are difficult to study with traditional lab experiments.
-   *     **Informing Public Health:** Such maps are valuable for:
-      *   Assessing the potential impact of new viral variants.
-          *   Guiding the design of antiviral drugs or vaccines by targeting regions of the virus that are highly constrained (i.e., where escape mutations are likely to be deleterious to the virus).
-          *   Improving our understanding of the functional roles of different viral proteins.
-     *   **Broad Applicability:** While demonstrated for SARS-CoV-2, this computational framework can be applied to any virus for which a sufficiently large number of sequences and a robust phylogeny are available.
+    *   **Comprehensive Fitness Maps:** Enables the generation of detailed maps of mutational fitness effects across all viral proteins, including those that are difficult to study with traditional lab experiments.
+        *   **Informing Public Health:** Such maps are valuable for:
+            *   Assessing the potential impact of new viral variants.
+            *   Guiding the design of antiviral drugs or vaccines by targeting regions of the virus that are highly constrained (i.e., where escape mutations are likely to be deleterious to the virus).
+            *   Improving our understanding of the functional roles of different viral proteins.
+        *   **Broad Applicability:** While demonstrated for SARS-CoV-2, this computational framework can be applied to any virus for which a sufficiently large number of sequences and a robust phylogeny are available.
 
 *   **Important Caveats:**
     *   **Data Quality:** The accuracy of the estimates heavily relies on the quality of the input sequence data and the phylogenetic tree. Sequencing errors or alignment artifacts can distort results.
