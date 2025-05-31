@@ -15,8 +15,9 @@ This methodology relies heavily on a large, comprehensive, and accurately constr
 
 *   **Specific Data Used in Bloom and Neher (2023):**
     *   **UShER Tree File:** `http://vhgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/2023/05/11/public-2023-05-11.all.masked.nextclade.pangolin.pb.gz`
+        *   More recent versions of the dataset (McBroome et al. 2021) are available: `http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/1`
     *   **Contents:** This compressed file contains a mutation-annotated tree representing approximately 7 million public SARS-CoV-2 sequences available as of May 11, 2023. The tree includes annotations of nucleotide mutations on its branches.
-*   **UShER Toolkit:** The [UShER (Ultrafast Sample placement on Existing tRee)](https://usher-wiki.readthedocs.io/en/latest/) toolkit, particularly programs like `matUtils`, is essential for working with these `.pb` (protobuf) tree files. `matUtils` can be used to extract information about mutations, samples, and phylogenetic relationships from the tree.
+*   **UShER Toolkit:** The [UShER (Ultrafast Sample placement on Existing tRee)](https://usher-wiki.readthedocs.io/en/latest/) toolkit, particularly programs like `matUtils`, is essential for working with these `.pb` (protobuf) tree files. [matUtils](https://usher-wiki.readthedocs.io/en/latest/matUtils.html) can be used to extract information about mutations, samples, and phylogenetic relationships from the tree.
 
 Obtaining and being able to parse such a tree is the foundational step for this type of analysis.
 
@@ -85,7 +86,8 @@ The goal is to determine how often each type of nucleotide mutation (e.g., A_to_
 
 This guide provides a high-level overview. For a detailed implementation, refer to the methods in the original Bloom and Neher (2023) paper and their publicly available code.
 
-## Reference
+## References
 *   Bloom, J. D., & Neher, R. A. (2023). Fitness effects of mutations to SARS-CoV-2 proteins. *Virus Evolution*, *9*(2), vead055. [https://doi.org/10.1093/ve/vead055](https://doi.org/10.1093/ve/vead055)
+*   McBroome, J., Thornlow, B., Hinrichs, A.S., Kramer, A., De Maio, N., Goldman, N., & Turakhia , Y. (2021).  A Daily-Updated Database and Tools for Comprehensive SARS-CoV-2 Mutation-Annotated Trees. [https://academic.oup.com/mbe/article/38/12/5819/6361626](https://academic.oup.com/mbe/article/38/12/5819/6361626)
 
 [Back to Top](#top)
