@@ -9,5 +9,4 @@ This section of the EvolCat-Python documentation focuses on topics related to vi
 
 =======
 
-
 Navigate back to the [main documentation page](../README.md) or the [EvolCat-Python project root](../../README.md).
