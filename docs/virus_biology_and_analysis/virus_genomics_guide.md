@@ -31,12 +31,15 @@
     *   [Population Level Virus Host Interactions](#population-level-virus-host-interactions)
     *   [Predicting Immunogenic Peptides and TCR Interactions](#predicting-immunogenic-peptides-and-tcr-interactions)
     *   [Deep Learning in Viral Evolution and Immunogenicity](#deep-learning-in-viral-evolution-and-immunogenicity)
+    *   [Predictive Modeling of Viral Evolution: AI and Other Approaches](#predictive-modeling-of-viral-evolution-ai-and-other-approaches)
 *   [Viral Evolution and Emergence Focus on Recombination Reassortment and Their Detection](#viral-evolution-and-emergence-focus-on-recombination-reassortment-and-their-detection)
     *   [1 The Landscape of Viral Genetic Variation](#1-the-landscape-of-viral-genetic-variation)
     *   [2 Recombination Creating Mosaic Viral Genomes](#2-recombination-creating-mosaic-viral-genomes)
     *   [3 Reassortment Segment Shuffling in Segmented Viruses](#3-reassortment-segment-shuffling-in-segmented-viruses)
     *   [4 Detecting Recombination and Reassortment Events](#4-detecting-recombination-and-reassortment-events)
     *   [5 Inferring Genotype Phenotype Consequences of Genetic Exchange](#5-inferring-genotype-phenotype-consequences-of-genetic-exchange)
+        *   [Estimating Mutational Fitness Effects from Large-Scale Sequence Data](#estimating-mutational-fitness-effects-from-large-scale-sequence-data)
+        *   [Case Study: Population Immunity and Predicting SARS-CoV-2 Evolutionary Trajectories](#case-study-population-immunity-and-predicting-sars-cov-2-evolutionary-trajectories)
     *   [6 Viral Sequence Data Availability and Surveillance](#6-viral-sequence-data-availability-and-surveillance)
     *   [7 Concluding Remarks on Studying Viral Emergence](#7-concluding-remarks-on-studying-viral-emergence)
 *   [Tools and Resources](#tools-and-resources)
@@ -505,6 +508,39 @@ Deep learning approaches are becoming increasingly important in virology and imm
 
 [Back to Top](#top)
 
+### Predictive Modeling of Viral Evolution: AI and Other Approaches
+
+A review by [Hamelin et al., 2024](#references) explores the evolving landscape of predicting pathogen evolution and immune evasion, with a particular focus on the role of Artificial Intelligence (AI). The paper serves as a valuable compendium of current strategies and future directions in this rapidly advancing field.
+
+#### Methods Described
+
+*   **Phylogenetic Analysis:** This involves using viral genomic sequences to construct evolutionary trees. The length of the branches in these trees reflects genetic divergence over time, allowing researchers to identify mutations associated with successful lineages. Statistical models, like multinomial logistic regressions, are used to assess the fitness advantage of competing strains.
+*   **Deep Mutational Scans (DMS):** This high-throughput experimental technique systematically evaluates the functional impact of numerous mutations across viral proteins. Libraries of barcoded mutant viruses are generated and then screened for phenotypes like host cell entry, immune evasion, and replication efficiency. Deep sequencing is used to track the mutant-phenotype relationships.
+*   **Variational Autoencoders (VAEs):** These are deep learning models that encode complex data (like viral genomes) into lower-dimensional representations. They are trained on large datasets of viral sequences and learn to generate new sequences based on the patterns they have learned.
+*   **Protein Language Models (PLMs):** These models, inspired by natural language processing, treat protein sequences as "sentences" and amino acids as "words." They are trained on massive protein sequence databases to learn the underlying rules governing protein function, domain organization, and selective pressures. Techniques like Long Short-Term Memory (LSTM) networks and Transformer architectures are used.
+
+#### Impact on the Field
+
+*   **Consolidation of Knowledge:** The review brings together a diverse range of methods into a single, accessible resource.
+*   **Highlighting AI's Potential:** It emphasizes the transformative potential of AI in tackling the complex problem of viral evolution, moving beyond traditional methods.
+*   **Stimulating Further Research:** By identifying challenges and future directions, the review serves as a roadmap for further research in this area.
+
+#### Breadth of Findings Described
+
+*   **Frameworks for Forecasting:** The review identifies and summarizes several frameworks for anticipating the evolution of viruses.
+*   **Data-Driven Approaches:** It showcases the increasing reliance on large datasets and AI-driven techniques in the field.
+*   **Adaptability:** The review underscores the adaptability of these frameworks across viral species.
+*   **Actionable Insights:** It emphasizes the potential of these methods to generate actionable insights for public health.
+
+#### Critique
+
+*   **Limited Technical Depth:** While the review provides an overview of various methods, it lacks detailed explanations of the underlying algorithms and mathematical models. For example, it mentions VAEs and LSTMs but doesn't provide equations or diagrams illustrating their architecture or training process. This limits the review's usefulness for researchers seeking to implement or adapt these methods.
+*   **Uneven Coverage:** The review dedicates a significant portion to PLMs, which may reflect the current research landscape but could be seen as disproportionate given the other methods' importance.
+*   **Lack of Direct Comparison:** The review could be strengthened by a more critical and comparative analysis of the different methods. It would be useful to see a table or section that directly compares the strengths, weaknesses, and applicability of each method in different scenarios (e.g., data-rich vs. data-scarce, RNA vs. DNA viruses, etc.).
+*   **Limited Discussion of Ethical Considerations:** While the review briefly mentions ethical concerns regarding the misuse of AI in viral pathogen engineering, it could expand on this topic. This is a crucial aspect of AI in bioscience and deserves more in-depth discussion.
+
+[Back to Top](#top)
+
 ## Viral Evolution and Emergence Focus on Recombination Reassortment and Their Detection
 
 The dynamic nature of viruses, particularly their capacity for rapid genetic change, underpins their ability to emerge in new hosts, adapt to changing environments, and evade host immunity. While point mutations provide a constant source of variation, mechanisms of genetic exchange—such as recombination and reassortment—can lead to more significant and abrupt evolutionary shifts, often associated with major outbreaks or changes in viral phenotype. This section delves into these mechanisms, methods for their detection, and illustrative case studies, while acknowledging the inherent challenges in predicting their full impact.
@@ -600,6 +636,90 @@ Identifying a recombination or reassortment event is often just the first step. 
         *   **Phenotypic Assays:** Test its properties (e.g., replication efficiency in different cell types, virulence in animal models, sensitivity to neutralizing antibodies or antiviral drugs) compared to parental and non-recombinant strains.
         *   *Critique:* This is resource-intensive and time-consuming. Laboratory conditions (cell culture, animal models) may not perfectly recapitulate the complexities of natural infection and transmission. Ethical considerations, particularly for "gain-of-function" research, are paramount.
 
+#### Estimating Mutational Fitness Effects from Large-Scale Sequence Data
+A powerful approach to understand the fitness consequences of mutations across the viral genome involves leveraging the vast amounts of publicly available sequence data. The study by [Bloom and Neher, 2023](#references) on SARS-CoV-2 provides an excellent example of this methodology.
+
+    *   **Core Methodology:**
+        *   **Expected Mutation Counts:** The method first calculates how many times each possible single-nucleotide mutation is *expected* to be observed along the viral phylogeny if there were no selection. This baseline is often derived from mutation rates at presumably neutral sites, like four-fold degenerate synonymous sites.
+        *   **Observed Mutation Counts:** The actual number of times each mutation is *observed* is then counted from a large phylogenetic tree of viral sequences (e.g., ~7 million SARS-CoV-2 sequences in the study).
+        *   **Fitness Estimation:** The ratio of observed to expected counts for each mutation is used to estimate its fitness effect. A ratio around 1 suggests neutrality, less than 1 suggests a deleterious effect (purifying selection), and greater than 1 can indicate a beneficial effect (positive selection), although beneficial mutations are rare and often require more complex models to confirm.
+
+    *   **Key Findings (from SARS-CoV-2 example):**
+        *   **Correlation with Experiments:** The estimated fitness effects correlate well with experimental data from deep mutational scanning (DMS) for proteins like Spike and Mpro.
+        *   **Mutation Class Effects:**
+            *   Most synonymous mutations are found to be nearly neutral.
+            *   The majority of stop-codon mutations are highly deleterious.
+            *   Amino acid (nonsynonymous) mutations exhibit a wide spectrum of effects, from neutral to highly deleterious, with some being slightly beneficial.
+        *   **Protein-Specific Constraints:**
+            *   Essential viral proteins (e.g., nonstructural proteins like the polymerase, and structural proteins like Spike, M, N, E) generally show strong purifying selection, meaning most amino acid changes are detrimental.
+            *   In contrast, many viral accessory proteins (e.g., ORF7a, ORF8 in SARS-CoV-2) appear to be under little to no selection pressure, tolerating even stop-codon mutations. ORF3a was an exception among accessory proteins, showing clear selection against stop codons.
+        *   **Epistasis and Evolution:** The approach can also shed light on how mutation effects can change in different viral backgrounds (epistasis) by comparing estimates across different viral clades. Mutations that become fixed in expanding viral clades typically show neutral or beneficial fitness effects in this analysis.
+
+    *   **Significance of the Approach:**
+        *   **Comprehensive Fitness Maps:** Enables the generation of detailed maps of mutational fitness effects across all viral proteins, including those that are difficult to study with traditional lab experiments.
+        *   **Informing Public Health:** Such maps are valuable for:
+            *   Assessing the potential impact of new viral variants.
+            *   Guiding the design of antiviral drugs or vaccines by targeting regions of the virus that are highly constrained (i.e., where escape mutations are likely to be deleterious to the virus).
+            *   Improving our understanding of the functional roles of different viral proteins.
+        *   **Broad Applicability:** While demonstrated for SARS-CoV-2, this computational framework can be applied to any virus for which a sufficiently large number of sequences and a robust phylogeny are available.
+
+    *   **Important Caveats:**
+        *   **Data Quality:** The accuracy of the estimates heavily relies on the quality of the input sequence data and the phylogenetic tree. Sequencing errors or alignment artifacts can distort results.
+        *   **Model Assumptions:**
+            *   The method often assumes uniform nucleotide mutation rates across the genome, which might not always hold true.
+            *   It may not fully account for complex nucleotide-level constraints unrelated to the encoded protein sequence (though analysis of synonymous sites can help assess this).
+        *   **Fitness Interpretation:** The precise quantitative relationship between the observed/expected ratio and the true biological fitness cost can be influenced by factors like sampling intensity (the fraction of all infections sequenced) and complex viral population dynamics, which are often simplified in these models.
+        *   **Epistasis:** While some epistatic effects can be inferred by comparing clades, the primary estimates are often an average effect across the backgrounds analyzed.
+
+    *   **Access to Findings:**
+        *   The Bloom and Neher study provides interactive visualizations of their comprehensive SARS-CoV-2 mutation effect maps at [https://jbloomlab.github.io/SARS2-mut-fitness/](https://jbloomlab.github.io/SARS2-mut-fitness/) [Bloom and Neher, 2023; see Reference 13 for full details](#references). This resource allows for detailed exploration of the data for each viral protein.
+
+    This methodology represents a significant advancement in using large-scale genomic data to probe the evolutionary landscape of viruses.
+
+For a more detailed breakdown of the methodology, including the specific public data source used in the Bloom and Neher study and further considerations, see the [Guide to Estimating Mutational Fitness Effects from Large-Scale Viral Sequence Data](./estimating_mutation_fitness_effects_guide.md).
+
+
+[Back to Top](#top)
+
+#### Case Study: Population Immunity and Predicting SARS-CoV-2 Evolutionary Trajectories
+
+The study by [Meijers et al., 2023](#references) provides a specific example of how population-level immunity data can be integrated with viral genomics to predict the evolutionary trajectories of SARS-CoV-2. Their work highlights the shift towards immune pressure as a dominant selective force.
+
+##### Methods Used
+
+*   **Data Collection:** The study collects and integrates data from several sources:
+    *   SARS-CoV-2 sequence data from GISAID.
+    *   Infection and vaccination rates from Our World in Data and CDC.
+    *   Neutralization titers from published studies.
+*   **Model Development:** The authors develop a fitness model that integrates:
+    *   Intrinsic fitness (clade-specific basic reproductive number).
+    *   Antigenic fitness (cross-immunity based on neutralization titers).
+    *   Population immunity trajectories (derived from infection and vaccination data).
+*   **Model Calibration and Validation:** The model is calibrated using empirical fitness values inferred from observed frequency trajectories. The model's predictive power is assessed by comparing predicted and observed frequency changes.
+*   **Statistical Analysis:** The authors use various statistical methods to analyze the data and assess the significance of their findings.
+
+##### Impact on the Field
+
+*   **Demonstrates Predictive Power:** The study provides strong evidence that population immunity is a key driver of SARS-CoV-2 evolution and that this can be used to predict future trajectories.
+*   **Provides a Framework for Surveillance:** The model can be used for continued surveillance to flag emerging variants and predict antigenic profiles of successful escape variants.
+*   **Informs Vaccine Strategies:** The findings highlight the importance of vaccine breadth and evolutionary feedback in vaccine design.
+
+##### Breadth of Findings
+
+*   **Dominant Role of Immunity:** The study shows that immune pressure has become the dominant force driving recent SARS-CoV-2 evolution.
+*   **Vaccination's Impact:** Both primary vaccination and booster vaccinations have influenced the speed and direction of clade shifts.
+*   **Predictive Accuracy:** The model accurately predicts short-term evolution and flags emerging variants.
+*   **Antigenic Constraints:** Selection windows in time constrain the antigenic profile of emerging variants.
+
+##### Critique
+
+*   **Model Simplifications:** The model makes several simplifying assumptions:
+    *   **Homogeneous mixing:** It assumes that individuals within a region mix randomly, which may not be realistic given geographic and social factors.
+    *   **Limited Immune Classes:** It uses a simplified representation of immune classes, averaging over variations in immunodominance and correlations between multiple infections.
+    *   **Decoupling of Growth and Selection:** The model assumes that relative fitness is decoupled from absolute growth, which may not hold in all situations.
+*   **Data Limitations:** The study relies on publicly available data, which may be subject to biases and inaccuracies. It acknowledges the limitations with regards to potential biases in datasets used.
+*   **Generalizability:** The model is specific to SARS-CoV-2 and the conditions of the COVID-19 pandemic. It's unclear how well it would generalize to other viruses or future pandemics with different characteristics.
+*   **Limited Exploration of Intrinsic Factors:** The study focuses primarily on antigenic selection and may not fully explore the role of intrinsic fitness factors in shaping viral evolution.
 
 [Back to Top](#top)
 
@@ -849,6 +969,9 @@ While the AI provided substantial support in these areas, the overall direction,
 10. Hemelaar, J. (2012). The origin and diversity of the HIV-1 pandemic. *Trends in molecular medicine*, 18(3), 182-192.
 11. Garten, R. J., Davis, C. T., Russell, C. A., Shu, B., Lindstrom, S., Balish, A., ... & Cox, N. J. (2009). Antigenic and Genetic Characteristics of Swine-Origin 2009 A(H1N1) Influenza Viruses Circulating in Humans. Science, 325, 197-201.
 12. Smith, G. J. D., Vijaykrishna, D., Bahl, J., Lycett, S. J., Worobey, M., Pybus, O. G., ... & Rambaut, A. (2009). Origins and evolutionary genomics of the 2009 swine-origin H1N1 influenza A epidemic. Nature, 459, 1122-1125.
+13. Bloom, J. D., & Neher, R. A. (2023). Fitness effects of mutations to SARS-CoV-2 proteins. *Virus Evolution*, *9*(2), vead055. [https://doi.org/10.1093/ve/vead055](https://doi.org/10.1093/ve/vead055)
+14. Hamelin, D.J., Scicluna, M., Saadie, I., Mostefai, F., Grenier, J.C., Baron, C., Caron, E., & Hussin, J.G. (2024). Predicting pathogen evolution and immune evasion in the age of artificial intelligence. *Computational and Structural Biotechnology Journal*, *23*, 1370-1382. [https://doi.org/10.1016/j.csbj.2024.03.044](https://doi.org/10.1016/j.csbj.2024.03.044)
+15. Meijers, M., Ruchnewitz, D., Eberhardt, J., Łuksza, M., & Lässig, M. (2023). Population immunity predicts evolutionary trajectories of SARSCoV-2. *Cell*, *186*(23), 5151–5164.e13. [https://doi.org/10.1016/j.cell.2023.09.022](https://doi.org/10.1016/j.cell.2023.09.022)
 
 
 [Back to Top](#top)
