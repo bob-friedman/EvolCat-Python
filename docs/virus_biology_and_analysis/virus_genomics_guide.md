@@ -626,6 +626,8 @@ Recombination and reassortment are powerful evolutionary mechanisms that can dra
 ## Tools and Resources
 
 This section highlights specific EvolCat-Python scripts relevant to viral genomics and key external resources. For a more detailed explanation of key biotechnologies used in virology, see the [Guide to Key Biotechnologies in Virology Research](./biotechnologies_in_virology_guide.md).
+=======
+This section highlights specific EvolCat-Python scripts relevant to viral genomics and key external resources.
 
 ### EvolCat Python Scripts for Viral Genomics
 
