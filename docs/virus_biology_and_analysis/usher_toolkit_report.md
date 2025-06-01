@@ -6,7 +6,7 @@ UShER (Ultrafast Sample placement on Existing tRee) is a phylogenetic toolkit cr
 
 ## 2. The Mutation Annotated Tree (MAT) Format
 
-The Mutation Annotated Tree (MAT) is a phylogenetic tree format where branches are annotated with the mutations inferred to have occurred along them. This format, typically stored as a protobuf (`.pb`) file, efficiently represents large phylogenies and the genetic changes defining each lineage. It's central to UShER's operations, allowing for rapid searching and updating of the tree. Key characteristics include:
+The Mutation Annotated Tree (MAT) is a phylogenetic tree format where branches are annotated with the mutations inferred to have occurred along them. This format, typically stored as a Protocol Buffers (`.pb`) file, efficiently represents large phylogenies and the genetic changes defining each lineage. It's central to UShER's operations, allowing for rapid searching and updating of the tree. Key characteristics include:
 
 *   **Efficiency:** Stores large trees and extensive mutation data compactly.
 *   **Annotation Rich:** Each node and branch can carry detailed mutation information.
@@ -159,6 +159,12 @@ The output is typically a tab-separated file. Each line often represents a node 
 *   A list of mutations (e.g., `A123T,G456C`) that occurred on the branch leading to this node.
 
 This output provides a clear, direct list of mutations per branch as inferred by UShER's parsimony algorithm.
+
+### Using the `process_usher_branch_mutations.py` Script
+
+The `usher_branch_mutations.tsv` file from `matUtils dump -m` is often sufficient. However, you might want to integrate this mutation data with a tree structure in Python for custom analyses, visualizations, or to associate mutations with specific nodes in a traversable tree object. The following conceptual script demonstrates how to do this using `dendropy` for tree manipulation and `pandas` for parsing the mutation file.
+
+An executable Python script version of this conceptual procedure is available in this repository: [`process_usher_branch_mutations.py`](scripts/process_usher_branch_mutations.py). The script includes comments outlining the necessary `matUtils` commands to generate its input files (`usher_tree.nwk` and `usher_branch_mutations.tsv`). The 'Required Prior Steps' and 'Note on Node ID Mapping' described below provide essential context for using the script.
 
 ### Conceptual Python Script for Processing `matUtils dump -m` Output
 
