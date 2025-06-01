@@ -134,7 +134,7 @@ While `matUtils extract -v` provides VCF files detailing mutations for each samp
 
 ### Generating Branch-Specific Mutation Lists
 
-UShER's MAT file inherently maps parsimony-inferred mutations to each branch. `matUtils` provides commands to extract this information. The new Jupyter Notebook (`process_usher_branch_mutations.ipynb`) utilizes `matUtils summary --get-all-basic` for this purpose.
+UShER's MAT file inherently maps parsimony-inferred mutations to each branch. `matUtils` provides commands to extract this information. The Python script (`process_usher_branch_mutations.py`) utilizes `matUtils summary --get-all-basic` for this purpose. It was exported from Google Colab, so the non-code text based descriptions must be deleted before use.
 
 **Command used by the Notebook (to be saved as `mutations.tsv`):**
 The notebook executes the following `matUtils` command to generate branch mutation data. The output of this command needs to be saved as `mutations.tsv` in the same directory as the notebook for it to run correctly.
@@ -151,11 +151,11 @@ The output is a tab-separated file. Each line represents a node (or the branch l
 
 This output provides a clear list of mutations per branch as inferred by UShER's parsimony algorithm.
 
-### Using the `process_usher_branch_mutations.ipynb` Notebook
+### Using the `process_usher_branch_mutations.py` Notebook
 
-The `mutations.tsv` file (generated as described above) is a primary input for the Jupyter Notebook. The notebook integrates this mutation data with a tree structure (also generated from the MAT file) in Python for custom analyses, visualizations, or to associate mutations with specific nodes in a traversable tree object using `dendropy` and `pandas`.
+The `mutations.tsv` file (generated as described above) is a primary input for the notebook. The notebook integrates this mutation data with a tree structure (also generated from the MAT file) in Python for custom analyses, visualizations, or to associate mutations with specific nodes in a traversable tree object using `dendropy` and `pandas`.
 
-An executable Jupyter Notebook version of this procedure is available in this repository: [`process_usher_branch_mutations.ipynb`](scripts/process_usher_branch_mutations.ipynb). The notebook itself includes cells to perform environment setup (Conda, UShER, Python libraries), download the MAT file, and then run the `matUtils` commands to generate its required input files (`usher_tree.nwk` and `mutations.tsv`).
+An executable Python script of this procedure is available in this repository: [`process_usher_branch_mutations.py`](scripts/process_usher_branch_mutations.py). The script itself includes cells to perform environment setup (Conda, UShER, Python libraries), download the MAT file, and then run the `matUtils` commands to generate its required input files (`usher_tree.nwk` and `mutations.tsv`). However, it was exported from Google Colab, so the non-code text based descriptions must be deleted before use.
 
 **Data Preparation Steps (executed within the Notebook):**
 
