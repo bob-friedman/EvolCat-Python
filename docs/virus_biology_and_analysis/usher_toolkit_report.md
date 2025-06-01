@@ -94,6 +94,16 @@ For visualization of this global tree and its genotypes, [https://cov2tree.org/]
     *   Use `matUtils introduce` for phylogeographic insights.
 4.  **Visualize/Downstream:** Use outputs with tools like Auspice (via JSON), Nextclade, MicrobeTrace, or standard phylogenetic software.
 
+A daily-updated, pre-processed mutation-annotated tree (MAT) for public SARS-CoV-2 sequences is maintained by UCSC and can be downloaded from:
+
+*   **[http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/](http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/)**
+
+This directory typically contains:
+*   `public-latest.all.masked.pb.gz`: The main MAT file, compressed.
+*   Associated metadata and VCF files.
+
+It's recommended to use tools like `wget` or `curl` to download these large files. For visualization of this global tree and its genotypes, [https://cov2tree.org/](https://cov2tree.org/) (with treenome enabled) is a useful resource.
+
 ## 6. Key Understandings and Advanced Applications
 
 Beyond routine tasks, `matUtils` enables more sophisticated analyses and provides deeper insights into pathogen evolution and epidemiology:
@@ -156,6 +166,10 @@ The `usher_branch_mutations.tsv` file from `matUtils dump -m` is often sufficien
 
 An executable Python script version of this conceptual procedure is available in this repository: [`process_usher_branch_mutations.py`](scripts/process_usher_branch_mutations.py). The script includes comments outlining the necessary `matUtils` commands to generate its input files (`usher_tree.nwk` and `usher_branch_mutations.tsv`). The 'Required Prior Steps' and 'Note on Node ID Mapping' described below provide essential context for using the script.
 
+### Conceptual Python Script for Processing `matUtils dump -m` Output
+
+The `usher_branch_mutations.tsv` file from `matUtils dump -m` is often sufficient. However, you might want to integrate this mutation data with a tree structure in Python for custom analyses, visualizations, or to associate mutations with specific nodes in a traversable tree object. The following conceptual script demonstrates how to do this using `dendropy` for tree manipulation and `pandas` for parsing the mutation file.
+
 **Required Prior Steps (using `matUtils`):**
 
 1.  **Download and decompress the latest MAT file:**
@@ -174,6 +188,85 @@ An executable Python script version of this conceptual procedure is available in
     ```bash
     matUtils dump -i public-latest.all.masked.pb -m usher_branch_mutations.tsv
     ```
+
+**Conceptual Python Script (`process_usher_output.py`):**
+
+```python
+import dendropy
+import pandas as pd
+from collections import defaultdict
+
+# 1. Load the Newick Tree
+tree_file = "usher_tree.nwk"
+tree = dendropy.Tree.get_from_path(tree_file, schema="newick")
+
+# Optional: UShER trees are generally rooted. If not, or for specific analyses:
+# tree.reroot_at_midpoint(update_bipartitions=False)
+
+# 2. Parse the Branch Mutations File
+# Adjust parsing based on the exact output format of your matUtils dump -m
+# Assuming two columns: Node_ID and comma-separated Mutations string
+mutations_file = "usher_branch_mutations.tsv"
+try:
+    mutations_df = pd.read_csv(mutations_file, sep='\t', header=None, names=['Node_ID', 'Mutations'], engine='python')
+except pd.errors.EmptyDataError:
+    print(f"Warning: {mutations_file} is empty or not formatted as expected.")
+    mutations_df = pd.DataFrame(columns=['Node_ID', 'Mutations'])
+
+
+node_to_mutations = defaultdict(list)
+for index, row in mutations_df.iterrows():
+    node_id = str(row['Node_ID']) # Ensure Node_ID is treated as a string
+    mutations_str = row['Mutations']
+    if pd.notna(mutations_str) and mutations_str.strip(): # Check for NaN/empty strings
+        node_to_mutations[node_id] = [m.strip() for m in str(mutations_str).split(',')]
+
+# 3. Traverse the Tree and Associate Mutations
+# This dictionary will map a node identifier (label or internal ID) to its branch mutations.
+branch_mutations_on_tree = {}
+
+# Key Challenge: Mapping UShER's Node_IDs from 'dump -m' to Dendropy's node objects.
+# UShER's Node_ID for internal nodes might not directly match Dendropy's internal OIDs or labels
+# if the Newick tree from 'matUtils extract' doesn't preserve/create consistent internal node labels
+# that 'matUtils dump -m' uses. Leaf node labels (taxon labels) are usually consistent.
+# This example assumes Node_ID from dump output corresponds to taxon.label for leaves
+# and potentially some form of label for internal nodes if present in the Newick.
+
+for node in tree.preorder_node_iter():
+    node_identifier = None
+    if node.is_leaf() and node.taxon:
+        node_identifier = node.taxon.label
+    elif node.label: # Check if an internal node has a label in the Newick
+        node_identifier = node.label
+    # else:
+        # For internal nodes without explicit labels in Newick, mapping can be complex.
+        # One might need to match based on descendant leaf sets if UShER's internal Node_IDs
+        # from `dump -m` are identifiable (e.g., `node_X`, `mutation_set_Y`).
+        # This script keeps it simple; adjust if your `dump -m` output has specific internal node IDs.
+
+    if node_identifier:
+        mutations_for_this_branch = node_to_mutations.get(node_identifier, [])
+        branch_mutations_on_tree[node_identifier] = mutations_for_this_branch
+        node.annotations.add_new('branch_mutations', mutations_for_this_branch)
+
+        if mutations_for_this_branch:
+            parent_label = "ROOT"
+            if node.parent_node:
+                parent_label = node.parent_node.taxon.label if node.parent_node.is_leaf() and node.parent_node.taxon else node.parent_node.label or f"internal_node_{node.parent_node.oid}"
+            # print(f"Branch leading to {node_identifier} (from {parent_label}): {', '.join(mutations_for_this_branch)}")
+
+# 4. Output Results (Example)
+output_summary_file = "branch_mutations_summary_from_script.txt"
+with open(output_summary_file, "w") as f:
+    for node_id, mutations in branch_mutations_on_tree.items():
+        if mutations: # Only write if there are mutations
+            f.write(f"Branch to node {node_id}: {', '.join(mutations)}\n")
+
+print(f"Processed branch mutations summary saved to {output_summary_file}")
+
+# To save the tree with annotations (some Newick writers might support this):
+# tree.write(path="usher_tree_with_mutations.nwk", schema="newick", suppress_annotations=False)
+```
 
 **Note on Node ID Mapping:** The critical part of the script is correctly mapping the `Node_ID` from `matUtils dump -m` to the nodes in the `dendropy` tree object. Leaf nodes are usually straightforward using `node.taxon.label`. Internal nodes can be more challenging if their labels are not consistent between `matUtils extract`'s Newick output and `matUtils dump`'s node identifiers. Further customization of the script might be needed based on the specifics of these identifiers in your dataset.
 
