@@ -27,6 +27,63 @@ The Mutation Annotated Tree (MAT) is a phylogenetic tree format where branches a
 
 ## 4. Accessing the Latest SARS-CoV-2 Dataset
 
+A daily-updated, pre-processed mutation-annotated tree (MAT) for public SARS-CoV-2 sequences is maintained by UCSC. The key file to download is `public-latest.all.masked.pb.gz`.
+
+*   **Download Link:** [http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/](http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/)
+*   **Specific File:** `public-latest.all.masked.pb.gz` (This is the main MAT file, compressed)
+*   This directory also contains associated metadata and VCF files.
+
+**Download and Decompression:**
+You can download the file using `wget`:
+```bash
+wget http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/public-latest.all.masked.pb.gz
+```
+After downloading, decompress the `.gz` file using `gunzip`:
+```bash
+gunzip public-latest.all.masked.pb.gz
+```
+This will result in the `public-latest.all.masked.pb` file, which is used as input for `matUtils`.
+
+For visualization of this global tree and its genotypes, [https://cov2tree.org/](https://cov2tree.org/) (with treenome enabled) is a useful resource.
+
+## 5. Practical Procedures for Using matUtils
+
+`matUtils` offers a suite of subcommands for common tasks. All commands require an input MAT file (e.g., `-i path/to/your_mat.pb`). Here are some practical examples:
+
+*   **Summarizing Tree Statistics:**
+    *   Get basic counts (nodes, samples, parsimony): `matUtils summary -i path/to/your_mat.pb`
+    *   List all samples and their parsimony scores: `matUtils summary -i path/to/your_mat.pb --samples samples.txt`
+    *   Get amino acid translations for mutations: `matUtils summary -i path/to/your_mat.pb -t translations.tsv -g genes.gtf -f reference.fasta`
+
+*   **Extracting Subtrees and Converting Formats:**
+    *   Extract all samples belonging to a specific clade (e.g., "B.1.1.7") into a new MAT file, using the decompressed global tree as input:
+        `matUtils extract -i public-latest.all.masked.pb -c B.1.1.7 -o B.1.1.7_subtree.pb`
+    *   Convert an entire MAT (e.g., the decompressed global tree) or a subtree to a Newick tree file:
+        `matUtils extract -i public-latest.all.masked.pb -t output_tree.nwk`
+        This uses the decompressed `public-latest.all.masked.pb` as input. The Newick format (.nwk) is a standard text-based format ideal for use with other phylogenetic software like MEGA, IQ-TREE, RAxML, or visualization tools like FigTree.
+    *   Extract samples containing a specific mutation (e.g., "S:E484K") and output as VCF:
+        `matUtils extract -i public-latest.all.masked.pb -m S:E484K -v E484K_samples.vcf`
+    *   Extract all mutations for all samples from the MAT into a VCF file:
+        `matUtils extract -i public-latest.all.masked.pb -v all_mutations.vcf`
+        This VCF lists all mutations for every sample relative to the reference genome used in the MAT's construction. The MAT format stores mutations on branches; the resulting VCF effectively translates these paths of mutations from the root to each sample into a standard genotype format.
+        *Note:* For highly specific analyses requiring explicit per-branch mutation lists in a custom format, one might need custom scripting (e.g., Python with dendropy/ete3 and pyVCF). However, for most applications, the MAT itself (queried with `matUtils`) or the comprehensive VCF output is sufficient.
+    *   Extract a subtree around a specific sample ("sample_X") including 25 nearest neighbors into a JSON for Auspice:
+        `matUtils extract -i public-latest.all.masked.pb -k "sample_X:25" -j sample_X_context.json`
+
+*   **Annotating Trees:**
+    *   Add clade annotations to your MAT file based on a TSV file (`clade_assignments.tsv`) where column 1 is clade name and column 2 is a representative sample ID for that clade:
+        `matUtils annotate -i path/to/your_mat.pb -c clade_assignments.tsv -o annotated_tree.pb`
+    *   Clear existing annotations before applying new ones:
+        `matUtils annotate -i path/to/your_mat.pb -c clade_assignments.tsv -o annotated_tree.pb --clear-current`
+
+*   **Assessing Placement Uncertainty:**
+    *   Calculate Equally Parsimonious Placements (EPPs) and Neighborhood Size Score (NSS) for a list of samples (`query_samples.txt`):
+        `matUtils uncertainty -i path/to/your_mat.pb -s query_samples.txt -e uncertainty_scores.tsv`
+
+*   **Analyzing Introductions (Experimental Heuristic):**
+    *   Infer introduction events into geographic regions based on a TSV file (`sample_regions.tsv`) mapping samples to regions:
+        `matUtils introduce -i path/to/your_mat.pb -s sample_regions.tsv -o introductions_report.tsv`
+
 A daily-updated, pre-processed mutation-annotated tree (MAT) for public SARS-CoV-2 sequences is maintained by UCSC and can be downloaded from:
 
 *   **[http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/](http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/)**
@@ -36,49 +93,6 @@ This directory typically contains:
 *   Associated metadata and VCF files.
 
 It's recommended to use tools like `wget` or `curl` to download these large files. For visualization of this global tree and its genotypes, [https://cov2tree.org/](https://cov2tree.org/) (with treenome enabled) is a useful resource.
-
-## 5. Practical Procedures for Using matUtils
-
-`matUtils` offers a suite of subcommands for common tasks. All commands require an input MAT file (`-i input.pb`). Here are some practical examples:
-
-*   **Summarizing Tree Statistics:**
-    *   Get basic counts (nodes, samples, parsimony): `matUtils summary -i input.pb`
-    *   List all samples and their parsimony scores: `matUtils summary -i input.pb --samples samples.txt`
-    *   Get amino acid translations for mutations: `matUtils summary -i input.pb -t translations.tsv -g genes.gtf -f reference.fasta`
-
-*   **Extracting Subtrees and Converting Formats:**
-    *   Extract all samples belonging to a specific clade (e.g., "B.1.1.7") into a new MAT file:
-        `matUtils extract -i input.pb -c B.1.1.7 -o B.1.1.7_subtree.pb`
-    *   Convert the extracted subtree to a Newick tree file:
-        `matUtils extract -i B.1.1.7_subtree.pb -t B.1.1.7_subtree.nwk`
-    *   Extract samples containing a specific mutation (e.g., "S:E484K") and output as VCF:
-        `matUtils extract -i input.pb -m S:E484K -v E484K_samples.vcf`
-    *   Extract a subtree around a specific sample ("sample_X") including 25 nearest neighbors into a JSON for Auspice:
-        `matUtils extract -i input.pb -k "sample_X:25" -j sample_X_context.json`
-
-*   **Annotating Trees:**
-    *   Add clade annotations to your MAT file based on a TSV file (`clade_assignments.tsv`) where column 1 is clade name and column 2 is a representative sample ID for that clade:
-        `matUtils annotate -i input.pb -c clade_assignments.tsv -o annotated_tree.pb`
-    *   Clear existing annotations before applying new ones:
-        `matUtils annotate -i input.pb -c clade_assignments.tsv -o annotated_tree.pb --clear-current`
-
-*   **Assessing Placement Uncertainty:**
-    *   Calculate Equally Parsimonious Placements (EPPs) and Neighborhood Size Score (NSS) for a list of samples (`query_samples.txt`):
-        `matUtils uncertainty -i input.pb -s query_samples.txt -e uncertainty_scores.tsv`
-
-*   **Analyzing Introductions (Experimental Heuristic):**
-    *   Infer introduction events into geographic regions based on a TSV file (`sample_regions.tsv`) mapping samples to regions:
-        `matUtils introduce -i input.pb -s sample_regions.tsv -o introductions_report.tsv`
-
-**General Workflow:**
-1.  **Obtain MAT:** Download the latest public tree (e.g., for SARS-CoV-2) or generate one using `usher`.
-2.  **Explore:** Use `matUtils summary` to understand its basic properties.
-3.  **Manipulate/Query:**
-    *   Use `matUtils extract` to get subtrees of interest (by clade, mutation, sample list, etc.) and convert them to VCF, Newick, or JSON.
-    *   Use `matUtils annotate` to add custom clade definitions.
-    *   Use `matUtils uncertainty` to check placement robustness for key samples.
-    *   Use `matUtils introduce` for phylogeographic insights.
-4.  **Visualize/Downstream:** Use outputs with tools like Auspice (via JSON), Nextclade, MicrobeTrace, or standard phylogenetic software.
 
 ## 6. Key Understandings and Advanced Applications
 
