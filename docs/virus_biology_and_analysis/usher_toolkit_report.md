@@ -132,54 +132,62 @@ By mastering `matUtils`, researchers and public health professionals can more ef
 
 While `matUtils extract -v` provides VCF files detailing mutations for each sample (leaf node) relative to the reference, sometimes a more explicit list of mutations occurring on each internal branch of the tree is desired. UShER's MAT file inherently contains this information, as it maps parsimony-inferred mutations to each branch.
 
-### Prioritizing `matUtils dump -m` for Branch Mutations
+### Generating Branch-Specific Mutation Lists
 
-The most direct and computationally efficient method to obtain a list of mutations for each branch is using the `matUtils dump` subcommand with the `-m` option. This command directly accesses the branch mutation data stored within the MAT file.
+UShER's MAT file inherently maps parsimony-inferred mutations to each branch. `matUtils` provides commands to extract this information. The new Jupyter Notebook (`process_usher_branch_mutations.ipynb`) utilizes `matUtils summary --get-all-basic` for this purpose.
 
-**Command:**
+**Command used by the Notebook (to be saved as `mutations.tsv`):**
+The notebook executes the following `matUtils` command to generate branch mutation data. The output of this command needs to be saved as `mutations.tsv` in the same directory as the notebook for it to run correctly.
 ```bash
-matUtils dump -i path/to/your_mat.pb -m usher_branch_mutations.tsv
+matUtils summary --get-all-basic --input-mat public-latest.all.masked.pb
 ```
-*   `-i path/to/your_mat.pb`: Specifies your input MAT file (e.g., `public-latest.all.masked.pb`).
-*   `-m usher_branch_mutations.tsv`: Specifies the output file where branch mutations will be written.
+*   `--input-mat public-latest.all.masked.pb`: Specifies your input MAT file.
+*   The output of this command (a TSV format with Node_ID and Mutations) should be redirected to a file named `mutations.tsv`.
 
-**Expected Output (`usher_branch_mutations.tsv`):**
-The output is typically a tab-separated file. Each line often represents a node (or the branch leading to it) and lists the mutations inferred on that specific branch relative to its parent. The exact format can vary slightly with `matUtils` versions, but it generally includes:
-*   A node identifier.
-*   A list of mutations (e.g., `A123T,G456C`) that occurred on the branch leading to this node.
+**Expected Output (content of `mutations.tsv`):**
+The output is a tab-separated file. Each line represents a node (or the branch leading to it) and lists the mutations inferred on that specific branch relative to its parent. It typically includes:
+*   A node identifier (Node_ID).
+*   A comma-separated list of mutations (e.g., `A123T,G456C`) that occurred on the branch leading to this node.
 
-This output provides a clear, direct list of mutations per branch as inferred by UShER's parsimony algorithm.
+This output provides a clear list of mutations per branch as inferred by UShER's parsimony algorithm.
 
-### Using the `process_usher_branch_mutations.py` Script
+### Using the `process_usher_branch_mutations.ipynb` Notebook
 
-The `usher_branch_mutations.tsv` file from `matUtils dump -m` is often sufficient. However, you might want to integrate this mutation data with a tree structure in Python for custom analyses, visualizations, or to associate mutations with specific nodes in a traversable tree object. The following conceptual script demonstrates how to do this using `dendropy` for tree manipulation and `pandas` for parsing the mutation file.
+The `mutations.tsv` file (generated as described above) is a primary input for the Jupyter Notebook. The notebook integrates this mutation data with a tree structure (also generated from the MAT file) in Python for custom analyses, visualizations, or to associate mutations with specific nodes in a traversable tree object using `dendropy` and `pandas`.
 
-An executable Python script version of this conceptual procedure is available in this repository: [`process_usher_branch_mutations.py`](scripts/process_usher_branch_mutations.py). The script includes comments outlining the necessary `matUtils` commands to generate its input files (`usher_tree.nwk` and `usher_branch_mutations.tsv`). The 'Required Prior Steps' and 'Note on Node ID Mapping' described below provide essential context for using the script.
+An executable Jupyter Notebook version of this procedure is available in this repository: [`process_usher_branch_mutations.ipynb`](scripts/process_usher_branch_mutations.ipynb). The notebook itself includes cells to perform environment setup (Conda, UShER, Python libraries), download the MAT file, and then run the `matUtils` commands to generate its required input files (`usher_tree.nwk` and `mutations.tsv`).
 
-**Required Prior Steps (using `matUtils`):**
+**Data Preparation Steps (executed within the Notebook):**
 
-1.  **Download and decompress the latest MAT file:**
-    ```bash
-    wget http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/public-latest.all.masked.pb.gz
-    gunzip public-latest.all.masked.pb.gz
+The notebook is designed to be largely self-contained, especially when run in an environment like Google Colab. It includes cells to:
+
+1.  **Set up the environment:** Installs Conda (if in Colab), the UShER toolkit, and required Python libraries like `dendropy` and `pandas`.
+2.  **Download and decompress the latest MAT file:**
+    ```python
+    # Commands executed in the notebook
+    !wget http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/public-latest.all.masked.pb.gz
+    !gunzip -f public-latest.all.masked.pb.gz
     ```
     (This provides `public-latest.all.masked.pb`)
 
-2.  **Export the Newick tree:**
-    ```bash
-    matUtils extract -i public-latest.all.masked.pb -t usher_tree.nwk
+3.  **Export the Newick tree (saved as `usher_tree.nwk`):**
+    ```python
+    # Command executed in the notebook
+    !matUtils extract --input-mat public-latest.all.masked.pb --write-tree usher_tree.nwk
     ```
 
-3.  **Dump the branch mutations:**
-    ```bash
-    matUtils dump -i public-latest.all.masked.pb -m usher_branch_mutations.tsv
+4.  **Generate the branch mutations file (output manually saved as `mutations.tsv`):**
+    ```python
+    # Command executed in the notebook, output needs to be saved as mutations.tsv
+    !matUtils summary --get-all-basic --input-mat public-latest.all.masked.pb
     ```
+    The notebook then loads `usher_tree.nwk` and `mutations.tsv` for processing.
 
-**Note on Node ID Mapping:** The critical part of the script is correctly mapping the `Node_ID` from `matUtils dump -m` to the nodes in the `dendropy` tree object. Leaf nodes are usually straightforward using `node.taxon.label`. Internal nodes can be more challenging if their labels are not consistent between `matUtils extract`'s Newick output and `matUtils dump`'s node identifiers. Further customization of the script might be needed based on the specifics of these identifiers in your dataset.
+**Note on Node ID Mapping:** The critical part of the script is correctly mapping the `Node_ID` from `mutations.tsv` to the nodes in the `dendropy` tree object. The notebook contains a detailed section ("Important Note on Node Identifiers") explaining its strategy: using `node.taxon.label` for leaves, `node.label` for internal nodes if available, and `node.oid` as a fallback. This approach is generally robust.
 
 ### Alternative (More Complex): Ancestral Reconstruction from Newick + VCF
 
-If `matUtils dump -m` were unavailable, or if one wished to use a different ancestral state reconstruction algorithm, it's conceptually possible to infer branch mutations by:
+If direct branch mutation extraction were unavailable, or if one wished to use a different ancestral state reconstruction algorithm, it's conceptually possible to infer branch mutations by:
 1.  Parsing a Newick tree (`matUtils extract -t`).
 2.  Parsing a VCF file containing tip (sample) genotypes (`matUtils extract -v`).
 3.  Using libraries like `pysam` (for VCF) and `dendropy` (for tree traversal and parsimony algorithms like Fitch's algorithm) to reconstruct ancestral states at each internal node for each polymorphic site.
