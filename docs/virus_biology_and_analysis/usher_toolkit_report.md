@@ -6,7 +6,7 @@ UShER (Ultrafast Sample placement on Existing tRee) is a phylogenetic toolkit cr
 
 ## 2. The Mutation Annotated Tree (MAT) Format
 
-The Mutation Annotated Tree (MAT) is a phylogenetic tree format where branches are annotated with the mutations inferred to have occurred along them. This format, typically stored as a Protocol Buffers (`.pb`) file, efficiently represents large phylogenies and the genetic changes defining each lineage. It's central to UShER's operations, allowing for rapid searching and updating of the tree. Key characteristics include:
+The Mutation Annotated Tree (MAT) is a phylogenetic tree format where branches are annotated with the mutations inferred to have occurred along them. This format, typically stored as a protobuf (`.pb`) file, efficiently represents large phylogenies and the genetic changes defining each lineage. It's central to UShER's operations, allowing for rapid searching and updating of the tree. Key characteristics include:
 
 *   **Efficiency:** Stores large trees and extensive mutation data compactly.
 *   **Annotation Rich:** Each node and branch can carry detailed mutation information.
@@ -84,15 +84,15 @@ For visualization of this global tree and its genotypes, [https://cov2tree.org/]
     *   Infer introduction events into geographic regions based on a TSV file (`sample_regions.tsv`) mapping samples to regions:
         `matUtils introduce -i path/to/your_mat.pb -s sample_regions.tsv -o introductions_report.tsv`
 
-**General Workflow:**
-1.  **Obtain MAT:** Download the latest public tree (e.g., for SARS-CoV-2) or generate one using `usher`.
-2.  **Explore:** Use `matUtils summary` to understand its basic properties.
-3.  **Manipulate/Query:**
-    *   Use `matUtils extract` to get subtrees of interest (by clade, mutation, sample list, etc.) and convert them to VCF, Newick, or JSON.
-    *   Use `matUtils annotate` to add custom clade definitions.
-    *   Use `matUtils uncertainty` to check placement robustness for key samples.
-    *   Use `matUtils introduce` for phylogeographic insights.
-4.  **Visualize/Downstream:** Use outputs with tools like Auspice (via JSON), Nextclade, MicrobeTrace, or standard phylogenetic software.
+A daily-updated, pre-processed mutation-annotated tree (MAT) for public SARS-CoV-2 sequences is maintained by UCSC and can be downloaded from:
+
+*   **[http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/](http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/)**
+
+This directory typically contains:
+*   `public-latest.all.masked.pb.gz`: The main MAT file, compressed.
+*   Associated metadata and VCF files.
+
+It's recommended to use tools like `wget` or `curl` to download these large files. For visualization of this global tree and its genotypes, [https://cov2tree.org/](https://cov2tree.org/) (with treenome enabled) is a useful resource.
 
 ## 6. Key Understandings and Advanced Applications
 
