@@ -134,28 +134,7 @@ While `matUtils extract -v` provides VCF files detailing mutations for each samp
 
 ### Generating Branch-Specific Mutation Lists
 
-UShER's MAT file inherently maps parsimony-inferred mutations to each branch. `matUtils` provides commands to extract this information. The Python script (`process_usher_branch_mutations.py`) utilizes `matUtils summary --get-all-basic` for this purpose. It was exported from Google Colab, so the non-code text based descriptions must be deleted before use.
-
-**Command used by the Notebook (to be saved as `mutations.tsv`):**
-The notebook executes the following `matUtils` command to generate branch mutation data. The output of this command needs to be saved as `mutations.tsv` in the same directory as the notebook for it to run correctly.
-```bash
-matUtils summary --get-all-basic --input-mat public-latest.all.masked.pb
-```
-*   `--input-mat public-latest.all.masked.pb`: Specifies your input MAT file.
-*   The output of this command (a TSV format with Node_ID and Mutations) should be redirected to a file named `mutations.tsv`.
-
-**Expected Output (content of `mutations.tsv`):**
-The output is a tab-separated file. Each line represents a node (or the branch leading to it) and lists the mutations inferred on that specific branch relative to its parent. It typically includes:
-*   A node identifier (Node_ID).
-*   A comma-separated list of mutations (e.g., `A123T,G456C`) that occurred on the branch leading to this node.
-
-This output provides a clear list of mutations per branch as inferred by UShER's parsimony algorithm.
-
-### Using the `process_usher_branch_mutations.py` Notebook
-
-The `mutations.tsv` file (generated as described above) is a primary input for the notebook. The notebook integrates this mutation data with a tree structure (also generated from the MAT file) in Python for custom analyses, visualizations, or to associate mutations with specific nodes in a traversable tree object using `dendropy` and `pandas`.
-
-An executable Python script of this procedure is available in this repository: [`process_usher_branch_mutations.py`](scripts/process_usher_branch_mutations.py). The script itself includes cells to perform environment setup (Conda, UShER, Python libraries), download the MAT file, and then run the `matUtils` commands to generate its required input files (`usher_tree.nwk` and `mutations.tsv`). However, it was exported from Google Colab, so the non-code text based descriptions must be deleted before use.
+UShER's MAT file inherently maps parsimony-inferred mutations to each branch. `matUtils` provides commands to extract this information. The Python script (`process_usher_branch_mutations.py`) is a partial implementation for working with this dataset. It was exported from Google Colab, so the non-code text based descriptions must be deleted before use (copy/paste operations of code are simplest).
 
 **Data Preparation Steps (executed within the Notebook):**
 
@@ -175,15 +154,6 @@ The notebook is designed to be largely self-contained, especially when run in an
     # Command executed in the notebook
     !matUtils extract --input-mat public-latest.all.masked.pb --write-tree usher_tree.nwk
     ```
-
-4.  **Generate the branch mutations file (output manually saved as `mutations.tsv`):**
-    ```python
-    # Command executed in the notebook, output needs to be saved as mutations.tsv
-    !matUtils summary --get-all-basic --input-mat public-latest.all.masked.pb
-    ```
-    The notebook then loads `usher_tree.nwk` and `mutations.tsv` for processing.
-
-**Note on Node ID Mapping:** The critical part of the script is correctly mapping the `Node_ID` from `mutations.tsv` to the nodes in the `dendropy` tree object. The notebook contains a detailed section ("Important Note on Node Identifiers") explaining its strategy: using `node.taxon.label` for leaves, `node.label` for internal nodes if available, and `node.oid` as a fallback. This approach is generally robust.
 
 ### Alternative (More Complex): Ancestral Reconstruction from Newick + VCF
 
