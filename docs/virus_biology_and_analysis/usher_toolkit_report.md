@@ -140,7 +140,7 @@ UShER's MAT file inherently maps parsimony-inferred mutations to each branch. `m
 
 The notebook is designed to be largely self-contained, especially when run in an environment like Google Colab. It includes cells to:
 
-1.  **Set up the environment:** Installs Conda (if in Colab), the UShER toolkit, and required Python libraries like `dendropy` and `pandas`.
+1.  **Set up the environment:** Installs Conda (if in Colab), the UShER toolkit, and any Python library dependencies for further analysis like `dendropy` and `pandas`.
 2.  **Download and decompress the latest MAT file:**
     ```python
     # Commands executed in the notebook
@@ -163,7 +163,7 @@ If direct branch mutation extraction were unavailable, or if one wished to use a
 3.  Using libraries like `pysam` (for VCF) and `dendropy` (for tree traversal and parsimony algorithms like Fitch's algorithm) to reconstruct ancestral states at each internal node for each polymorphic site.
 4.  Comparing parent and child node genotypes along the tree to identify mutations on each branch.
 
-This approach is significantly more complex to implement correctly and is computationally far more intensive than using UShER's pre-computed parsimony inferences via `matUtils dump -m`. For large trees like the global SARS-CoV-2 phylogeny, re-implementing this in Python would be impractical for routine use compared to leveraging UShER's optimized C++ functionalities.
+This approach is significantly more complex to implement correctly and is computationally far more intensive than using UShER's pre-computed parsimony inferences. For large trees like the global SARS-CoV-2 phylogeny, re-implementing this in Python would be impractical for routine use compared to leveraging UShER's optimized C++ functionalities.
 
 ---
 
