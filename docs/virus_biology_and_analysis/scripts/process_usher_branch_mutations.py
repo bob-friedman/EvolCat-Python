@@ -53,7 +53,7 @@ import condacolab; condacolab.install()
 """##### 4. Download the UShER Mutation-Annotated Tree (MAT) data"""
 
 # The following are Bash shell commands
-# Verify the output files (usher_tree.nwk, mutations.txt) are created
+# Verify the output files (usher_tree.nwk, mutations.tsv) are created
 
 # Download the latest MAT file:
 ! wget http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/public-latest.all.masked.pb.gz
