@@ -130,30 +130,49 @@ By mastering `matUtils`, researchers and public health professionals can more ef
 
 ## 7. Advanced: Extracting and Processing Branch-Specific Mutations
 
-While `matUtils extract -v` provides VCF files detailing mutations for each sample (leaf node) relative to the reference, sometimes a more explicit list of mutations occurring on each internal branch of the tree is desired. UShER's MAT file inherently contains this information, as it maps parsimony-inferred mutations to each branch.
+While `matUtils extract -v` provides VCF files detailing mutations for each sample (leaf node) relative to the reference, sometimes a more explicit list of mutations occurring on each internal branch or leading to each sample is desired. UShER's MAT file inherently contains this information, as it maps parsimony-inferred mutations to each branch.
 
-### Generating Branch-Specific Mutation Lists
+### Using the `process_usher_branch_mutations.py` Script
 
-UShER's MAT file inherently maps parsimony-inferred mutations to each branch. `matUtils` provides commands to extract this information. The Python script (`process_usher_branch_mutations.py`) is a partial implementation for working with this dataset. It was exported from Google Colab, so the non-code text based descriptions must be deleted before use (copy/paste operations of code are simplest).
+The Python script `docs/virus_biology_and_analysis/scripts/process_usher_branch_mutations.py` is provided to demonstrate how to obtain and process these branch-specific (or path-specific) mutations. This script is designed to be run in an environment like Google Colab, which allows for direct execution of shell commands (prefixed with `!`) and integration with Google Drive.
 
-**Data Preparation Steps (executed within the Notebook):**
+**Key Steps Performed by the Script:**
 
-The notebook is designed to be largely self-contained, especially when run in an environment like Google Colab. It includes cells to:
+The script automates several processes:
 
-1.  **Set up the environment:** Installs Conda (if in Colab), the UShER toolkit, and any Python library dependencies for further analysis like `dendropy` and `pandas`.
-2.  **Download and decompress the latest MAT file:**
-    ```python
-    # Commands executed in the notebook
-    !wget http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/public-latest.all.masked.pb.gz
-    !gunzip -f public-latest.all.masked.pb.gz
-    ```
-    (This provides `public-latest.all.masked.pb`)
+1.  **Mount Google Drive:** Connects to Google MyDrive to set the working directory.
+2.  **Install Conda and UShER:**
+    *   Installs Condacolab to manage packages within the Colab environment.
+    *   Creates a Conda environment named `usher-env`.
+    *   Installs the UShER toolkit (including `matUtils`) into this environment.
+3.  **Download and Decompress the Latest MAT File:**
+    *   Downloads the latest public SARS-CoV-2 MAT file from UCSC:
+        ```bash
+        !wget http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/public-latest.all.masked.pb.gz
+        ```
+    *   Decompresses the file:
+        ```bash
+        !gunzip -f public-latest.all.masked.pb.gz
+        ```
+        This results in `public-latest.all.masked.pb`.
+4.  **Extract Summary Statistics (Optional Example):**
+    *   Demonstrates how to get clade information:
+        ```bash
+        !matUtils summary --input-mat public-latest.all.masked.pb --clades clades.tsv
+        ```
+5.  **Extract Mutation Paths for a Clade:**
+    *   This is the core function demonstrated by the script. It uses `matUtils extract` with the `--all-paths` option to output mutations along each path from a clade's common ancestor to every sample and internal node within that clade.
+        ```bash
+        !matUtils extract \
+            --input-mat public-latest.all.masked.pb \
+            --clade "YOUR_CLADE_OF_INTEREST" \
+            --all-paths mutations_for_clade.txt
+        ```
+    *   The user needs to replace `"YOUR_CLADE_OF_INTEREST"` with the specific clade they are analyzing. The output, `mutations_for_clade.txt`, will list nodes/samples followed by the mutations on the branch leading to them.
+6.  **(Optional) VCF to Fasta Conversion:**
+    *   The script includes commented-out example commands for installing `vcflib` and using `vcf2fasta` if conversion from VCF to Fasta is needed. This part is noted as potentially problematic in Colab/WSL environments.
 
-3.  **Export the Newick tree (saved as `usher_tree.nwk`):**
-    ```python
-    # Command executed in the notebook
-    !matUtils extract --input-mat public-latest.all.masked.pb --write-tree usher_tree.nwk
-    ```
+This script provides a template for users who need to extract detailed mutation lists for specific clades directly from the MAT file using `matUtils`.
 
 ### Alternative (More Complex): Ancestral Reconstruction from Newick + VCF
 
