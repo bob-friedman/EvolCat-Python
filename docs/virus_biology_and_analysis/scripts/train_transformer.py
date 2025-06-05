@@ -242,3 +242,4 @@ if __name__ == "__main__":
     print("train_transformer.py script starting...")
     run_training()
     print("\nTraining script execution finished.")
+```
