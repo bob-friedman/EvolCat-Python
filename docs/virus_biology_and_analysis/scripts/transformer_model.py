@@ -78,7 +78,7 @@ class MultiHeadAttention(layers.Layer):
         x = tf.reshape(x, (batch_size, -1, self.num_heads, self.depth))
         return tf.transpose(x, perm=[0, 2, 1, 3])
 
-    def call(self, v, k, q, mask):
+    def call(self, v, k, q, mask=None):
         batch_size = tf.shape(q)[0]
         q_proj = self.wq(q)
         k_proj = self.wk(k)
@@ -112,8 +112,8 @@ class EncoderLayer(layers.Layer):
         self.dropout1 = layers.Dropout(rate)
         self.dropout2 = layers.Dropout(rate)
 
-    def call(self, x, training, mask):
-        attn_output, _ = self.mha(x, x, x, mask)
+    def call(self, x, training=None, mask=None):
+        attn_output, _ = self.mha(x, x, x, mask=mask)
         attn_output = self.dropout1(attn_output, training=training)
         out1 = self.layernorm1(x + attn_output)
         ffn_output = self.ffn(out1)
@@ -135,12 +135,12 @@ class DecoderLayer(layers.Layer):
         self.dropout2 = layers.Dropout(rate)
         self.dropout3 = layers.Dropout(rate)
 
-    def call(self, x, enc_output, training, look_ahead_mask, padding_mask):
-        attn1, attn_weights_block1 = self.mha1(x, x, x, look_ahead_mask)
+    def call(self, x, enc_output, training=None, look_ahead_mask=None, padding_mask=None):
+        attn1, attn_weights_block1 = self.mha1(x, x, x, mask=look_ahead_mask)
         attn1 = self.dropout1(attn1, training=training)
         out1 = self.layernorm1(attn1 + x)
 
-        attn2, attn_weights_block2 = self.mha2(enc_output, enc_output, out1, padding_mask)
+        attn2, attn_weights_block2 = self.mha2(enc_output, enc_output, out1, mask=padding_mask)
         attn2 = self.dropout2(attn2, training=training)
         out2 = self.layernorm2(out1 + attn2)
 
@@ -162,7 +162,7 @@ class Encoder(layers.Layer):
                            for _ in range(num_layers)]
         self.dropout = layers.Dropout(rate)
 
-    def call(self, x, training, mask):
+    def call(self, x, training=None, mask=None):
         # x shape: (batch_size, input_seq_len)
         seq_len = tf.shape(x)[1]
         x = self.embedding(x)  # (batch_size, input_seq_len, d_model)
@@ -170,7 +170,7 @@ class Encoder(layers.Layer):
         x = self.pos_encoding(x)
         x = self.dropout(x, training=training)
         for i in range(self.num_layers):
-            x = self.enc_layers[i](x, training, mask)
+            x = self.enc_layers[i](x, training=training, mask=mask)
         return x  # (batch_size, input_seq_len, d_model)
 
 # --- 7. Decoder ---
@@ -186,7 +186,7 @@ class Decoder(layers.Layer):
                            for _ in range(num_layers)]
         self.dropout = layers.Dropout(rate)
 
-    def call(self, x, enc_output, training, look_ahead_mask, padding_mask):
+    def call(self, x, enc_output, training=None, look_ahead_mask=None, padding_mask=None):
         # x shape: (batch_size, target_seq_len)
         seq_len = tf.shape(x)[1]
         attention_weights = {}
@@ -195,7 +195,7 @@ class Decoder(layers.Layer):
         x = self.pos_encoding(x)
         x = self.dropout(x, training=training)
         for i, layer in enumerate(self.dec_layers):
-            x, block1, block2 = layer(x, enc_output, training, look_ahead_mask, padding_mask)
+            x, block1, block2 = layer(x, enc_output, training=training, look_ahead_mask=look_ahead_mask, padding_mask=padding_mask)
             attention_weights[f'decoder_layer{i+1}_block1'] = block1
             attention_weights[f'decoder_layer{i+1}_block2'] = block2
         return x, attention_weights  # x shape: (batch_size, target_seq_len, d_model)
@@ -234,11 +234,11 @@ class Transformer(tf.keras.Model):
 
         enc_padding_mask, look_ahead_combined_mask, dec_padding_mask = self.create_masks(inp, tar)
 
-        enc_output = self.encoder(inp, training, enc_padding_mask)  # (batch_size, inp_seq_len, d_model)
+        enc_output = self.encoder(inp, training=training, mask=enc_padding_mask)  # (batch_size, inp_seq_len, d_model)
 
         # dec_output.shape == (batch_size, tar_seq_len, d_model)
         dec_output, attention_weights = self.decoder(
-            tar, enc_output, training, look_ahead_combined_mask, dec_padding_mask)
+            tar, enc_output, training=training, look_ahead_mask=look_ahead_combined_mask, padding_mask=dec_padding_mask)
 
         final_output = self.final_layer(dec_output)  # (batch_size, tar_seq_len, target_vocab_size)
 
