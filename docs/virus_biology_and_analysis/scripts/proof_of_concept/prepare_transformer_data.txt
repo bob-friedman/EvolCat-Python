@@ -1,3 +1,5 @@
+Not fully working yet.
+
 """
 Prepare data for viral evolution analysis and Transformer model training.
 
