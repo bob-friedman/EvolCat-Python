@@ -190,10 +190,10 @@ def run_training():
     else:
         for epoch in range(EPOCHS):
             start_time = time.time()
-            epoch_loss_avg.reset_states()
-            epoch_accuracy_avg.reset_states()
-            epoch_val_loss_avg.reset_states()
-            epoch_val_accuracy_avg.reset_states()
+            epoch_loss_avg.reset_state()
+            epoch_accuracy_avg.reset_state()
+            epoch_val_loss_avg.reset_state()
+            epoch_val_accuracy_avg.reset_state()
 
             print(f"--- Epoch {epoch + 1}/{EPOCHS} ---")
             # Training
@@ -242,4 +242,3 @@ if __name__ == "__main__":
     print("train_transformer.py script starting...")
     run_training()
     print("\nTraining script execution finished.")
-```

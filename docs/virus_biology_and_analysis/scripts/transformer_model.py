@@ -327,13 +327,10 @@ if __name__ == "__main__":
     print(f"\n--- Testing Transformer (Full Model) ---")
     try:
         num_layers_transformer = 2
-        # d_model_transformer = 128 # Use d_model_test for consistency
-        # num_heads_transformer = 8 # Use num_heads_test
-        # dff_transformer = 512     # Use dff_test
         input_vocab_size_transformer = 7
         target_vocab_size_transformer = 7
-        max_pos_enc_input = max_len_test # Should match sequence length used in Encoder
-        max_pos_enc_target = max_len_test # Should match sequence length used in Decoder
+        max_pos_enc_input = max_len_test
+        max_pos_enc_target = max_len_test
 
         transformer_model = Transformer(
             num_layers_transformer, d_model_test, num_heads_test, dff_test,
@@ -347,7 +344,7 @@ if __name__ == "__main__":
         predictions, attn_weights = transformer_model((dummy_input_seq, dummy_target_seq), training=False)
         print(f"Transformer Input Seq Shape: {dummy_input_seq.shape}")
         print(f"Transformer Target Seq Shape: {dummy_target_seq.shape}")
-        print(f"Transformer Predictions Shape: {predictions.shape}") # (batch, tar_seq_len, target_vocab_size)
+        print(f"Transformer Predictions Shape: {predictions.shape}")
         print(f"Transformer Attention Weights Keys: {list(attn_weights.keys())}")
 
         expected_pred_shape = (batch_size_test, max_len_test, target_vocab_size_transformer)
@@ -358,5 +355,3 @@ if __name__ == "__main__":
 
     except Exception as e:
         print(f"Error during Transformer test: {e}")
-
-```

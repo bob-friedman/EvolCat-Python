@@ -56,9 +56,9 @@ def parse_mutation_file(file_path):
                     # This allows create_input_output_pairs to correctly create (ref,ref) for such cases.
                     mutation_strings.append(mutations)
                     if not mutations:
-                        warnings.warn(f"Warning: Empty mutation string (but identifier present) on line {line_num} in {file_path}: '{line}'")
+                        print(f"Info: Empty mutation string (but identifier present) on line {line_num} in {file_path}: '{line}'")
                 else:
-                    warnings.warn(f"Warning: Line {line_num} in {file_path} does not contain ':' and was skipped: '{line}'")
+                    print(f"Info: Line {line_num} in {file_path} does not contain ':' and was skipped: '{line}'")
         return mutation_strings
     except FileNotFoundError:
         print(f"Error: Mutations file not found at {file_path}")
@@ -70,7 +70,7 @@ def apply_mutations(ancestral_sequence_str, mutations_str):
     Validates mutations against the ancestral sequence.
     """
     if not ancestral_sequence_str:
-        warnings.warn("Warning: Ancestral sequence is empty. No mutations applied.")
+        print("Info: Ancestral sequence is empty. No mutations applied.")
         return ""
     if not mutations_str: # If mutations_str is empty, return original sequence
         return ancestral_sequence_str
@@ -86,7 +86,7 @@ def apply_mutations(ancestral_sequence_str, mutations_str):
 
         match = mutation_pattern.fullmatch(mut_op)
         if not match:
-            warnings.warn(f"Warning: Invalid mutation format '{mut_op}' in '{mutations_str}'. Skipped.")
+            print(f"Info: Invalid mutation format '{mut_op}' in '{mutations_str}'. Skipped.")
             continue
 
         original_base = match.group(1).upper()
@@ -95,11 +95,11 @@ def apply_mutations(ancestral_sequence_str, mutations_str):
         position_0_indexed = position_1_indexed - 1
 
         if not (0 <= position_0_indexed < len(sequence_list)):
-            warnings.warn(f"Warning: Position {position_1_indexed} in mutation '{mut_op}' (from '{mutations_str}') is out of bounds. Skipped.")
+            print(f"Info: Position {position_1_indexed} in mutation '{mut_op}' (from '{mutations_str}') is out of bounds. Skipped.")
             continue
 
         if sequence_list[position_0_indexed].upper() != original_base:
-            warnings.warn(f"Warning: Mismatch for mutation '{mut_op}' (from '{mutations_str}'). Expected '{original_base}' found '{sequence_list[position_0_indexed]}'. Skipped.")
+            print(f"Info: Mismatch for mutation '{mut_op}' (from '{mutations_str}'). Expected '{original_base}' (at 0-indexed {position_0_indexed}), found '{sequence_list[position_0_indexed]}'. Mutation skipped.")
             continue
 
         sequence_list[position_0_indexed] = new_base
@@ -116,7 +116,7 @@ def tokenize_sequence(sequence_str, vocab):
     for nucleotide in sequence_str.upper():
         token = vocab.get(nucleotide, unknown_token)
         if token is unknown_token: # More robust check if get() returns default
-             warnings.warn(f"Warning: Unknown nucleotide '{nucleotide}' found in sequence. Mapped to <UNK>.")
+             print(f"Info: Unknown nucleotide '{nucleotide}' found in sequence. Mapped to <UNK>.")
         tokens.append(token)
     return tokens
 
@@ -127,7 +127,7 @@ def create_input_output_pairs(main_reference_sequence_str, all_mutation_strings_
     """
     pairs = []
     if not main_reference_sequence_str:
-        warnings.warn("Warning: Main reference sequence is empty for create_input_output_pairs. No pairs created.")
+        print("Info: Main reference sequence is empty for create_input_output_pairs. No pairs created.")
         return pairs
 
     tokenized_main_reference = tokenize_sequence(main_reference_sequence_str, vocab)
