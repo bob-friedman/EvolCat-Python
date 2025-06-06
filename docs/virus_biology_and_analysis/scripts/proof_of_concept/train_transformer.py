@@ -35,7 +35,7 @@ WARMUP_STEPS = 100 # Reduced for dummy data
 REFERENCE_FASTA_PATH = "reference_genome_train.fasta" # Unique name for this script's dummy
 MUTATIONS_FILE_PATH = "mutations_file_train.txt"   # Unique name
 CHECKPOINT_PATH = "./checkpoints_train_script/train" # Checkpoint directory
-MODEL_SAVE_PATH = "./saved_model_train_script/final_transformer" # Final model save path
+MODEL_SAVE_PATH = "./saved_model_train_script/final_transformer.weights.h5" # Final model save path including .weights.h5
 
 # --- Custom Learning Rate Schedule ---
 class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
@@ -235,8 +235,8 @@ def run_training():
     #     print(f"Full model saved to {MODEL_SAVE_PATH}")
     # except Exception as e:
     #     print(f"Could not save full model: {e}. Saving weights instead.")
-    transformer.save_weights(MODEL_SAVE_PATH + "_weights.h5")
-    print(f"Model weights saved to {MODEL_SAVE_PATH}_weights.h5")
+    transformer.save_weights(MODEL_SAVE_PATH)
+    print(f"Model weights saved to {MODEL_SAVE_PATH}")
 
 if __name__ == "__main__":
     print("train_transformer.py script starting...")
