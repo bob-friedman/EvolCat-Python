@@ -799,8 +799,5 @@ import numpy as np
 - **Prediction Method:** Keras provides a convenient `model.predict()` method. In PyTorch, you directly call `model(...)` for the forward pass.
 - **Custom Objects:** Keras requires explicit handling of custom layers during model loading. PyTorch model loading primarily deals with state dictionaries, and the class definitions must be available.
 
-## Conclusion
-(Placeholder for conclusion: Summarizing key differences, typical use cases, or when one might prefer one library over the other.)
-
 ## Credits
 This comparison uses PyTorch code from the "Transformer Core Concepts" document (originally provided by Gemini 2.5 Pro AI) and the Keras code examples a product of collaboration with Gemini 2.5 Pro as the major author.
