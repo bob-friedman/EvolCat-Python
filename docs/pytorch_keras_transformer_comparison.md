@@ -803,4 +803,4 @@ import numpy as np
 (Placeholder for conclusion: Summarizing key differences, typical use cases, or when one might prefer one library over the other.)
 
 ## Credits
-This comparison uses PyTorch code from the "Transformer Core Concepts" document (originally provided by Gemini 2.5 Pro AI) and Keras code examples provided by the user.
+This comparison uses PyTorch code from the "Transformer Core Concepts" document (originally provided by Gemini 2.5 Pro AI) and the Keras code examples a product of collaboration with Gemini 2.5 Pro as the major author.
