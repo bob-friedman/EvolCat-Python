@@ -14,6 +14,7 @@ The pipeline involves several stages:
 This pipeline is designed to be run in an environment like Google Colab, leveraging its capabilities for package installation and distributed computing, though it can be adapted for other environments.
 
 ## Python Script: `sars_cov2_lineage_classifier.py`
+
 ```python
 # Processing SARS-CoV-2 Mutation Data
 
@@ -774,6 +775,7 @@ This report (from the sample run data) would show varying levels of importance f
 [Interpretation of Saliency Reports will be added here]
 
 ## Overall Conclusions & Synthesis
+
 1.  **The Model Works and is Interpretable:** The pipeline successfully trains a classifier that can distinguish between fine-grained SARS-CoV-2 lineages and, more importantly, provides a method (saliency analysis) to understand *how* it's doing it.
 2.  **Saliency Reflects Evolutionary Distance:** The magnitude of the "importance" score can be seen as a proxy for how evolutionarily distinct a sublineage is from its relatives *within the training data*. Lineages with high scores have likely accumulated a set of unique mutations that make them easy to spot. Lineages with low scores are likely "fuzzier" and genetically closer to their neighbors.
 3.  **Identification of Key Markers:** The `saliency_report_top10.csv` files generated are essentially a list of the most important genetic markers for each lineage, as determined by the model. This is a computationally derived list that can guide further biological investigation.
@@ -1139,6 +1141,7 @@ This step provides powerful external validation for your entire methodology. It 
 ## On Model Size and Further Experiments
 *   **The Model is Not Overfitting:** The XBB (95-class) results show the model's performance on validation data is excellent and tracks the training performance well. The loss doesn't diverge. This suggests your model architecture (Dense 128 -> 64) is not excessively large or complex for the task. It has enough capacity to learn, but not so much that it's just memorizing noise.
 *   **The Bottleneck is Data, Not Model Size:** The classification report clearly shows that the model's few failures are on lineages with \`support: 1\` or \`support: 2\`. This is a classic problem—if the model has never (or rarely) seen an example of a class, it cannot learn to identify it. No amount of model tuning (making it bigger or smaller) can fix a fundamental lack of data for a specific class.
+
 
 ---
 **The core goal of this project is:** "to develop an end-to-end pipeline that can accurately classify fine-grained SARS-CoV-2 lineages and, using saliency analysis, we can interpret the model's decisions to identify the key mutations that define these lineages, which correspond to known biological markers."
