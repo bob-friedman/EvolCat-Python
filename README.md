@@ -38,6 +38,7 @@ The scripts and library components provided here are for research and informatio
     *   [F. Guide to Interpreting Phylogenetic Trees with Python](#f-guide-to-interpreting-phylogenetic-trees-with-python)
     *   [G. Special Topic: Virus Genomics, Diversity, and Analysis](#g-special-topic-virus-genomics-diversity-and-analysis)
     *   [H. VCF File Analysis and Filtering](#h-vcf-file-analysis-and-filtering)
+    *   [I. Extracting and Analyzing CDS Regions](#i-extracting-and-analyzing-cds-regions)
 8.  [Detailed Script Usage](#detailed-script-usage)
 9.  [Development and Contributions](#development-and-contributions)
 10. [Citation](#citation)
@@ -50,7 +51,7 @@ The scripts and library components provided here are for research and informatio
 The library is organized into:
 
 *   `pylib/utils/`: Contains core utility modules for tasks like sequence parsing.
-*   `pylib/scripts/`: Contains executable Python scripts that replicate and extend the functionality of original bioinformatics command-line tools. Many of these scripts depend on the `pylib/utils/` core utility modules. The scripts are designed to find these modules by default when EvolCat-Python is structured with `pylib/utils/` as a subdirectory.
+*   `pylib/scripts/`: Contains executable Python scripts that replicate and extend the functionality of original bioinformatics command-line tools. Many of these scripts depend on the `pylib/utils/` core utility modules. The scripts are designed to find these modules by default when EvolCat-Python is structured with `pylib/utils/` as a subdirectory. Some scripts may have their own detailed `README.md` files within this directory (e.g., `extract_cds_region.py`).
     *   `pylib/scripts/ncbi/`: Contains tools specifically for interacting with NCBI.
     *   `pylib/scripts/paml_tools/`: Contains tools specifically for PAML genomics analysis.
 
@@ -537,6 +538,32 @@ For a more comprehensive understanding of VCF files, the variant calling process
 
 For specific command-line options and usage examples for the script, see [`analyze_vcf.py` usage](docs/USAGE.md#pylibscriptsanalyze_vcfpy).
 
+### I. Extracting and Analyzing CDS Regions
+
+The `pylib/scripts/extract_cds_region.py` script is a versatile tool for working with coding sequences (CDS) in GenBank files. It allows for two main types of operations:
+
+1.  **Extracting a specific genomic region and translating overlapping CDS:** If you have a particular region of interest in a genome (defined by start and end coordinates), this script can extract the nucleotide sequence for that region. Furthermore, if any annotated CDS features overlap with your specified region, the script will identify the precise portion of the CDS that overlaps, extract its nucleotide sequence (correctly handling strand and exon information), and translate it into the corresponding protein sequence. This is useful for examining the protein products of specific genomic segments.
+
+2.  **Analyzing a single nucleotide position to find its codon and amino acid:** If you are interested in a specific nucleotide position within a genome, this script can determine if that position falls within a CDS. If it does, the script will identify the codon that includes this nucleotide, indicate the nucleotide's position within the codon (1st, 2nd, or 3rd base), and provide the translated amino acid. This is helpful for detailed analysis of specific sites, such as investigating the impact of a single nucleotide variant (SNV) if it falls within a coding region.
+
+The script handles complexities like forward and reverse strands, compound CDS locations (exons), and `codon_start` annotations to ensure accurate extraction and translation.
+
+For detailed usage instructions, command-line options, input/output formats, and examples, please refer to its dedicated README file:
+[extract_cds_region.py README](pylib/scripts/README.md)
+
+**Example Scenarios:**
+
+*   **Range Extraction:**
+    ```bash
+    python pylib/scripts/extract_cds_region.py my_genome.gb --start_pos 1000 --end_pos 1500
+    ```
+    This command would analyze the region from base 1000 to 1500 in `my_genome.gb`.
+
+*   **Single Position Analysis:**
+    ```bash
+    python pylib/scripts/extract_cds_region.py my_genome.gb --single_position 1234
+    ```
+    This command would provide details about the codon and amino acid related to nucleotide position 1234 in `my_genome.gb`.
 
 [Back to Top](#top)
 
