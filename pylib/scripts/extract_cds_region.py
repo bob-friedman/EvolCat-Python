@@ -1,5 +1,28 @@
 #!/usr/bin/env python3
 
+"""
+Processes GenBank files to extract and analyze coding sequence (CDS) information.
+
+This script provides two main functionalities:
+1. Range Extraction Mode: Extracts nucleotide sequences from a specified
+   genomic range. If this range overlaps with CDS features, it translates
+   the overlapping CDS portions into protein sequences.
+2. Single Position Mode: Identifies the codon and corresponding amino acid
+   at a specific nucleotide position if it falls within a CDS feature.
+
+The script uses BioPython for GenBank parsing and sequence operations.
+It handles various CDS feature complexities, including forward/reverse strands,
+compound locations (exons), and `codon_start` qualifiers.
+
+Usage via command line:
+  For range extraction:
+    python extract_cds_region.py <genbank_file> --start_pos <start> --end_pos <end>
+  For single position analysis:
+    python extract_cds_region.py <genbank_file> --single_position <position>
+
+See pylib/scripts/README.md for detailed documentation.
+"""
+
 import argparse
 import sys
 import os
@@ -16,8 +39,33 @@ from Bio.Data import CodonTable
 
 def extract_and_translate_cds_region(genbank_file, start_pos, end_pos):
     """
-    Extracts a nucleotide sequence from a GenBank record based on start and end positions,
-    and translates it to protein sequence if it overlaps with a CDS feature.
+    Extracts a nucleotide sequence from a GenBank record based on 1-based start and end
+    positions, and translates it to a protein sequence if it overlaps with any CDS feature.
+
+    This function iterates through records in the provided GenBank file. For each record,
+    it extracts the nucleotide sequence corresponding to the given `start_pos` and `end_pos`.
+    It then identifies all CDS features within that record and checks for overlaps
+    with the queried genomic range.
+
+    For each overlapping CDS:
+    - It determines the exact nucleotide sequence from the CDS that falls within the query.
+    - It considers the CDS's strand, `codon_start` qualifier, and `transl_table`.
+    - It translates this portion into an amino acid sequence.
+    - Results, including nucleotide and protein sequences, are printed to standard output.
+
+    Args:
+        genbank_file (str): Path to the input GenBank file.
+        start_pos (int): The 1-based start position of the genomic region to query.
+        end_pos (int): The 1-based end position of the genomic region to query.
+
+    Prints:
+        Detailed information about the processed records, extracted sequences,
+        CDS features found, and translated protein sequences to standard output.
+        Error messages are printed to standard error if issues occur (e.g.,
+        positions out of bounds, file not found).
+
+    Returns:
+        None
     """
     if start_pos > end_pos:
         print(f"Error: Start position ({start_pos}) cannot be greater than end position ({end_pos}).", file=sys.stderr)
@@ -39,19 +87,21 @@ def extract_and_translate_cds_region(genbank_file, start_pos, end_pos):
                 print(f"Error: Query range {start_pos}-{end_pos} is out of bounds for record {record.id} (length {len(record.seq)}). Skipping record.", file=sys.stderr)
                 continue
 
+            # Extract the raw nucleotide sequence from the record based on the user's query range.
             queried_nucleotide_sequence_full_range = record.seq[query_start_0based:query_end_0based]
             print(f"Nucleotide sequence in query range ({start_pos}-{end_pos}): {queried_nucleotide_sequence_full_range}")
 
             any_cds_produced_sequence_in_record = False # Renamed and will be used correctly
 
+            # Iterate through all features in the record to find CDS features.
             for feature in record.features:
                 if feature.type == "CDS":
                     cds_id = feature.qualifiers.get('protein_id', feature.qualifiers.get('locus_tag', ['Unknown_CDS']))[0]
                     print(f"  Found CDS: {cds_id} located at {feature.location}")
 
-                    # Get the entire sequence of this CDS feature
-                    # feature.extract() handles compound locations (exons) and reverse strands correctly.
-                    # The result is the coding sequence in the 5' to 3' direction of transcription.
+                    # Extract the full coding sequence for this CDS.
+                    # BioPython's feature.extract() correctly handles strand orientation (forward/reverse)
+                    # and compound locations (e.g., joins for exons), returning the 5'-3' coding sequence.
                     full_cds_sequence = feature.extract(record.seq)
                     # Removed UnknownSeq check: if isinstance(full_cds_sequence, UnknownSeq):
                     # The Seq object itself can handle unknown characters.
@@ -65,31 +115,34 @@ def extract_and_translate_cds_region(genbank_file, start_pos, end_pos):
 
                     target_sub_sequence = Seq("") # Initialize as an empty Bio.Seq object
 
-                    # Rebuild target_sub_sequence using the full_cds_sequence and the indices derived from genomic positions
-                    # This is the most robust way:
-                    # `genomic_to_cds_index_map` maps a genomic index (0-based) to its corresponding index in `full_cds_sequence` (0-based)
+                    # Create a map from genomic 0-based indices to 0-based indices within the full_cds_sequence.
+                    # This map is crucial for correctly piecing together the CDS portion that overlaps the user's query,
+                    # especially for CDS with compound locations (exons) or on the reverse strand.
                     genomic_to_cds_index_map = {}
-                    map_idx_counter = 0
-                    if feature.location.strand == 1:
+                    map_idx_counter = 0 # Counter for position in the full_cds_sequence
+                    if feature.location.strand == 1: # Forward strand
                         for part in feature.location.parts:
-                            for i in range(int(part.start), int(part.end)): # Ensure integer positions
+                            # For each genomic position in this part, map it to its corresponding index in full_cds_sequence
+                            for i in range(int(part.start), int(part.end)):
                                 genomic_to_cds_index_map[i] = map_idx_counter
                                 map_idx_counter += 1
                     else: # Reverse strand
-                        for part in reversed(feature.location.parts): # Iterate parts in transcription order for reverse strand
-                            for i in reversed(range(int(part.start), int(part.end))): # Iterate bases in transcription order
+                        # For reverse strand, iterate parts and bases in transcription order (genomic high to low for each part, parts high to low)
+                        for part in reversed(feature.location.parts):
+                            for i in reversed(range(int(part.start), int(part.end))):
                                 genomic_to_cds_index_map[i] = map_idx_counter
                                 map_idx_counter += 1
 
+                    # List to store the 0-based indices from full_cds_sequence that fall within the user's genomic query range.
                     indices_in_full_cds_for_query = []
                     for record_idx_in_query in range(query_start_0based, query_end_0based):
                         if record_idx_in_query in genomic_to_cds_index_map:
                             indices_in_full_cds_for_query.append(genomic_to_cds_index_map[record_idx_in_query])
 
                     if indices_in_full_cds_for_query:
-                        # Sort indices to ensure they are in the correct order for sequence reconstruction
-                        # This is vital if the query range might hit multiple disjoint parts of the CDS that are contiguous in the coding sequence
-                        # or if the mapping process itself didn't guarantee order (though it should with map_idx_counter).
+                        # Sort and get unique indices to reconstruct the CDS portion correctly.
+                        # Sorting is vital if the query spans multiple exons that are not contiguous in the genome
+                        # but are contiguous in the coding sequence. Set ensures uniqueness.
                         sorted_indices_in_full_cds = sorted(list(set(indices_in_full_cds_for_query)))
 
                         temp_target_seq_list = []
@@ -116,13 +169,21 @@ def extract_and_translate_cds_region(genbank_file, start_pos, end_pos):
                              print(f"    Internal logic error: target_sub_sequence is present but its source indices (indices_in_full_cds_for_query) are not. Skipping translation for {cds_id}.")
                              continue
 
-                        # Use the already sorted list of unique indices: sorted_indices_in_full_cds
+                        # The 0-based index of the first base of the overlapping CDS region within the *full* CDS sequence.
+                        # This is used to calculate the correct frame for translation.
                         first_base_offset_in_cds = sorted_indices_in_full_cds[0]
 
-                        codon_start_qualifier = int(feature.qualifiers.get("codon_start", [1])[0]) # 1, 2, or 3
+                        # Get the 'codon_start' qualifier (1, 2, or 3), defaulting to 1 if not present.
+                        # This indicates the reading frame of the CDS.
+                        codon_start_qualifier = int(feature.qualifiers.get("codon_start", [1])[0])
 
+                        # Calculate the effective frame for the *extracted segment* (target_sub_sequence).
+                        # (codon_start_qualifier - 1) is the 0-based frame of the full CDS.
+                        # first_base_offset_in_cds is how many bases into the full CDS our extracted segment begins.
+                        # The sum modulo 3 gives the 0-based starting frame for our specific segment.
                         effective_frame_start = ( (codon_start_qualifier - 1) + first_base_offset_in_cds ) % 3
 
+                        # Slice the extracted CDS segment to begin at the correct frame for translation.
                         sequence_for_translation = target_sub_sequence[effective_frame_start:]
 
                         table_id = int(feature.qualifiers.get("transl_table", [1])[0])
@@ -162,13 +223,41 @@ def extract_and_translate_cds_region(genbank_file, start_pos, end_pos):
 # New function placeholder
 def process_single_position_mode(genbank_file, target_nucleotide_pos_1based):
     """
-    Processes a GenBank file to find the codon associated with a single nucleotide position.
-    This step focuses on finding if the position is within a CDS and its index in full_cds_sequence.
+    Identifies and analyzes the codon containing a single specified nucleotide position
+    within CDS features of a GenBank file.
+
+    This function iterates through records in the GenBank file. For each record, it
+    checks if the `target_nucleotide_pos_1based` falls within any CDS feature.
+
+    If the position is found within a CDS:
+    - It determines the specific codon containing this nucleotide.
+    - It identifies the position of the target nucleotide within that codon (1st, 2nd, or 3rd).
+    - It translates the codon to its corresponding amino acid using the `transl_table`
+      and `codon_start` qualifier from the CDS feature.
+    - Detailed information, including record ID, CDS ID, genomic location,
+      CDS nucleotide index, codon sequence, and translated amino acid, is printed
+      in a formatted block to standard output.
+
+    Args:
+        genbank_file (str): Path to the input GenBank file.
+        target_nucleotide_pos_1based (int): The 1-based genomic nucleotide position to analyze.
+
+    Prints:
+        Formatted information about the codon and amino acid at the target position
+        if it's found within a CDS.
+        Prints messages if the position is not within a CDS, is before the translation
+        start, or is part of an incomplete codon.
+        Error messages are printed to standard error for issues like file not found
+        or invalid positions.
+
+    Returns:
+        None
     """
     if target_nucleotide_pos_1based <= 0:
         print(f"Error: Target nucleotide position must be positive. Got {target_nucleotide_pos_1based}", file=sys.stderr)
         sys.exit(1)
 
+    # User input is 1-based, convert to 0-based for internal calculations.
     target_pos_0based = target_nucleotide_pos_1based - 1
     found_target_in_any_cds = False
 
@@ -185,8 +274,10 @@ def process_single_position_mode(genbank_file, target_nucleotide_pos_1based):
                     cds_id = feature.qualifiers.get('protein_id', feature.qualifiers.get('locus_tag', ['Unknown_CDS']))[0]
                     # print(f"  Checking CDS: {cds_id} located at {feature.location}") # Debug
 
+                    # This will store the 0-based index of the target nucleotide within the full CDS sequence, if found.
                     pos_in_cds_0based = None
-                    current_map_idx = 0 # 0-based index into the conceptual full_cds_sequence
+                    # Counter for the current position in the conceptual full_cds_sequence as we iterate through parts.
+                    current_map_idx = 0
 
                     # Determine iteration order for parts based on strand
                     parts_to_iterate = feature.location.parts
@@ -202,23 +293,21 @@ def process_single_position_mode(genbank_file, target_nucleotide_pos_1based):
                         part_end_0based = int(part.end) # Exclusive end for length
 
                         if target_pos_0based >= part_start_0based and target_pos_0based < part_end_0based:
-                            # Target nucleotide is within this part of the CDS feature
-                            if feature.location.strand == 1:
+                            # Target nucleotide is within this part (e.g., exon) of the CDS feature.
+                            if feature.location.strand == 1: # Forward strand
+                                # Offset within this specific part.
                                 offset_in_part = target_pos_0based - part_start_0based
+                                # Position in full_cds_sequence is sum of lengths of prior parts plus offset in current part.
                                 pos_in_cds_0based = current_map_idx + offset_in_part
                             else: # Reverse strand
-                                # For reverse strand, the genomic part_start_0based corresponds to the *end* of this exon's contribution
-                                # to the full_cds_sequence, and part_end_0based-1 corresponds to the *start*.
-                                # Example: complement(100..109). part.start=99, part.end=109.
-                                # target_pos_0based = 99. This is the last base of the exon in 5'-3' coding seq. (corresponds to a high index in current_map_idx + offset_in_part if not careful)
-                                # target_pos_0based = 108. This is the first base of the exon in 5'-3' coding seq. (corresponds to a low index in current_map_idx + offset_in_part if not careful)
-                                # offset_in_part should be from the 5' end of this exon's contribution to the CDS.
-                                # The 5' end of this exon (in coding sense) is part_end_0based-1 on the genome for reverse strand.
+                                # For reverse strand, the 5' end of this exon (in coding sense) is part_end_0based-1 on the genome.
+                                # Offset is calculated from this 5' end.
                                 offset_in_part = (part_end_0based - 1) - target_pos_0based
+                                # Position in full_cds_sequence is sum of lengths of prior parts (iterated in reverse genomic order) plus offset in current part.
                                 pos_in_cds_0based = current_map_idx + offset_in_part
                             break # Found the part containing the target nucleotide
 
-                        current_map_idx += len(part) # same as (part_end_0based - part_start_0based)
+                        current_map_idx += len(part) # Add length of this part to map_idx for next iteration.
 
                     if pos_in_cds_0based is not None:
                         found_target_in_any_cds = True
@@ -242,32 +331,34 @@ def process_single_position_mode(genbank_file, target_nucleotide_pos_1based):
                             # For this step, let's keep found_target_in_any_cds as True and print error.
                             continue # To the next feature
 
+                        # The actual nucleotide base at the calculated 0-based index within the full CDS sequence.
                         target_nucleotide_in_cds = full_cds_sequence[pos_in_cds_0based]
                         print(f"    Nucleotide at this CDS index: {target_nucleotide_in_cds}")
 
                         codon_start_qualifier = int(feature.qualifiers.get("codon_start", [1])[0])
-                        # cds_translation_start_offset is the 0-based index on full_cds_sequence where translation actually begins
+                        # The 0-based index on the full_cds_sequence where translation actually begins, accounting for codon_start.
                         cds_translation_start_offset = codon_start_qualifier - 1
 
-                        # target_pos_relative_to_translation_start is the 0-based index of our target nucleotide
-                        # *relative to the start of the actual translated part of the CDS*.
+                        # The 0-based index of the target nucleotide relative to the actual start of translation within the CDS.
+                        # This is used to determine its position within a codon.
                         target_pos_relative_to_translation_start = pos_in_cds_0based - cds_translation_start_offset
 
                         if target_pos_relative_to_translation_start < 0:
                             print(f"    Position {target_nucleotide_pos_1based} is in CDS {cds_id} (at CDS index {pos_in_cds_0based}) but occurs *before* the translation start indicated by codon_start={codon_start_qualifier}. It is not part of a translated codon.")
                             break # Stop processing this specific CDS here, move to next record or finish.
 
-                        # 0-based index of the START of the codon our target nucleotide belongs to,
-                        # relative to the start of the translated part of the CDS.
+                        # Calculate the 0-based start index of the codon that contains the target nucleotide.
+                        # This index is relative to the start of the translated portion of the CDS.
                         codon_internal_start_0based = (target_pos_relative_to_translation_start // 3) * 3
 
-                        # Actual 0-based start index of this codon *within the full_cds_sequence*.
+                        # Calculate the actual 0-based start index of this codon within the *full_cds_sequence*.
                         codon_start_in_full_cds = cds_translation_start_offset + codon_internal_start_0based
 
-                        # Extract the codon
+                        # Extract the three-nucleotide codon sequence from the full CDS sequence.
                         the_codon_seq = full_cds_sequence[codon_start_in_full_cds : codon_start_in_full_cds + 3]
 
                         if len(the_codon_seq) == 3:
+                            # Determine the 1-based position (1, 2, or 3) of the target nucleotide within its codon.
                             base_in_codon_1based = (target_pos_relative_to_translation_start % 3) + 1
 
                             # Translate the codon
@@ -349,6 +440,12 @@ def process_single_position_mode(genbank_file, target_nucleotide_pos_1based):
 def main():
     """
     Main function to parse command-line arguments and call the appropriate processing function.
+
+    It sets up `argparse` to handle command-line inputs, distinguishing between
+    range extraction mode (using `--start_pos` and `--end_pos`) and single
+    position mode (using `--single_position`). Based on the provided arguments,
+    it validates them and then invokes either `extract_and_translate_cds_region`
+    or `process_single_position_mode`.
     """
     parser = argparse.ArgumentParser(
         description="Processes GenBank records to either extract and translate a nucleotide range "

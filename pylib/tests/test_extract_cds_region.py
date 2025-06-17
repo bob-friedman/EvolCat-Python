@@ -77,6 +77,7 @@ ORIGIN
         self.assertIn("Protein sequence from CDS XYZ_001 (frame adj: 0, table: 1): MKLN", stdout)
 
     def test_cds_on_reverse_strand(self):
+        """Test CDS on reverse strand, query fully overlaps CDS, checking translation."""
         # Protein: MKLNSLFTISSTYQCKLDSVTGSAKKQYEQ (Stop is implicit)
         # Coding DNA (forward strand): ATGAAGCTTGAATCTCTATTCACAATTTCATCAACATATCAGTGTAAGCTAGATTCAGTAACAGGCTCAGCTAAGAAACAATATGAGCAATAA (100bp)
         # Reverse Complement of Coding DNA (this goes into ORIGIN):
@@ -264,8 +265,8 @@ ORIGIN
         self.assertIn("Processing record: TestOutOfBounds", stdout)
         self.assertIn("Error: Query range 80-120 is out of bounds for record TestOutOfBounds (length 100).", stderr)
 
-    def test_invalid_range_start_greater_than_end(self):
-        """Test invalid input: start position is greater than end position."""
+    def test_invalid_range_start_gt_end_argparse(self):
+        """Test argparse error: start position > end position from command line."""
         genbank_content = """
 LOCUS       TestInvalidRange          100 bp    DNA     linear   SYN 01-JAN-2023
 DEFINITION  Minimal test sequence.
@@ -300,7 +301,7 @@ ORIGIN
         return process.stdout, process.stderr
 
     def test_single_pos_middle_of_codon_fwd(self):
-        """Test single_position mode: middle base of a codon, forward strand."""
+        """Test single_pos mode: target is middle base of a codon on forward strand."""
         genbank_content = """
 LOCUS       TestSingleMidFwd         200 bp    DNA     linear   SYN 01-JAN-2024
 DEFINITION  Test single position, middle of codon, forward.
@@ -344,7 +345,7 @@ ORIGIN
         self.assertIn("Translated Codon:             L", stdout)
 
     def test_single_pos_not_in_cds(self):
-        """Test single_position mode: target position is not in any CDS."""
+        """Test single_pos mode: target position is not in any CDS feature."""
         genbank_content = """
 LOCUS       TestSingleNoCDS          200 bp    DNA     linear   SYN 01-JAN-2024
 DEFINITION  Test single position, not in CDS.
@@ -371,7 +372,7 @@ ORIGIN
         self.assertNotIn("Codon Sequence:", stdout)
 
     def test_single_pos_codon_start_2_fwd(self):
-        """Test single_position: CDS with codon_start=2. Target in first translated codon."""
+        """Test single_pos mode: CDS with codon_start=2, target in first translated codon."""
         genbank_content = """
 LOCUS       TestSingleCdsSt2         200 bp    DNA     linear   SYN 01-JAN-2024
 DEFINITION  Test single pos, codon_start=2.
@@ -419,7 +420,7 @@ ORIGIN
         self.assertIn("Translated Codon:             M", stdout)
 
     def test_single_pos_before_translation_start(self):
-        """Test single_pos: target is in CDS but before codon_start position."""
+        """Test single_pos mode: target is in CDS but before effective translation start due to codon_start."""
         genbank_content = """
 LOCUS       TestSinglePreTransl      200 bp    DNA     linear   SYN 01-JAN-2024
 DEFINITION  Test single pos, before translation start.
@@ -460,7 +461,7 @@ ORIGIN
         self.assertNotIn("Translated Codon:", stdout)
 
     def test_single_pos_reverse_strand_middle_codon(self):
-        """Test single_pos: middle base of a codon, reverse strand."""
+        """Test single_pos mode: target is middle base of a codon on a reverse strand CDS."""
         # Forward coding seq (for translation): ATGAAGCTTGAATCTCTATTCACAATTTCATCAACATATCAGTGTAAGCTAGATTCAGTAACAGGCTCAGCTAAGAAACAATATGAGCAATAA
         # This is 100bp. Protein: MKLNSLFTISSTYQCKLDSVTGSAKKQYEQ
         # CDS is complement(51..150) on a 200bp record.
@@ -502,7 +503,7 @@ ORIGIN
         self.assertIn("Translated Codon:             L", stdout)
 
     def test_single_pos_incomplete_codon_end(self):
-        """Test single_pos: target is in an incomplete codon at the end of CDS."""
+        """Test single_pos mode: target is part of an incomplete codon at the end of a CDS."""
         genbank_content = """
 LOCUS       TestSingleIncomplete     150 bp    DNA     linear   SYN 01-JAN-2024
 DEFINITION  Test single pos, incomplete codon.
@@ -542,7 +543,7 @@ ORIGIN
 
 
     def test_single_pos_compound_location_exon2(self):
-        """Test single_pos: target in exon 2 of a compound CDS."""
+        """Test single_pos mode: target in the second exon of a CDS with a compound location."""
         # CDS: join(51..80,101..130)
         # Exon 1 (51..80): ATGAAGCTTGAATCTCTATTCACAATTTCAT (30 bp) -> MKLNSLFTIS
         # Exon 2 (101..130): TCAACATATCAGTGTAAGCTAGATTCAGTAA (30 bp) -> STYQCKLDSV
