@@ -545,7 +545,167 @@ print("\\n--- Evaluating Model Performance ---")
 loss, accuracy = model.evaluate(X_test, y_test, verbose=0)
 print(f"\\nFinal Test Accuracy: {accuracy * 100:.2f}%")
 print(f"Final Test Loss: {loss:.4f}")
-# [Rest of script will be added here]
+
+### Code to Generate the Confusion Matrix
+
+# --- 10. Visualizing Performance with a Confusion Matrix ---
+
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix, classification_report
+import pandas as pd # Make sure pandas is imported
+
+print("\\n--- Generating Confusion Matrix and Classification Report ---")
+
+# --- Step 1: Get Model's Predictions for the Test Set ---
+y_pred_probs = model.predict(X_test)
+y_pred_numerical = np.argmax(y_pred_probs, axis=1)
+
+# --- Step 2: Identify Top N Most Frequent Classes in the Test Set ---
+N_TOP_CLASSES = 15 # You can change this number
+class_counts = pd.Series(y_test).value_counts()
+top_n_classes_indices = class_counts.head(N_TOP_CLASSES).index.tolist()
+
+# Get the corresponding string names for these top classes
+top_n_class_names = [lineage_map[i] for i in top_n_classes_indices]
+
+# --- Step 3: Filter the Confusion Matrix for Only Top N Classes ---
+# Calculate the full confusion matrix first
+cm_full = confusion_matrix(y_test, y_pred_numerical)
+
+# Create a filtered version
+cm_filtered = cm_full[top_n_classes_indices, :][:, top_n_classes_indices]
+
+# --- Step 4: Visualize the Filtered Confusion Matrix ---
+plt.figure(figsize=(12, 10)) # A good size for 15x15
+sns.heatmap(cm_filtered, annot=True, fmt='d', cmap='Blues',
+            xticklabels=top_n_class_names, yticklabels=top_n_class_names)
+plt.title(f'Confusion Matrix (Top {N_TOP_CLASSES} Most Frequent Lineages in Test Set)', fontsize=16)
+plt.ylabel('True Lineage', fontsize=12)
+plt.xlabel('Predicted Lineage', fontsize=12)
+plt.xticks(rotation=45, ha="right")
+plt.tight_layout()
+
+# --- SAVE THE FIGURE ---
+plt.savefig(f'confusion_matrix_top_{N_TOP_CLASSES}.png', dpi=150) # Lower DPI for smaller file
+plt.show()
+
+# --- Step 5: Print a Detailed Classification Report (This can remain the same) ---
+# It's okay for the report to be long, as it's text.
+print("\\nFull Classification Report:")
+present_labels = np.unique(np.concatenate((y_test, y_pred_numerical)))
+filtered_target_names = [lineage_map[i] for i in present_labels]
+print(classification_report(
+    y_test,
+    y_pred_numerical,
+    labels=present_labels,
+    target_names=filtered_target_names,
+    zero_division=0
+))
+
+### Code to Generate Saliency Maps for Model Interpretability
+
+# --- 11. Verifying the Model's "Reasoning" with a Saliency Table ---
+
+# This block assumes the following are in memory from previous steps:
+# model, X_test, y_test, lineage_map, and the 'vectorizer' from data prep.
+
+# Vectorizer defined in Step 9 above (neural network model):
+# from sklearn.feature_extraction.text import CountVectorizer
+# # Create a collection of the mutation names
+# document = set(all_variants)
+# # Create a Vectorizer Object
+# vectorizer = CountVectorizer()
+# vectorizer.fit(document)
+
+import tensorflow as tf
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+print("\\n--- Running Saliency Map Analysis for Model Interpretability ---")
+
+# --- Step 1: Ensure we have the mutation names (features) ---
+# The 'vectorizer' object holds the mapping from column index to mutation name.
+try:
+    feature_names = vectorizer.get_feature_names_out()
+    print("Successfully retrieved feature names from vectorizer.")
+except NameError:
+    print("Error: 'vectorizer' object not found.")
+    # You would need to re-run the cell with the CountVectorizer if this error occurs.
+    # For now, we will exit if it's not available.
+    feature_names = None
+
+if feature_names is not None:
+    # --- Step 2: Find one example index for each class in the test set ---
+    unique_classes_in_test = np.unique(y_test)
+    sample_indices = [np.where(y_test == cls)[0][0] for cls in unique_classes_in_test]
+
+    ### --- START: MODIFICATION FOR TABLE OUTPUT --- ###
+
+    # Create an empty list to store the results from each class
+    saliency_results_list = []
+
+    print(f"Calculating top 10 influential mutations for {len(sample_indices)} classes...")
+
+    # --- Step 3: Loop through each sample and calculate saliency ---
+    for i, sample_index in enumerate(sample_indices):
+        sample_x = X_test[sample_index:sample_index+1]
+        sample_y_numerical = y_test[sample_index]
+        sample_y_name = lineage_map[sample_y_numerical]
+
+        sample_tensor = tf.convert_to_tensor(sample_x, dtype=tf.float32)
+
+        with tf.GradientTape() as tape:
+            tape.watch(sample_tensor)
+            predictions = model(sample_tensor)
+            top_class_output = predictions[:, sample_y_numerical]
+
+        saliency = tape.gradient(top_class_output, sample_tensor)
+        saliency_scores = np.abs(saliency.numpy().flatten())
+
+        # Create a DataFrame for this sample's results
+        df_saliency = pd.DataFrame({
+            'mutation': feature_names,
+            'present': sample_x.flatten(),
+            'importance': saliency_scores
+        })
+
+        # Filter for mutations present in this sequence and get the top 10
+        top_10_features = df_saliency[df_saliency['present'] == 1].sort_values(
+            by='importance', ascending=False
+        ).head(10)
+
+        # Add the lineage name to the DataFrame
+        top_10_features['Lineage'] = sample_y_name
+
+        # Append the results for this class to our master list
+        saliency_results_list.append(top_10_features)
+
+        # No plotting in the loop anymore
+        # plt.figure(...)
+        # plt.show()
+
+    # --- Step 4: Combine all results into a single DataFrame ---
+    if saliency_results_list:
+        final_saliency_table = pd.concat(saliency_results_list, ignore_index=True)
+
+        # Reorder columns for clarity
+        final_saliency_table = final_saliency_table[['Lineage', 'mutation', 'importance']]
+
+        print("\\n--- Saliency Analysis Complete ---")
+        print("Top 10 most influential mutations for each class:")
+        # Display the first 20 rows of the final table
+        print(final_saliency_table.head(20))
+
+        # --- Step 5: Save the table to a file ---
+        csv_filename = 'saliency_report_top10.csv'
+        final_saliency_table.to_csv(csv_filename, index=False)
+        print(f"\\nFull saliency table saved to '{csv_filename}'")
+
+    else:
+        print("No saliency results were generated.")
 ```
 
 ### Dependencies and Execution Notes
