@@ -39,6 +39,7 @@ The scripts and library components provided here are for research and informatio
     *   [G. Special Topic: Virus Genomics, Diversity, and Analysis](#g-special-topic-virus-genomics-diversity-and-analysis)
     *   [H. VCF File Analysis and Filtering](#h-vcf-file-analysis-and-filtering)
     *   [I. Extracting and Analyzing CDS Regions](#i-extracting-and-analyzing-cds-regions)
+    *   [J. SARS-CoV-2 Lineage Classification Pipeline](#j-sars-cov-2-lineage-classification-pipeline)
 8.  [Detailed Script Usage](#detailed-script-usage)
 9.  [Development and Contributions](#development-and-contributions)
 10. [Citation](#citation)
@@ -564,6 +565,12 @@ For detailed usage instructions, command-line options, input/output formats, and
     python pylib/scripts/extract_cds_region.py my_genome.gb --single_position 1234
     ```
     This command would provide details about the codon and amino acid related to nucleotide position 1234 in `my_genome.gb`.
+
+[Back to Top](#top)
+
+### J. SARS-CoV-2 Lineage Classification Pipeline
+
+[Documentation for the SARS-CoV-2 Lineage Classification Pipeline](docs/virus_biology_and_analysis/pipelines/sars_cov2_lineage_classification/README.md)
 
 [Back to Top](#top)
 
