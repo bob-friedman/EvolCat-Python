@@ -736,6 +736,17 @@ if feature_names is not None:
     *   `confusion_matrix_top_N.png`: Image of the confusion matrix.
     *   `saliency_report_top10.csv`: CSV file with saliency analysis results.
 
+## Advanced `matUtils` Usage and Data Extraction Strategies
+
+Beyond the single-clade extraction used in the primary pipeline workflow, `matUtils` offers capabilities for more comprehensive data access. For users interested in:
+
+*   A detailed breakdown of how `matUtils extract` is used for targeted clade data retrieval.
+*   A conceptual strategy for systematically extracting data for *all* clades from the MAT `.pb` file using a divide-and-conquer approach.
+
+Please refer to the supplementary document: **[./matutils_implementation.md](./matutils_implementation.md)**.
+
+This guide discusses methods for obtaining a full list of clades and iteratively extracting their respective variant data, which is essential for large-scale analyses of the entire SARS-CoV-2 dataset.
+
 ## Utility and Critique of the Pipeline
 ### 1. Analysis of Methodology
 
