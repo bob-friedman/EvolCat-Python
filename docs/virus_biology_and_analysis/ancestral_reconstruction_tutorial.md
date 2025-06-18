@@ -104,6 +104,60 @@ print(f"All fetched sequences saved to {output_fasta}")
 ```
 *Remember to replace `"your.email@example.com"` with your actual email address.*
 
+**1b. Using NCBI Command-Line Utilities for Sequence Retrieval (Alternative to BioPython)**
+
+While BioPython provides excellent programmatic access, NCBI also offers powerful command-line tools for bulk data retrieval: `ncbi-datasets-cli` and `Entrez Direct (E-utilities)`. These can be particularly useful for very large downloads or integration into shell scripts.
+
+*   **`ncbi-datasets-cli` (NCBI Datasets)**
+    *   **Purpose:** A modern command-line tool for downloading biological sequence data, metadata, and gene features from NCBI by accession number, taxon, or gene. It's designed for efficient bulk downloads.
+    *   **Installation:** Follow instructions on the [NCBI Datasets page](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/download-and-install/).
+    *   **Example (Download genomes by accession list):**
+        Create a file named `accession_list.txt` with one accession per line (e.g., GenBank or RefSeq assembly accessions).
+        ```bash
+        # accession_list.txt:
+        # GCF_000864765.1
+        # GCF_000840245.1
+
+        ncbi-datasets-cli download genome accession --inputfile accession_list.txt --filename downloaded_genomes.zip
+        # This will download genome data packages (zip files) for the specified accessions.
+        # You'll need to unzip the package; sequences are often found in a path like 'ncbi_dataset/data/GCF_xxxx/sequence.fna'.
+        # The package also contains metadata. Output format (e.g., FASTA, GenBank) can sometimes be specified with further options or chosen from package contents.
+        # You can also download by taxon:
+        # ncbi-datasets-cli download genome taxon "Betacoronavirus" --reference --assembly-source refseq --filename betacoronavirus_refseq.zip
+        ```
+    *   **Note:** `ncbi-datasets-cli` is rapidly evolving. Always check its official documentation for the latest commands, options, and available data types.
+
+*   **`Entrez Direct (E-utilities)`**
+    *   **Purpose:** A suite of command-line tools that provide direct access to the NCBI Entrez query and database system. Useful for complex queries, batch operations, and when `ncbi-datasets-cli` might not cover specific advanced search needs or older datasets.
+    *   **Installation:** Follow instructions on the [Entrez Direct documentation page](https://www.ncbi.nlm.nih.gov/books/NBK179288/).
+    *   **Key Commands:**
+        *   `esearch`: Searches Entrez databases (e.g., nucleotide, protein) for records matching a query.
+        *   `efetch`: Retrieves records in a specified format (e.g., FASTA, GenBank) based on UIDs or from `esearch` results.
+    *   **Example (Find SARS-CoV-2 sequences from a specific region and download them):**
+        ```bash
+        # 1. Search for relevant records (e.g., SARS-CoV-2 sequences from 'Wuhan')
+        # This query is an example; refine it for your specific needs.
+        esearch -db nucleotide -query '"Severe acute respiratory syndrome coronavirus 2"[Organism] AND "Wuhan"[Place of Publication]' \
+          | efetch -format uid > wuhan_sars_cov2_uids.txt
+
+        # The above command first searches for nucleotide sequences matching the query
+        # then pipes the results to efetch to get only the UIDs (accession numbers essentially)
+        # and saves them to wuhan_sars_cov2_uids.txt.
+
+        # 2. Download these sequences in FASTA format
+        efetch -db nucleotide -format fasta -input wuhan_sars_cov2_uids.txt > wuhan_sars_cov2_sequences.fasta
+
+        # Alternatively, pipe directly:
+        # esearch -db nucleotide -query '"Severe acute respiratory syndrome coronavirus 2"[Organism] AND "China"[Place of Publication] AND "complete genome"[Title]' \
+        #  | efetch -format fasta > china_sars_cov2_complete_genomes.fasta
+        ```
+    *   **API Keys and Rate Limiting:**
+        *   For extensive use of E-utilities, it's highly recommended to obtain an NCBI API key. This provides higher access rates.
+        *   Set your API key as an environment variable: `export NCBI_API_KEY="YOUR_API_KEY_HERE"`
+        *   Even with an API key, E-utilities enforce rate limits (typically 3 requests per second without an API key, 10 with one). Long-running scripts should include `sleep` commands between requests if making many calls. For very large bulk downloads, `ncbi-datasets-cli` is generally preferred if it meets your needs.
+
+Choosing between BioPython, `ncbi-datasets-cli`, and `E-utilities` depends on the specific task, dataset size, and whether you prefer a programmatic Python approach or command-line scripting.
+
 **2. Subsampling/Clustering for Very Large Datasets (Optional):**
 
 If you have tens of thousands of sequences or more, aligning them all and building a comprehensive tree can be computationally prohibitive or unnecessary for certain analyses.
