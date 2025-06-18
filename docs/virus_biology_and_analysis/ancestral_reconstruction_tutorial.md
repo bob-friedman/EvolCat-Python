@@ -486,3 +486,8 @@ Successfully navigating large-scale viral datasets requires thoughtful strategie
     *   **Snakemake:** [https://snakemake.readthedocs.io/](https://snakemake.readthedocs.io/)
 
 This tutorial provides a foundation. The field of phylogenetics is dynamic; continued exploration of documentation and new methods is encouraged to enhance your evolutionary analyses.
+
+---
+
+## Credits
+This work is made possible by the collaborative efforts of Jules and Gemini 2.5 Pro (Google).
