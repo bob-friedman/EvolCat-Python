@@ -8,6 +8,7 @@ This section of the EvolCat-Python documentation focuses on topics related to vi
 *   [**Guide to Key Biotechnologies in Virology Research**](./biotechnologies_in_virology_guide.md): An overview of foundational and cutting-edge biotechnologies used in virology.
 *   [**Guide to Estimating Mutational Fitness Effects from Large-Scale Viral Sequence Data**](./estimating_mutation_fitness_effects_guide.md): Outlines a methodology for estimating mutation fitness effects based on observed vs. expected mutation counts from sequence data.
 *   [**UShER Toolkit and matUtils: A Condensed Guide**](./usher_toolkit_report.md): A guide to using the UShER toolkit and `matUtils` for phylogenetic placement and analysis of large viral datasets, particularly SARS-CoV-2.
+*   [**Ancestral Reconstruction Tutorial**](ancestral_reconstruction_tutorial.md): A tutorial on performing ancestral sequence reconstruction using tools like TreeTime and Python libraries such as DendroPy.
 *   [**SARS-CoV-2 Lineage Classification Pipeline**](./pipelines/sars_cov2_lineage_classification/README.md): Documentation for the SARS-CoV-2 lineage classification pipeline.
 
 =======
