@@ -809,6 +809,10 @@ Ancestral sequence reconstruction is a powerful lens for viewing evolution. This
 
 Successfully navigating large-scale viral datasets requires thoughtful strategies for data subsampling (e.g., with MMseqs2/CD-HIT), efficient tree inference, and potentially divide-and-conquer approaches for ASR. Whether using command-line tools like TreeTime for integrated time-scaling and ASR, or delving into Python-based ASR with DendroPy for finer control, the key is to choose tools and methods appropriate for your research question, dataset size, and computational resources. Remember to critically assess the uncertainty inherent in ASR and to ground your interpretations in robust evolutionary models and high-quality data.
 
+## Related Tutorials
+
+For a practical, end-to-end example of processing SARS-CoV-2 data and applying advanced modeling techniques, see the [SARS-CoV-2 Genomic Data Processing and Transformer-Based Modeling Pipeline](./pipelines/sars_cov2_transformer_pipeline.md) tutorial. It demonstrates a full workflow from data retrieval to using Transformer models for sequence analysis, building upon many of the concepts discussed here.
+
 ## Further Reading/Resources
 
 *   **Python Libraries:**
