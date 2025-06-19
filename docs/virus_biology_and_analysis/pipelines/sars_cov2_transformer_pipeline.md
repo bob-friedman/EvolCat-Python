@@ -391,11 +391,13 @@ df_model_input = df_sequences_filtered
 
 ## Conceptual framework for remaining steps
 
-The core idea is to train a sequence-to-sequence Transformer model.
+The core idea is to train a sequence-to-sequence Transformer model (seq2seq).
 *   **Input (Encoder):** The descendant sequence.
 *   **Output (Decoder):** The ancestor sequence.
 
-The model learns to "translate" a descendant sequence back to its immediate ancestor.
+The model learns to "translate" a descendant sequence back to its immediate ancestor:
+
+The procedure is described in the *The Viral Chase: Outsmarting Evolution with Data Trees and AI Predictions* (https://doi.org/10.20944/preprints202506.0456.v1).
 
 ### Data Preprocessing for Transformer
 1.  **Tokenization:** Convert nucleotide sequences (A, C, G, T, N, and potentially other characters like '-') into integer tokens.
@@ -1197,6 +1199,7 @@ The provided Transformer implementation is a starting point. Further refinements
 
 *   **UShER & matUtils:** [https://usher-wiki.readthedocs.io/](https://usher-wiki.readthedocs.io/)
 *   **NCBI Datasets:** [https://www.ncbi.nlm.nih.gov/datasets/](https://www.ncbi.nlm.nih.gov/datasets/)
+*   **The Viral Chase: Outsmarting Evolution with Data Trees and AI Predictions (Paper):** [https://doi.org/10.20944/preprints202506.0456.v1](https://doi.org/10.20944/preprints202506.0456.v1)
 *   **TensorFlow Transformer Tutorial:** [https://www.tensorflow.org/text/tutorials/transformer](https://www.tensorflow.org/text/tutorials/transformer)
 *   **Effective Transformers (Book/Blog by Lilian Weng):** [https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/](https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/) (For deeper understanding of Transformer variants)
 *   **Attention Is All You Need (Original Transformer Paper):** Vaswani, A., et al. (2017). [https://arxiv.org/abs/1706.03762](https://arxiv.org/abs/1706.03762)
