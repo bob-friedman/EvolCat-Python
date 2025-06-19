@@ -292,7 +292,7 @@ A typical viral phylogenetic analysis workflow involves several steps:
     *   Use methods like Maximum Likelihood (ML) or Bayesian Inference (BI) with software like IQ-TREE, RAxML, MrBayes, or BEAST. `pylib/scripts/fas2phy.py` can help with format conversion if needed.
 
 *   **5. Tree Visualization and Interpretation:**
-        *   Visualize trees with FigTree, iTOL, or Dendroscope. For Python-based tree manipulation and basic interpretation, refer to the [Interpreting Phylogenetic Trees with Python](../phylogenetic-tree-interpretation.html) guide.
+        *   Visualize trees with FigTree, iTOL, or Dendroscope. For Python-based tree manipulation and basic interpretation, refer to the [Interpreting Phylogenetic Trees with Python](../guides/phylogenetic-tree-interpretation.md) guide.
 
 
 [Back to Top](#top)
@@ -641,7 +641,7 @@ Identifying these genetic exchange events requires careful bioinformatic analysi
 *   **Relevance of EvolCat Python tools:**
     *   Sequence manipulation scripts (`pylib/scripts/clean_fasta_name.py`, `pylib/scripts/merge_fastas.py`, and conceptually `pylib/scripts/extract_region.py` for isolating specific genes or segments) are crucial for preparing datasets for these external analysis tools.
     *   Alignment tools (either via Python wrappers or by using external programs like MAFFT) are a prerequisite for almost all detection methods.
-    *   Phylogenetic tree formatters (`pylib/scripts/fas2phy.py`) and general tree manipulation capabilities (as discussed in the [Interpreting Phylogenetic Trees with Python](../phylogenetic-tree-interpretation.html) guide) are essential for phylogenetic incongruence tests.
+    *   Phylogenetic tree formatters (`pylib/scripts/fas2phy.py`) and general tree manipulation capabilities (as discussed in the [Interpreting Phylogenetic Trees with Python](../guides/phylogenetic-tree-interpretation.md) guide) are essential for phylogenetic incongruence tests.
 
 
 [Back to Top](#top)
@@ -708,7 +708,7 @@ A powerful approach to understand the fitness consequences of mutations across t
 *   **Access to Findings:**
     *   The Bloom and Neher study provides interactive visualizations of their comprehensive SARS-CoV-2 mutation effect maps at [https://jbloomlab.github.io/SARS2-mut-fitness/](https://jbloomlab.github.io/SARS2-mut-fitness/) [Bloom and Neher, 2023; see Reference 13 for full details](#references). This resource allows for detailed exploration of the data for each viral protein.
 
-    This methodology represents a significant advancement in using large-scale genomic data to probe the evolutionary landscape of viruses. At this site there is also a related [Guide to Estimating Mutational Fitness Effects from Large-Scale Viral Sequence Data](https://github.com/bob-friedman/EvolCat-Python/blob/main/docs/virus_biology_and_analysis/estimating_mutation_fitness_effects_guide.md).
+    This methodology represents a significant advancement in using large-scale genomic data to probe the evolutionary landscape of viruses. At this site there is also a related [Guide to Estimating Mutational Fitness Effects from Large-Scale Viral Sequence Data](https://github.com/bob-friedman/EvolCat-Python/blob/main/virology_tools/estimating_mutation_fitness_effects_guide.md).
 
 
 [Back to Top](#top)
@@ -885,7 +885,7 @@ This section outlines a hypothetical step-by-step workflow to illustrate how a r
     iqtree -s curated_alignment.afa -m MFP -B 1000 -T AUTO --prefix viral_phylogeny
     ```
     *(This creates `viral_phylogeny.treefile`, among others)*
-*   **6.3. Tree Visualization:** Use FigTree, iTOL. Refer to [Phylogenetic Tree Interpretation Guide](../phylogenetic-tree-interpretation.html).
+*   **6.3. Tree Visualization:** Use FigTree, iTOL. Refer to [Phylogenetic Tree Interpretation Guide](../guides/phylogenetic-tree-interpretation.md).
 
 
 [Back to Top](#top)

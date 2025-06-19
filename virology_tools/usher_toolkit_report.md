@@ -134,7 +134,7 @@ While `matUtils extract -v` provides VCF files detailing mutations for each samp
 
 ### Using the `process_usher_branch_mutations.py` Script
 
-The Python script `docs/virus_biology_and_analysis/scripts/process_usher_branch_mutations.py` is provided to demonstrate how to obtain and process these branch-specific (or path-specific) mutations. This script is designed to be run in an environment like Google Colab, which allows for direct execution of shell commands (prefixed with `!`) and integration with Google Drive.
+The Python script `scripts/process_usher_branch_mutations.py` is provided to demonstrate how to obtain and process these branch-specific (or path-specific) mutations. This script is designed to be run in an environment like Google Colab, which allows for direct execution of shell commands (prefixed with `!`) and integration with Google Drive.
 
 **Key Steps Performed by the Script:**
 

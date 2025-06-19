@@ -84,7 +84,7 @@ The goal is to determine how often each type of nucleotide mutation (e.g., A_to_
     *   The principles of analyzing selection are related to those in `calculate_site_specific_ds_dn.py`, although the underlying methodology (counts vs. codon models) is different.
 *   **Complexity:** This is a sophisticated analytical approach. The details of QC, clade definition, and pseudocount selection can influence the results. Understanding the assumptions and limitations (see "Important Caveats" in the summary within the [Virus Genomics Guide](./virus_genomics_guide.md)) is crucial.
 
-This guide provides a high-level overview. For a detailed implementation, refer to the methods in the original Bloom and Neher (2023) paper and their publicly available code. There is also a related guide on use of this toolkit as it applies to the above documentation: [UShER Toolkit and matUtils: A Condensed Guide](https://github.com/bob-friedman/EvolCat-Python/blob/main/docs/virus_biology_and_analysis/usher_toolkit_report.md).
+This guide provides a high-level overview. For a detailed implementation, refer to the methods in the original Bloom and Neher (2023) paper and their publicly available code. There is also a related guide on use of this toolkit as it applies to the above documentation: [UShER Toolkit and matUtils: A Condensed Guide](https://github.com/bob-friedman/EvolCat-Python/blob/main/virology_tools/usher_toolkit_report.md).
 
 ## References
 *   Bloom, J. D., & Neher, R. A. (2023). Fitness effects of mutations to SARS-CoV-2 proteins. *Virus Evolution*, *9*(2), vead055. [https://doi.org/10.1093/ve/vead055](https://doi.org/10.1093/ve/vead055)
