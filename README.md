@@ -570,7 +570,7 @@ For detailed usage instructions, command-line options, input/output formats, and
 
 ### J. SARS-CoV-2 Lineage Classification Pipeline
 
-[Documentation for the SARS-CoV-2 Lineage Classification Pipeline](docs/virus_biology_and_analysis/pipelines/sars_cov2_lineage_classification/README.md)
+[Documentation for the SARS-CoV-2 Lineage Classification Pipeline](pipelines/sars_cov2_lineage_classification/README.md)
 
 [Back to Top](#top)
 
