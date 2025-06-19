@@ -21,28 +21,20 @@ The scripts and library components provided here are for research and informatio
 6.  [Relationship with Biopython and Scope of Provided Scripts](#relationship-with-biopython-and-scope-of-provided-scripts)
 7.  [Workflow Examples](#workflow-examples)
     *   [A. Building a Local Sequence Database from NCBI](#a-building-a-local-sequence-database-from-ncbi)
-        *   [Step 1: Identifying and Retrieving Initial Sequences](#step-1-identifying-and-retrieving-initial-sequences)
-        *   [Step 2: Fetching Full Records for Retrieved IDs](#step-2-fetching-full-records-for-retrieved-ids)
-        *   [Step 3: Converting Formats](#step-3-converting-formats)
-        *   [Step 4: Extracting Relevant Information](#step-4-extracting-relevant-information)
-        *   [Step 5: Cleaning and Standardizing Sequence Data](#step-5-cleaning-and-standardizing-sequence-data)
-        *   [Step 6: Merging and Organizing Your Local Database](#step-6-merging-and-organizing-your-local-database)
     *   [B. Performing a Phylogenetic Tree Analysis](#b-performing-a-phylogenetic-tree-analysis)
-        *   [Step 1: Sequence Preparation and Alignment](#step-1-sequence-preparation-and-alignment)
-        *   [Step 2: Alignment Curation and Basic Analysis](#step-2-alignment-curation-and-basic-analysis)
-        *   [Step 3: Phylogenetic Inference (External Tools)](#step-3-phylogenetic-inference-external-tools)
-        *   [Step 4: Tree Visualization and Basic Manipulation (Conceptual)](#step-4-tree-visualization-and-basic-manipulation-conceptual)
     *   [C. Performing a Standard Pairwise Sequence Alignment with Biopython](#c-performing-a-standard-pairwise-sequence-alignment-with-biopython)
     *   [D. Basic Motif Scanning](#d-basic-motif-scanning)
-    *   [E. Guide to Accessing MHC Sequence Databases](#e-guide-to-accessing-mhc-sequence-databases)   
-    *   [F. Guide to Interpreting Phylogenetic Trees with Python](#f-guide-to-interpreting-phylogenetic-trees-with-python)
-    *   [G. Special Topic: Virus Genomics, Diversity, and Analysis](#g-special-topic-virus-genomics-diversity-and-analysis)
     *   [H. VCF File Analysis and Filtering](#h-vcf-file-analysis-and-filtering)
     *   [I. Extracting and Analyzing CDS Regions](#i-extracting-and-analyzing-cds-regions)
     *   [J. SARS-CoV-2 Lineage Classification Pipeline](#j-sars-cov-2-lineage-classification-pipeline)
-8.  [Detailed Script Usage](#detailed-script-usage)
-9.  [Development and Contributions](#development-and-contributions)
-10. [Citation](#citation)
+8.  [Virus Genomics, Diversity, and Analysis](#virus-genomics-diversity-and-analysis)
+    *   [Special Topic: Virus Genomics, Diversity, and Analysis](#g-special-topic-virus-genomics-diversity-and-analysis)
+9.  [Technical Guides](#technical-guides)
+    *   [Guide to Accessing MHC Sequence Databases](#e-guide-to-accessing-mhc-sequence-databases)
+    *   [Guide to Interpreting Phylogenetic Trees with Python](#f-guide-to-interpreting-phylogenetic-trees-with-python)
+10. [Detailed Script Usage](#detailed-script-usage)
+11. [Development and Contributions](#development-and-contributions)
+12. [Citation](#citation)
 
 
 [Back to Top](#top)
@@ -508,21 +500,23 @@ Identifying known motifs (e.g., transcription factor binding sites, short functi
 
 [Back to Top](#top)
 
-### E. Guide to Accessing MHC Sequence Databases
+## Technical Guides <a name="technical-guides"></a>
+### Guide to Accessing MHC Sequence Databases <a name="e-guide-to-accessing-mhc-sequence-databases"></a>
 
 [MHC Database Guide](docs/mhc-database-guide.md)
 
 
 [Back to Top](#top)
 
-### F. Guide to Interpreting Phylogenetic Trees with Python
+### Guide to Interpreting Phylogenetic Trees with Python <a name="f-guide-to-interpreting-phylogenetic-trees-with-python"></a>
 
-[Phylogenetic Tree Interpretation](docs//phylogenetic-tree-interpretation.md)
+[Phylogenetic Tree Interpretation](docs/phylogenetic-tree-interpretation.md)
 
 
 [Back to Top](#top)
 
-### G. Special Topic: Virus Genomics, Diversity, and Analysis
+## Virus Genomics, Diversity, and Analysis <a name="virus-genomics-diversity-and-analysis"></a>
+### Special Topic: Virus Genomics, Diversity, and Analysis <a name="g-special-topic-virus-genomics-diversity-and-analysis"></a>
 
 [Guide to Virus Genomics, Diversity, and Analysis](docs/virus_biology_and_analysis/virus_genomics_guide.md)
 
@@ -570,7 +564,7 @@ For detailed usage instructions, command-line options, input/output formats, and
 
 ### J. SARS-CoV-2 Lineage Classification Pipeline
 
-[Documentation for the SARS-CoV-2 Lineage Classification Pipeline](docs/virus_biology_and_analysis/pipelines/sars_cov2_lineage_classification/README.md)
+[Documentation for the SARS-CoV-2 Lineage Classification Pipeline](pipelines/sars_cov2_lineage_classification/README.md)
 
 [Back to Top](#top)
 
