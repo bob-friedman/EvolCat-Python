@@ -17,7 +17,8 @@ This tutorial provides a comprehensive guide to processing SARS-CoV-2 genomic da
 *   **BioPython:** For sequence manipulation. (`pip install biopython`)
 *   **PySam:** For reading VCF files. (`pip install pysam`)
 *   **DendroPy:** For phylogenetic computations, tree manipulation, and ASR. (`pip install dendropy`)
-*   **(Optional) Nextflow:** For pipeline orchestration.
+*   **Bgzip:** Required method of compression for downstream tasks. (`pip install bgzip`)
+*   **BCFTools:** Utilities for variant calling and manipulating VCF files. (`conda install bcftools`)
 
 ### Conceptual Knowledge:
 *   Basic understanding of genomic data (FASTA, VCF formats).
@@ -27,32 +28,43 @@ This tutorial provides a comprehensive guide to processing SARS-CoV-2 genomic da
 
 ## Expected Outcomes
 
-By completing this tutorial, you will:
-*   Understand the workflow for collecting and processing SARS-CoV-2 genomic data, specifically focusing on creating ancestor-descendant sequence pairs.
-*   Learn how to perform feature engineering using Pandas to prepare data for a machine learning model.
-*   Gain insights into the conceptual framework of using Transformer models for predicting ancestral genomic sequences.
+This tutorial goal is for:
+*   Understanding the workflow for collecting and processing SARS-CoV-2 genomic data, specifically focusing on creating ancestor-descendant sequence pairs.
+*   Learning how to perform feature engineering using Pandas to prepare data for a machine learning model.
+*   Gaining insights into the conceptual framework of using Transformer models for predicting ancestral genomic sequences.
 *   Have a trained Transformer model in TensorFlow capable of predicting ancestral sequences from descendant sequences.
 *   Be able to adapt this pipeline for your own research questions in viral genomics or similar sequence-based tasks.
-*   Understand how to prepare and preprocess data for a nucleotide-based Transformer model.
+*   Understanding how to prepare and preprocess data for a nucleotide-based Transformer model.
 
-## DATA COLLECTION
+## Scaling to Full Dataset of SARS-CoV-2 Genomes
+
+Loop & Sample: A Monte Carlo Approach with parallelism and efficiency:
+1. Execute a loop with a large number of iterations.
+2. Randomly Select a Node: In each iteration, pick a random internal node from the clade's tree.
+3. Filter by Size: Check the number of leaves descending from this randomly selected node, if it is within a predefined manageable range (i.e., 500 - 5,000 leaves) then proceed, otherwise, discard and select another node.
+4. Extract sub-subtree for this manageable internal node.
+5. Save inferred ancestral sequences for the nodes in this analyzed subtree. Verify node identifiers are unique and can be mapped back to the master clade tree.
+6. Assess if this iterative analysis is still yielding new or significantly different ancestral state information for the nodes within the target clade. Stop when results appear to converge or after a sufficient number of iterations.
+
+## Data Collection
 
 This section outlines the steps to collect and preprocess SARS-CoV-2 data to create a dataset of (ancestor, descendant) sequence pairs.
 
 ### 1. Database Construction with UShER
 
-The initial step involves constructing or updating a comprehensive SARS-CoV-2 database using UShER. This database typically includes a global phylogenetic tree (`public-latest.all.masked.pb.gz`) and corresponding mutation-annotated VCF files.
+The initial step involves constructing or updating a comprehensive SARS-CoV-2 database using UShER (>8 million samples). This database typically includes a global phylogenetic tree (`public-latest.all.masked.pb.gz`) and corresponding mutation-annotated VCF files.
 
 ```bash
 # Download the latest UShER tree and VCF (example paths)
-# These files are usually obtained from sources like https://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/
+# Retrieve files at: https://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/
 wget https://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/public-latest.all.masked.pb.gz
 wget https://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/public-latest.all.masked.vcf.gz
+wget https://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/public-latest.metadata.tsv.gz
 
 # It's good practice to decompress the VCF for easier processing by some tools,
-# though UShER itself can handle .vcf.gz
 gunzip public-latest.all.masked.vcf.gz
-# Now you have public-latest.all.masked.vcf
+gunzip public-latest.all.masked.pb.gz
+gunzip public-latest.metadata.tsv.gz
 ```
 *Note: Ensure UShER is properly installed and configured. The paths to the database files should be specified.*
 
@@ -62,7 +74,7 @@ We need a reference genome for alignment and variant calling. The Wuhan-Hu-1 gen
 
 ```bash
 # Download reference genome and annotation using NCBI Datasets CLI
-datasets download genome accession NC_045512.2 --include genome --filename SC2_ref.zip
+ncbi-datasets-cli download genome accession NC_045512.2 --include genome --filename SC2_ref.zip
 unzip SC2_ref.zip
 mv ncbi_dataset/data/NC_045512.2/NC_045512.2.fna ./SC2_ref.fasta
 rm -rf ncbi_dataset SC2_ref.zip README.md # Clean up
@@ -70,46 +82,216 @@ rm -rf ncbi_dataset SC2_ref.zip README.md # Clean up
 
 ### 3. Extracting Ancestor-Descendant Sequence Pairs using UShER and `matUtils`
 
-`matUtils extract` (a tool packaged with UShER) is crucial for generating the data needed. We will use it to extract information about ancestor-descendant pairs along with their mutations.
+## Retrieving Subset of the Full Dataset
 
+Examples:
+*   Retrieving all clade names in virus data:
 ```bash
-# Ensure UShER and matUtils are in your PATH
-# Path to your UShER protobuf tree
-TREE_PATH="./public-latest.all.masked.pb.gz"
-# Path to your VCF file (unzipped)
-VCF_PATH="./public-latest.all.masked.vcf"
-# Output directory for extracted data
-OUTPUT_DIR="./usher_extracted_data"
-
-# Create output directory if it doesn't exist
-mkdir -p ${OUTPUT_DIR}
-
-# Use matUtils to extract ancestor-descendant information
-# -t: input tree
-# -v: input VCF
-# -d: output directory
-# -A: output ancestor sequences in FASTA format (ancestors.fa)
-# -D: output descendant sequences in FASTA format (descendants.fa)
-# -M: output mutations for each descendant relative to its ancestor (mutation_paths.txt)
-# -N: output node names for descendants (descendant_nodes.txt)
-# -P: output node names for ancestors (ancestor_nodes.txt)
-matUtils extract -t ${TREE_PATH} -v ${VCF_PATH} -d ${OUTPUT_DIR} -A -D -M -N -P
+matUtils summary --input-mat public-latest.all.masked.pb --clades clades.tsv #
 ```
 
-This command will generate several files in `${OUTPUT_DIR}`:
-*   `ancestors.fa`: FASTA file of ancestral sequences.
-*   `descendants.fa`: FASTA file of descendant sequences.
-*   `mutation_paths.txt`: Text file detailing mutations between each ancestor-descendant pair.
-*   `ancestor_nodes.txt`: List of ancestor node identifiers.
-*   `descendant_nodes.txt`: List of descendant node identifiers.
+*   Retrieving all samples in virus data:
+```bash
+matUtils summary --input-mat public-latest.all.masked.pb --samples samples.txt
+```
 
-Each line in `ancestor_nodes.txt`, `descendant_nodes.txt`, `ancestors.fa` (sequence headers), and `descendants.fa` (sequence headers) corresponds to an ancestor-descendant pair. `mutation_paths.txt` also aligns with these pairs.
+*   Retrieving Clade 23E (XBB.2.3) in virus data (~16,362 samples of >8M in full data):
+```bash
+matUtils extract -i public-latest.all.masked.pb -c 'XBB.2.3' -v xbb23.vcf
+```
+
+*   Verify sample count in metadata:
+```bash
+cat public-latest.metadata.tsv | grep -nr "XBB.2.3" | wc -l
+```
+
+*   Retrieve subset of data for this Clade:
+```bash
+cat public-latest.metadata.tsv | grep -nr "XBB.2.3" > public-xbb23-latest.metadata.tsv
+echo "Creating accession list..."
+cat public-xbb23-latest.metadata.tsv | cut -f2 | grep -v "genbank_accession" | uniq > accession_list.txt
+echo "accession_list.txt created with $(wc -l < accession_list.txt) entries."
+```
+
+*   Tool for compressing VCF file for downstream tasks:
+```bash
+bgzip --force xbb23.vcf
+```
+
+BCFTools is available in Conda:
+*   And an index file that accompanies the compressed VCF file:
+```bash
+bcftools index --tbi xbb23.vcf.gz
+```
+
+Retrieval method for data in VCF file (Conceptual):
+```python
+# Retrieve data in vcf file
+conda install -q -y pysam 
+import pysam
+from pysam import VariantFile
+
+vcf_filepath = 'xbb23.vcf.gz'
+vcf = VariantFile(vcf_filepath)
+
+print(f"Successfully opened {vcf_filepath}")
+print("-" * 30)
+print(f"Reference sequence in VCF: {vcf.header.contigs}")
+print(f"Samples in VCF: {list(vcf.header.samples)}")
+print("-" * 30)
+
+variant_count = 0
+log_interval = 500
+for record in vcf.fetch():
+    variant_count += 1
+    # Examine samples for this variant
+    # The 'GT' field in the FORMAT column tells us the genotype (0=ref, 1=alt)
+    samples_with_variant = []
+    for sample in record.samples.values():
+        # sample['GT'] returns a tuple, e.g., (1, 1) for a homozygous alt
+        # We check if the first alternate allele (1) is present in the genotype
+        if 1 in sample['GT']:
+            samples_with_variant.append(sample.name)
+
+    # Only log detailed info periodically
+    if variant_count % log_interval == 0:
+        chrom = record.chrom
+        pos = record.pos
+        ref_allele = record.ref
+        alt_alleles = record.alts
+
+        print(f"Processed {variant_count} variants...")
+        print(f"\nVariant at {chrom}:{pos} | REF: {ref_allele} | ALT: {alt_alleles[0] if alt_alleles else ''}")
+
+        if samples_with_variant:
+            print(f"  > Found in {len(samples_with_variant)} samples: {samples_with_variant[:3]}...") # Print first 3
+        else:
+            print("  > Not found in any sample in this VCF (might be an ancestral variant).")
+
+print(f"\nProcessing complete. Analyzed {variant_count} total variants.")
+vcf.close()
+```
+
+## Retrieval of NCBI Genome Data (Conceptual)
+
+*   Create accession_list.txt of accession numbers in a list, for example:
+GCF_000864765.1
+GCF_000840245.1
+Download genome data (zip file) in the accession list
+```bash
+ncbi-datasets-cli download genome accession --inputfile accession_list.txt --filename downloaded_genomes.zip
+```
+
+Or download by taxon:
+```bash
+ncbi-datasets-cli download virus genome taxon 'Severe acute respiratory syndrome coronavirus 2' --reference --include genome --filename sars-cov-2-genomes.zip
+unzip -o sars-cov-2-genomes.zip # -o for overwrite without prompt
+```
+
+Find all FASTA files (.fna) in the download directory, concatenates into a single file for downstream tools:
+```bash
+echo "Consolidating downloaded sequences..."
+find ncbi_dataset/data -name "*.fna" -exec cat {} + > retrieved_sequences.fasta
+echo "All sequences consolidated into retrieved_sequences.fasta"
+```
+
+## Cluster Sequence Data by Similarity (Conceptual)
+
+Construct multiple sequence alignment of sequences:
+*   Cluster sequences with 100% identity (fast search of large datasets)
+*   Alternatively, for very large dataset cluster at lower than 1.0, such as ~0.99 (min-seq-id)
+*   Uses Fast Fourier Transform approximation for rapid homologous segment identification
+```bash
+mmseqs easy-cluster --min-seq-id 1.0
+```
+
+## Multiple Sequence Alignment (MSA) of above Data Output (Conceptual)
+MAFFT selects a fast method of sequence alignment:
+```bash
+mafft --auto retrieved_sequences.fasta > aligned_sequences.fasta
+```
+
+## Construct Phylogenetic Tree of MSA (Conceptual)
+Construct phylogenetic tree by IQ-TREE:
+*   Scales tree by divergence (substitutions per site; GTR+F+G4 model is common for viruses
+*   Use distinct prefix for output files: 'iqtree_run'; tree file is iqtree_run.treefile
+*   Leaf names in tree must exactly match sequence names in aligned_sequences.fasta
+```bash
+iqtree -s aligned_sequences.fasta -m GTR+F+G4 -nt AUTO --threads-max AUTO -mem 16G -pre iqtree_run
+```
+
+## Ancestral Sequence Reconstruction by TreeTime (Conceptual):
+*   Dependent on Newick tree format and Fasta multiple sequence alignment (set for automatic resolution of polytomies)
+*   Output includes: annotated_tree.nexus with inferred ancestral sequences and mutations annotated on branches (FigTree) and ancestral_sequences.fasta of inferred sequences at internal nodes
+```bash
+treetime ancestral --aln aligned_sequences.fasta --tree iqtree_run.treefile --outdir treetime_asr_output
+```
+
+## Construct Data of Ancestral/Descendant Pairs of Sequences (Conceptual):
+First, install the necessary library
+```bash
+!pip install -q dendropy
+```
+
+```python
+import dendropy
+
+# --- Configuration ---
+# These are the output files from the previous TreeTime step
+TREE_FILE = 'treetime_asr_output/annotated_tree.nexus'
+ANCESTRAL_SEQS_FILE = 'treetime_asr_output/ancestral_sequences.fasta'
+OUTPUT_PAIRS_FILE = 'ancestor_descendant_pairs.tsv'
+
+print(f"Loading tree from {TREE_FILE}...")
+# Load the tree, specifying the schema
+tree = dendropy.Tree.get(path=TREE_FILE, schema="nexus")
+
+print(f"Loading sequences from {ANCESTRAL_SEQS_FILE}...")
+# Load the ancestral sequences into a dictionary for easy lookup
+# DendroPy's FastaReader is a good choice
+seqs = dendropy.DnaCharacterMatrix.get(path=ANCESTRAL_SEQS_FILE, schema="fasta")
+seq_dict = {taxon.label: str(seqs[taxon]) for taxon in seqs.taxon_namespace}
+
+print("Generating ancestor-descendant pairs...")
+pairs_count = 0
+with open(OUTPUT_PAIRS_FILE, 'w') as f_out:
+    # Write a header
+    f_out.write("ancestor_id\tdescendant_id\tancestor_seq\tdescendant_seq\n")
+
+    # Iterate over every node in the tree
+    for node in tree.postorder_node_iter():
+        # A node is an ancestor if it is not a leaf (i.e., it has children)
+        if not node.is_leaf():
+            ancestor_id = node.label
+            
+            # Skip if the ancestor node's sequence is not available for some reason
+            if ancestor_id not in seq_dict:
+                continue
+            
+            ancestor_seq = seq_dict[ancestor_id]
+
+            # Now, iterate through its direct children (descendants)
+            for child_node in node.child_nodes():
+                descendant_id = child_node.label
+                
+                # The descendant could be another internal node or a leaf (tip)
+                if descendant_id not in seq_dict:
+                    continue
+
+                descendant_seq = seq_dict[descendant_id]
+                
+                # Write the pair to our output file
+                f_out.write(f"{ancestor_id}\t{descendant_id}\t{ancestor_seq}\t{descendant_seq}\n")
+                pairs_count += 1
+
+print(f"Processing complete. Wrote {pairs_count} pairs to {OUTPUT_PAIRS_FILE}.")
+```
 
 ## Feature Engineering with Pandas
 
 Now, we'll process the files generated by `matUtils` into a structured Pandas DataFrame. This DataFrame will be the input for our Transformer model.
 
-### Gemini: Script to Create DataFrame for Ancestor-Descendant Pairs
+### Script to Create DataFrame for Ancestor-Descendant Pairs (Conceptual)
 
 This Python script reads the FASTA files and creates a Pandas DataFrame.
 
@@ -220,10 +402,315 @@ The model learns to "translate" a descendant sequence back to its immediate ance
 2.  **Padding:** Ensure all sequences in a batch have the same length by padding shorter sequences.
 3.  **Special Tokens:** Add `[START]` and `[END]` tokens to target sequences (ancestor sequences) for the decoder.
 
-## Implement the Transformer based method
+## Implement the Transformer based method #1 (Conceptual)
+
+This section provides a Keras/TensorFlow implementation of the Transformer model.
+
+```python
+# Setup and Data Loading
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+import pandas as pd
+import numpy as np
+import os
+
+# --- Configuration ---
+PAIRS_FILE = 'ancestor_descendant_pairs.tsv'
+BATCH_SIZE = 64
+EPOCHS = 10 # Start with a few epochs, increase for better results
+MAX_SEQ_LENGTH = 30000 # SARS-CoV-2 is ~29.9k bp. Pad to this length.
+
+# Model Hyperparameters
+EMBED_DIM = 128      # Embedding dimension for each token
+NUM_HEADS = 8        # Number of attention heads
+FF_DIM = 512         # Hidden layer size in feed forward network inside transformer
+NUM_ENCODER_LAYERS = 3
+NUM_DECODER_LAYERS = 3
+DROPOUT_RATE = 0.1
+
+# --- Load and Preprocess Data ---
+if not os.path.exists(PAIRS_FILE):
+    print(f"ERROR: The data file '{PAIRS_FILE}' was not found.")
+    print("Please ensure the previous data preparation steps have been completed successfully.")
+else:
+    print(f"Loading data from '{PAIRS_FILE}'...")
+    df = pd.read_csv(PAIRS_FILE, sep='\t')
+
+    # For demonstration, let's use a smaller subset. Remove this for a full run.
+    df = df.sample(n=min(10000, len(df)), random_state=42)
+    print(f"Using a subset of {len(df)} pairs for this demonstration.")
+
+    # Create the vocabulary
+    # Find all unique characters in both ancestor and descendant sequences
+    vocab = set()
+    for seq in pd.concat([df['ancestor_seq'], df['descendant_seq']]):
+        vocab.update(list(seq))
+    vocab = sorted(list(vocab))
+
+    # Add special tokens
+    special_tokens = ["[PAD]", "[START]", "[END]"]
+    vocab = special_tokens + vocab
+    VOCAB_SIZE = len(vocab)
+
+    print(f"Vocabulary size: {VOCAB_SIZE}")
+    print(f"Vocabulary: {vocab}")
+
+    # Create token mapping dictionaries
+    char_to_token = {char: i for i, char in enumerate(vocab)}
+    token_to_char = {i: char for i, char in enumerate(vocab)}
+
+    # --- Tokenization and Padding Function ---
+    def tokenize_and_pad(sequences):
+        tokenized = []
+        for seq in sequences:
+            # Add start and end tokens
+            current_tokens = [char_to_token["[START]"]]
+            current_tokens.extend([char_to_token.get(char, 0) for char in seq])
+            current_tokens.append(char_to_token["[END]"])
+            tokenized.append(current_tokens)
+        
+        # Pad sequences to the max length
+        return keras.preprocessing.sequence.pad_sequences(
+            tokenized, maxlen=MAX_SEQ_LENGTH, padding="post", value=char_to_token["[PAD]"]
+        )
+
+    # Apply the function
+    ancestor_vectors = tokenize_and_pad(df["ancestor_seq"].values)
+    descendant_vectors = tokenize_and_pad(df["descendant_seq"].values)
+
+    print(f"\nShape of ancestor vectors: {ancestor_vectors.shape}")
+    print(f"Shape of descendant vectors: {descendant_vectors.shape}")
+
+    # --- Create tf.data.Dataset ---
+    # Prepare inputs and outputs for the "teacher forcing" model
+    # Decoder input is the sequence shifted right (starts with [START])
+    # Decoder output is the sequence as is (ends with [END])
+    decoder_inputs = descendant_vectors[:, :-1]
+    decoder_outputs = descendant_vectors[:, 1:]
+
+    dataset = tf.data.Dataset.from_tensor_slices(
+        ((ancestor_vectors, decoder_inputs), decoder_outputs)
+    )
+    dataset = dataset.batch(BATCH_SIZE).shuffle(buffer_size=1024).prefetch(tf.data.AUTOTUNE)
+
+```
+
+```python
+# Transformer Building Blocks (Custom Layers)
+
+# --- Positional Embedding Layer ---
+# Combines token embedding with a fixed positional encoding.
+class PositionalEmbedding(layers.Layer):
+    def __init__(self, vocab_size, embed_dim, maxlen, **kwargs):
+        super().__init__(**kwargs)
+        self.maxlen = maxlen
+        self.embed_dim = embed_dim
+        self.vocab_size = vocab_size
+        self.token_emb = layers.Embedding(input_dim=vocab_size, output_dim=embed_dim)
+        self.pos_emb = self.get_positional_encoding(maxlen, embed_dim)
+
+    def get_positional_encoding(self, maxlen, embed_dim):
+        positions = np.arange(maxlen)[:, np.newaxis]
+        div_term = np.exp(np.arange(0, embed_dim, 2) * -(np.log(10000.0) / embed_dim))
+        pos_encoding = np.zeros((maxlen, embed_dim))
+        pos_encoding[:, 0::2] = np.sin(positions * div_term)
+        pos_encoding[:, 1::2] = np.cos(positions * div_term)
+        return tf.cast(pos_encoding[np.newaxis, ...], dtype=tf.float32)
+
+    def call(self, x):
+        maxlen = tf.shape(x)[-1]
+        x = self.token_emb(x)
+        # Add the positional encoding, slicing to match the input length
+        return x + self.pos_emb[:, :maxlen, :]
+        
+# --- Transformer Encoder Layer ---
+class TransformerEncoder(layers.Layer):
+    def __init__(self, embed_dim, ff_dim, num_heads, **kwargs):
+        super().__init__(**kwargs)
+        self.attn = layers.MultiHeadAttention(num_heads=num_heads, key_dim=embed_dim)
+        self.ffn = keras.Sequential(
+            [layers.Dense(ff_dim, activation="relu"), layers.Dense(embed_dim),]
+        )
+        self.layernorm1 = layers.LayerNormalization(epsilon=1e-6)
+        self.layernorm2 = layers.LayerNormalization(epsilon=1e-6)
+        self.dropout1 = layers.Dropout(DROPOUT_RATE)
+        self.dropout2 = layers.Dropout(DROPOUT_RATE)
+
+    def call(self, inputs, training=False):
+        # Multi-head self-attention
+        attn_output = self.attn(inputs, inputs)
+        attn_output = self.dropout1(attn_output, training=training)
+        out1 = self.layernorm1(inputs + attn_output)
+        
+        # Feed-forward network
+        ffn_output = self.ffn(out1)
+        ffn_output = self.dropout2(ffn_output, training=training)
+        return self.layernorm2(out1 + ffn_output)
+
+# --- Transformer Decoder Layer ---
+class TransformerDecoder(layers.Layer):
+    def __init__(self, embed_dim, ff_dim, num_heads, **kwargs):
+        super().__init__(**kwargs)
+        self.self_attn = layers.MultiHeadAttention(num_heads=num_heads, key_dim=embed_dim)
+        self.cross_attn = layers.MultiHeadAttention(num_heads=num_heads, key_dim=embed_dim)
+        self.ffn = keras.Sequential(
+            [layers.Dense(ff_dim, activation="relu"), layers.Dense(embed_dim),]
+        )
+        self.layernorm1 = layers.LayerNormalization(epsilon=1e-6)
+        self.layernorm2 = layers.LayerNormalization(epsilon=1e-6)
+        self.layernorm3 = layers.LayerNormalization(epsilon=1e-6)
+        self.dropout1 = layers.Dropout(DROPOUT_RATE)
+        self.dropout2 = layers.Dropout(DROPOUT_RATE)
+        self.dropout3 = layers.Dropout(DROPOUT_RATE)
+
+    def call(self, inputs, encoder_outputs, training=False):
+        # Causal (masked) self-attention
+        causal_mask = self.get_causal_attention_mask(inputs)
+        self_attn_output = self.self_attn(
+            query=inputs, value=inputs, key=inputs, attention_mask=causal_mask
+        )
+        self_attn_output = self.dropout1(self_attn_output, training=training)
+        out1 = self.layernorm1(inputs + self_attn_output)
+
+        # Cross-attention (attends to encoder output)
+        cross_attn_output = self.cross_attn(
+            query=out1, value=encoder_outputs, key=encoder_outputs
+        )
+        cross_attn_output = self.dropout2(cross_attn_output, training=training)
+        out2 = self.layernorm2(out1 + cross_attn_output)
+
+        # Feed-forward network
+        ffn_output = self.ffn(out2)
+        ffn_output = self.dropout3(ffn_output, training=training)
+        return self.layernorm3(out2 + ffn_output)
+        
+    def get_causal_attention_mask(self, inputs):
+        input_shape = tf.shape(inputs)
+        batch_size, sequence_length = input_shape[0], input_shape[1]
+        i = tf.range(sequence_length)[:, tf.newaxis]
+        j = tf.range(sequence_length)
+        mask = tf.cast(i >= j, dtype="int32")
+        return mask
+```
+
+```python
+# Build and Train the Transformer Model
+
+# --- Build the full model ---
+encoder_inputs = keras.Input(shape=(None,), dtype="int32", name="ancestor")
+decoder_inputs = keras.Input(shape=(None,), dtype="int32", name="descendant")
+
+# Encoder path
+encoder_embedding = PositionalEmbedding(VOCAB_SIZE, EMBED_DIM, MAX_SEQ_LENGTH)(encoder_inputs)
+x = encoder_embedding
+for _ in range(NUM_ENCODER_LAYERS):
+    x = TransformerEncoder(EMBED_DIM, FF_DIM, NUM_HEADS)(x)
+encoder_outputs = x
+
+# Decoder path
+decoder_embedding = PositionalEmbedding(VOCAB_SIZE, EMBED_DIM, MAX_SEQ_LENGTH)(decoder_inputs)
+x = decoder_embedding
+for _ in range(NUM_DECODER_LAYERS):
+    x = TransformerDecoder(EMBED_DIM, FF_DIM, NUM_HEADS)(x, encoder_outputs)
+
+# Final output layer
+# This projects the decoder's output back to the vocabulary space to get probabilities for each token
+output_logits = layers.Dense(VOCAB_SIZE, name="logits")(x)
+
+# Create the model
+transformer = keras.Model([encoder_inputs, decoder_inputs], output_logits, name="viral_transformer")
+transformer.summary()
+
+# --- Compile and Train ---
+transformer.compile(
+    optimizer=keras.optimizers.Adam(learning_rate=1e-4),
+    loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+    metrics=[keras.metrics.SparseCategoricalAccuracy()],
+)
+
+# Optional: Add a callback to save the model
+model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
+    filepath="viral_transformer_checkpoint.h5",
+    save_weights_only=True,
+    monitor='val_sparse_categorical_accuracy',
+    mode='max',
+    save_best_only=True)
+
+# Note: Training will be slow on a CPU. A GPU is highly recommended.
+history = transformer.fit(
+    dataset,
+    epochs=EPOCHS,
+    callbacks=[model_checkpoint_callback]
+    # To use a validation split, you'd need to create a separate validation dataset
+    # validation_data=val_dataset 
+)
+```
+
+```python
+# Inference and Prediction
+# Load best weights if you trained with the callback
+# transformer.load_weights("viral_transformer_checkpoint.h5")
+
+def decode_sequence(input_sentence):
+    # Tokenize the input ancestor sequence
+    tokenized_input = tokenize_and_pad([input_sentence])[0]
+    
+    # Initialize the decoder's input with the [START] token
+    decoded_sentence = [char_to_token["[START]"]]
+    
+    for i in range(MAX_SEQ_LENGTH):
+        # Prepare inputs for the model
+        ancestor_input = tf.constant([tokenized_input], dtype=tf.int32)
+        decoder_input = tf.constant([decoded_sentence], dtype=tf.int32)
+        
+        # Get the model's prediction (logits for the next token)
+        predictions = transformer([ancestor_input, decoder_input], training=False)
+        
+        # Sample the token with the highest probability
+        next_token_id = tf.argmax(predictions[0, i, :]).numpy()
+        
+        # Append the predicted token to the sequence
+        decoded_sentence.append(next_token_id)
+        
+        # If the model predicts the [END] token, stop
+        if next_token_id == char_to_token["[END]"]:
+            break
+            
+    # Convert the token sequence back to characters
+    return "".join(token_to_char.get(token, "?") for token in decoded_sentence[1:-1])
+
+def compare_sequences(ancestor, actual, predicted):
+    print("-" * 50)
+    print(f"Ancestor:  {ancestor[:80]}...")
+    print(f"Actual:    {actual[:80]}...")
+    print(f"Predicted: {predicted[:80]}...")
+    print("-" * 50)
+    mutations = []
+    for i, (a, p) in enumerate(zip(ancestor, predicted)):
+        if a != p:
+            mutations.append(f"  - Position {i+1}: {a} -> {p}")
+    
+    if mutations:
+        print("Predicted Mutations:")
+        print("\n".join(mutations))
+    else:
+        print("Predicted sequence is identical to the ancestor.")
+    print("-" * 50)
+
+# --- Test with a few examples from our dataset ---
+for i in range(5):
+    idx = np.random.randint(0, len(df))
+    ancestor_seq = df["ancestor_seq"].iloc[idx]
+    actual_descendant_seq = df["descendant_seq"].iloc[idx]
+    predicted_descendant_seq = decode_sequence(ancestor_seq)
+    compare_sequences(ancestor_seq, actual_descendant_seq, predicted_descendant_seq)
+```
+
+## Implement the Transformer based method #2 (Conceptual)
 
 This section provides a Python/TensorFlow implementation of the Transformer model.
-*Gemini: This implementation is based on the TensorFlow tutorial "Transformer model for language understanding" ([https://www.tensorflow.org/text/tutorials/transformer](https://www.tensorflow.org/text/tutorials/transformer)), adapted for nucleotide sequences.*
+*This implementation is based on the TensorFlow tutorial "Transformer model for language understanding" ([https://www.tensorflow.org/text/tutorials/transformer](https://www.tensorflow.org/text/tutorials/transformer)), adapted for nucleotide sequences.*
 
 ### Setup
 
@@ -716,3 +1203,7 @@ The provided Transformer implementation is a starting point. Further refinements
 *   **DendroPy Documentation:** [https://dendropy.org/](https://dendropy.org/)
 
 This comprehensive pipeline provides a foundation for applying deep learning to complex phylogenetic questions.
+
+## Credits
+
+Jules AI and Gemini 2.5 Pro helped develop this documentation page and the code.
