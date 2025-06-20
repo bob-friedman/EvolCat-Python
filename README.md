@@ -24,17 +24,15 @@ The scripts and library components provided here are for research and informatio
     *   [B. Performing a Phylogenetic Tree Analysis](#b-performing-a-phylogenetic-tree-analysis)
     *   [C. Performing a Standard Pairwise Sequence Alignment with Biopython](#c-performing-a-standard-pairwise-sequence-alignment-with-biopython)
     *   [D. Basic Motif Scanning](#d-basic-motif-scanning)
-    *   [H. VCF File Analysis and Filtering](#h-vcf-file-analysis-and-filtering)
-    *   [I. Extracting and Analyzing CDS Regions](#i-extracting-and-analyzing-cds-regions)
-    *   [J. SARS-CoV-2 Lineage Classification Pipeline](#j-sars-cov-2-lineage-classification-pipeline)
+    *   [E. VCF File Analysis and Filtering](#e-vcf-file-analysis-and-filtering)
+    *   [F. Extracting and Analyzing CDS Regions](#f-extracting-and-analyzing-cds-regions)
+    *   [G. SARS-CoV-2 Lineage Classification Pipeline](#g-sars-cov-2-lineage-classification-pipeline)
 8.  [Virus Genomics, Diversity, and Analysis](#virus-genomics-diversity-and-analysis)
-    *   [Special Topic: Virus Genomics, Diversity, and Analysis](#g-special-topic-virus-genomics-diversity-and-analysis)
 9.  [Technical Guides](#technical-guides)
     *   [Guide to Accessing MHC Sequence Databases](#e-guide-to-accessing-mhc-sequence-databases)
     *   [Guide to Interpreting Phylogenetic Trees with Python](#f-guide-to-interpreting-phylogenetic-trees-with-python)
 10. [Detailed Script Usage](#detailed-script-usage)
 11. [Development and Contributions](#development-and-contributions)
-12. [Citation](#citation)
 
 
 [Back to Top](#top)
@@ -516,14 +514,13 @@ Identifying known motifs (e.g., transcription factor binding sites, short functi
 [Back to Top](#top)
 
 ## Virus Genomics, Diversity, and Analysis <a name="virus-genomics-diversity-and-analysis"></a>
-### Special Topic: Virus Genomics, Diversity, and Analysis <a name="g-special-topic-virus-genomics-diversity-and-analysis"></a>
 
 [Guide to Virus Genomics, Diversity, and Analysis](guides/virus_genomics_guide.md)
 
 
 [Back to Top](#top)
 
-### H. VCF File Analysis and Filtering
+### E. VCF File Analysis and Filtering
 
 Variant Call Format (VCF) files are essential in genomics for storing data about genetic variations. The process of identifying these genetic differences between a sample genome and a reference is known as variant calling. A common and crucial step after obtaining VCF files is to filter them to retain only high-quality and reliable variants for downstream analysis.
 
@@ -533,7 +530,7 @@ For a more comprehensive understanding of VCF files, the variant calling process
 
 For specific command-line options and usage examples for the script, see [`analyze_vcf.py` usage](docs/USAGE.md#pylibscriptsanalyze_vcfpy).
 
-### I. Extracting and Analyzing CDS Regions
+### F. Extracting and Analyzing CDS Regions
 
 The `pylib/scripts/extract_cds_region.py` script is a versatile tool for working with coding sequences (CDS) in GenBank files. It allows for two main types of operations:
 
@@ -562,7 +559,7 @@ For detailed usage instructions, command-line options, input/output formats, and
 
 [Back to Top](#top)
 
-### J. SARS-CoV-2 Lineage Classification Pipeline
+### G. SARS-CoV-2 Lineage Classification Pipeline
 
 [Documentation for the SARS-CoV-2 Lineage Classification Pipeline](pipelines/sars_cov2_lineage_classification/README.md)
 
@@ -594,13 +591,7 @@ This library was primarily converted from its original Perl source using AI-assi
 
 Human oversight and review are crucial for ensuring the accuracy and robustness of the converted code. This library is currently under development. Contributions, bug reports, and feature requests are welcome via GitHub Issues and Pull Requests.
 
-
-[Back to Top](#top)
-
-## Citation
-
 If you use EvolCat-Python in your research or find the repository useful, please cite the following paper:
-
 Friedman, R. EvolCat-Python: A Python Suite for Evolutionary and Comparative Genomics. Preprints 2025, 2025052059. https://www.preprints.org/manuscript/202505.2059/v1
 
 
