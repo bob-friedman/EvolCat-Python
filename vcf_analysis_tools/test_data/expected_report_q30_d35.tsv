@@ -1,4 +1,0 @@
-CHROM	POS	ID	REF	ALT	QUAL	DP
-chr1	400	rs4	T	C	60.0	50
-chr1	500	rs5	A	G,T	70.0	40
-chr2	300	rs8	C	T	80.0	60

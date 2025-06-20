@@ -1,9 +1,0 @@
-##fileformat=VCFv4.2
-##INFO=<ID=DP,Number=1,Type=Integer,Description="Total Depth">
-##INFO=<ID=AF,Number=A,Type=Float,Description="Allele Frequency">
-##FILTER=<ID=lowqual,Description="Low quality">
-#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
-chr1	100	rs1	A	T	50	PASS	DP=30;AF=0.5
-chr1	400	rs4	T	C	60	PASS	DP=50;AF=0.8
-chr1	500	rs5	A	G,T	70	PASS	DP=40;AF=0.3,0.2
-chr2	300	rs8	C	T	80	PASS	DP=60;AF=0.7
