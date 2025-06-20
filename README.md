@@ -351,7 +351,7 @@ Identifying known motifs within a set of sequences is a common requirement.
 [extract_cds_region.py README](pylib/scripts/README.md)
 
 ### SARS-CoV-2 Lineage Classification Pipeline
-[Documentation for the SARS-CoV-2 Lineage Classification Pipeline](../pipelines/sars_cov2_lineage_classification/README.md)
+[Documentation for the SARS-CoV-2 Lineage Classification Pipeline](./pipelines/sars_cov2_lineage_classification/README.md)
 
 
 [Back to Top](#top)
