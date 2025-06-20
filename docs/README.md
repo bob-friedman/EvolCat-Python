@@ -10,6 +10,6 @@ This directory contains detailed documentation, guides, and usage examples for t
 *   [**PyTorch vs. Keras for Transformers: A Comparison**](./pytorch_keras_transformer_comparison.md)
 
 ## Specialized Topics
-*   [**Virus Biology and Analysis**](./virus_biology_and_analysis/)
+*   [**Virus Biology and Analysis**](../guides/README.md)
 
 For the main project overview, installation, and general workflow examples, please see the [main README.md file](../README.md).
