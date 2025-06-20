@@ -1,18 +1,21 @@
 #!/bin/bash
 
-# Define paths
-SCRIPT_PATH="../pylib/scripts/analyze_vcf.py"
-INPUT_VCF="test_data/input.vcf"
+# Get the directory where the script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# Define paths relative to SCRIPT_DIR
+SCRIPT_PATH="$SCRIPT_DIR/../analyze_vcf.py"
+INPUT_VCF="$SCRIPT_DIR/test_data/input.vcf"
 
 # Test Case 1: Filtered VCF
-OUTPUT_FILTERED_VCF_ACTUAL="test_data/actual_filtered_q45_d20.vcf"
-EXPECTED_FILTERED_VCF="test_data/expected_filtered_q45_d20.vcf"
+OUTPUT_FILTERED_VCF_ACTUAL="$SCRIPT_DIR/test_data/actual_filtered_q45_d20.vcf"
+EXPECTED_FILTERED_VCF="$SCRIPT_DIR/test_data/expected_filtered_q45_d20.vcf"
 MIN_QUAL_1=45
 MIN_DP_1=20
 
 # Test Case 2: Summary Report
-OUTPUT_SUMMARY_REPORT_ACTUAL="test_data/actual_report_q30_d35.tsv"
-EXPECTED_SUMMARY_REPORT="test_data/expected_report_q30_d35.tsv"
+OUTPUT_SUMMARY_REPORT_ACTUAL="$SCRIPT_DIR/test_data/actual_report_q30_d35.tsv"
+EXPECTED_SUMMARY_REPORT="$SCRIPT_DIR/test_data/expected_report_q30_d35.tsv"
 MIN_QUAL_2=30
 MIN_DP_2=35
 
