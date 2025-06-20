@@ -1,199 +1,154 @@
-# UShER Toolkit and matUtils: A Condensed Guide
+# A Guide to the UShER Toolkit and `matUtils`
 
-## 1. Introduction to UShER
+This guide provides a condensed overview of the UShER toolkit, focusing on its core command-line utility, `matUtils`, for analyzing and manipulating large-scale phylogenetic trees.
 
-UShER (Ultrafast Sample placement on Existing tRee) is a phylogenetic toolkit crucial for real-time genomic epidemiology. It enables rapid placement of new pathogen sequences (like SARS-CoV-2) onto massive existing phylogenetic trees, helping to track viral evolution and spread. Its speed and scalability are vital for timely public health responses.
-
-## 2. The Mutation Annotated Tree (MAT) Format
-
-The Mutation Annotated Tree (MAT) is a phylogenetic tree format where branches are annotated with the mutations inferred to have occurred along them. This format, typically stored as a Protocol Buffers (`.pb`) file, efficiently represents large phylogenies and the genetic changes defining each lineage. It's central to UShER's operations, allowing for rapid searching and updating of the tree. Key characteristics include:
-
-*   **Efficiency:** Stores large trees and extensive mutation data compactly.
-*   **Annotation Rich:** Each node and branch can carry detailed mutation information.
-*   **Foundation for UShER:** UShER processes query sequences by identifying the optimal placement based on shared mutations within the MAT.
-
-## 3. matUtils: Overview and Core Functions
-
-`matUtils` is a command-line toolkit designed for querying, interpreting, and manipulating MAT files. It is an essential companion to UShER for downstream analysis. Core functions include:
-
-*   **Annotation:** Adding metadata or clade definitions (e.g., Pango lineages) to the tree.
-*   **Extraction:** Creating subtrees based on various criteria (e.g., specific clades, samples, or proximity to a query sequence). This is useful for focusing on particular parts of the phylogeny.
-*   **Conversion:** Transforming MAT files into other standard phylogenetic or variant formats, such as:
-    *   Newick (`.nh`): For use with many standard phylogenetic viewers.
-    *   VCF (Variant Call Format): For analysis of mutations.
-*   **Summarization:** Generating summary statistics about the tree, such as clade sizes or mutation distributions.
-*   **Introduction:** Facilitating the integration of new mutations or samples into an existing MAT, although `usher` is the primary tool for de novo placement.
-*   **Optimization:** While `matOptimize` is a separate tool, `matUtils` can help prepare or analyze trees for such parsimony optimization steps.
-
-## 4. Accessing the Latest SARS-CoV-2 Dataset
-
-A daily-updated, pre-processed mutation-annotated tree (MAT) for public SARS-CoV-2 sequences is maintained by UCSC. The key file to download is `public-latest.all.masked.pb.gz`.
-
-*   **Download Link:** [http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/](http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/)
-*   **Specific File:** `public-latest.all.masked.pb.gz` (This is the main MAT file, compressed)
-*   This directory also contains associated metadata and VCF files.
-
-**Download and Decompression:**
-You can download the file using `wget`:
-```bash
-wget http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/public-latest.all.masked.pb.gz
-```
-After downloading, decompress the `.gz` file using `gunzip`:
-```bash
-gunzip public-latest.all.masked.pb.gz
-```
-This will result in the `public-latest.all.masked.pb` file, which is used as input for `matUtils`.
-
-For visualization of this global tree and its genotypes, [https://cov2tree.org/](https://cov2tree.org/) (with treenome enabled) is a useful resource.
-
-## 5. Practical Procedures for Using matUtils
-
-`matUtils` offers a suite of subcommands for common tasks. All commands require an input MAT file (e.g., `-i path/to/your_mat.pb`). Here are some practical examples:
-
-*   **Summarizing Tree Statistics:**
-    *   Get basic counts (nodes, samples, parsimony): `matUtils summary -i path/to/your_mat.pb`
-    *   List all samples and their parsimony scores: `matUtils summary -i path/to/your_mat.pb --samples samples.txt`
-    *   Get amino acid translations for mutations: `matUtils summary -i path/to/your_mat.pb -t translations.tsv -g genes.gtf -f reference.fasta`
-
-*   **Extracting Subtrees and Converting Formats:**
-    *   Extract all samples belonging to a specific clade (e.g., "B.1.1.7") into a new MAT file, using the decompressed global tree as input:
-        `matUtils extract -i public-latest.all.masked.pb -c B.1.1.7 -o B.1.1.7_subtree.pb`
-    *   Convert an entire MAT (e.g., the decompressed global tree) or a subtree to a Newick tree file:
-        `matUtils extract -i public-latest.all.masked.pb -t output_tree.nwk`
-        This uses the decompressed `public-latest.all.masked.pb` as input. The Newick format (.nwk) is a standard text-based format ideal for use with other phylogenetic software like MEGA, IQ-TREE, RAxML, or visualization tools like FigTree.
-    *   Extract samples containing a specific mutation (e.g., "S:E484K") and output as VCF:
-        `matUtils extract -i public-latest.all.masked.pb -m S:E484K -v E484K_samples.vcf`
-    *   Extract all mutations for all samples from the MAT into a VCF file:
-        `matUtils extract -i public-latest.all.masked.pb -v all_mutations.vcf`
-        This VCF lists all mutations for every sample relative to the reference genome used in the MAT's construction. The MAT format stores mutations on branches; the resulting VCF effectively translates these paths of mutations from the root to each sample into a standard genotype format.
-        *Note:* For highly specific analyses requiring explicit per-branch mutation lists in a custom format, one might need custom scripting (e.g., Python with dendropy/ete3 and pyVCF). However, for most applications, the MAT itself (queried with `matUtils`) or the comprehensive VCF output is sufficient.
-    *   Extract a subtree around a specific sample ("sample_X") including 25 nearest neighbors into a JSON for Auspice:
-        `matUtils extract -i public-latest.all.masked.pb -k "sample_X:25" -j sample_X_context.json`
-
-*   **Annotating Trees:**
-    *   Add clade annotations to your MAT file based on a TSV file (`clade_assignments.tsv`) where column 1 is clade name and column 2 is a representative sample ID for that clade:
-        `matUtils annotate -i path/to/your_mat.pb -c clade_assignments.tsv -o annotated_tree.pb`
-    *   Clear existing annotations before applying new ones:
-        `matUtils annotate -i path/to/your_mat.pb -c clade_assignments.tsv -o annotated_tree.pb --clear-current`
-
-*   **Assessing Placement Uncertainty:**
-    *   Calculate Equally Parsimonious Placements (EPPs) and Neighborhood Size Score (NSS) for a list of samples (`query_samples.txt`):
-        `matUtils uncertainty -i path/to/your_mat.pb -s query_samples.txt -e uncertainty_scores.tsv`
-
-*   **Analyzing Introductions (Experimental Heuristic):**
-    *   Infer introduction events into geographic regions based on a TSV file (`sample_regions.tsv`) mapping samples to regions:
-        `matUtils introduce -i path/to/your_mat.pb -s sample_regions.tsv -o introductions_report.tsv`
-
-**General Workflow:**
-1.  **Obtain MAT:** Download the latest public tree (e.g., for SARS-CoV-2) or generate one using `usher`.
-2.  **Explore:** Use `matUtils summary` to understand its basic properties.
-3.  **Manipulate/Query:**
-    *   Use `matUtils extract` to get subtrees of interest (by clade, mutation, sample list, etc.) and convert them to VCF, Newick, or JSON.
-    *   Use `matUtils annotate` to add custom clade definitions.
-    *   Use `matUtils uncertainty` to check placement robustness for key samples.
-    *   Use `matUtils introduce` for phylogeographic insights.
-4.  **Visualize/Downstream:** Use outputs with tools like Auspice (via JSON), Nextclade, MicrobeTrace, or standard phylogenetic software.
-
-## 6. Key Understandings and Advanced Applications
-
-Beyond routine tasks, `matUtils` enables more sophisticated analyses and provides deeper insights into pathogen evolution and epidemiology:
-
-*   **Understanding Tree Structure and Certainty:**
-    *   The MAT format itself (a protobuf) is highly efficient for storing massive phylogenies with full mutation annotations. This is key to handling datasets like the global SARS-CoV-2 tree.
-    *   `matUtils uncertainty` (calculating EPPs and NSS) is crucial for assessing the confidence of individual sample placements. High EPPs or large NSS values indicate ambiguity, which is important when interpreting potential transmission links or identifying novel variants. This helps avoid over-interpreting tree topology.
-
-*   **Customized Data Extraction and Integration:**
-    *   The `extract` command is powerful. Its various filtering options (by clade, mutation, metadata, parsimony score, branch length) allow for highly specific dataset generation for targeted research questions.
-    *   Ability to output to VCF allows integration with variant analysis pipelines. Newick output facilitates use with a wide array of phylogenetic tools. JSON output is tailored for Nextstrain/Auspice, enabling rich, interactive visualizations.
-
-*   **Advanced Annotation and Interpretation:**
-    *   `matUtils annotate` allows for dynamic updating of clade definitions on the tree, essential as new variants of concern emerge or classification systems (like Pango lineages) are updated. It can infer clade roots from representative samples or assign them directly.
-    *   The `--translate` option in `summary` links nucleotide mutations to amino acid changes, providing functional context.
-    *   The RoHo (Ratio of Homoplasic Offspring) score calculation in `summary` can help identify recurrent mutations potentially under positive selection, flagging mutations of interest for further investigation.
-
-*   **Phylogeographic Analysis:**
-    *   `matUtils introduce`, while partly heuristic, provides methods (including Association Index and Max Monophyletic Clade size) to estimate viral introductions into geographic regions. This can help quantify transmission dynamics and assess the impact of travel or public health interventions. The confidence metrics help gauge the strength of these inferences.
-
-*   **Scalability and Automation:**
-    *   `matUtils` is designed to work with very large trees (millions of samples) efficiently, often on standard computing hardware.
-    *   Its command-line nature makes it suitable for scripting and integration into automated bioinformatics pipelines for routine surveillance reporting.
-
-*   **Bridging Phylogenetics and Epidemiology:**
-    *   By allowing mutations, clade assignments, sample metadata (dates, locations), and phylogenetic structure to be jointly analyzed and manipulated, `matUtils` serves as a critical bridge between raw sequence data, phylogenetic inference, and epidemiological interpretation.
-
-*   **Considerations for Advanced Use:**
-    *   **Input Data Quality:** The quality of the input MAT (and the underlying sequence alignments and tree construction) significantly impacts `matUtils` results. Masking problematic sites in the reference genome is crucial.
-    *   **Parameter Choice:** Many `matUtils` commands have numerous options. Understanding their specific effects is important for obtaining meaningful results (e.g., allele frequency thresholds in `annotate`, confidence cutoffs in `introduce`).
-    *   **Interpretation Context:** Phylogenetic results, even with `matUtils`, require careful interpretation in the context of sampling biases, sequencing coverage, and available epidemiological data.
-
-By mastering `matUtils`, researchers and public health professionals can more effectively navigate and utilize the vast genomic data generated during pandemics like COVID-19.
-
-## 7. Advanced: Extracting and Processing Branch-Specific Mutations
-
-While `matUtils extract -v` provides VCF files detailing mutations for each sample (leaf node) relative to the reference, sometimes a more explicit list of mutations occurring on each internal branch or leading to each sample is desired. UShER's MAT file inherently contains this information, as it maps parsimony-inferred mutations to each branch.
-
-### Using the `process_usher_branch_mutations.py` Script
-
-The Python script `../pipelines/process_usher_branch_mutations.py` is provided to demonstrate how to obtain and process these branch-specific (or path-specific) mutations. This script is designed to be run in an environment like Google Colab, which allows for direct execution of shell commands (prefixed with `!`) and integration with Google Drive.
-
-**Key Steps Performed by the Script:**
-
-The script automates several processes:
-
-1.  **Mount Google Drive:** Connects to Google MyDrive to set the working directory.
-2.  **Install Conda and UShER:**
-    *   Installs Condacolab to manage packages within the Colab environment.
-    *   Creates a Conda environment named `usher-env`.
-    *   Installs the UShER toolkit (including `matUtils`) into this environment.
-3.  **Download and Decompress the Latest MAT File:**
-    *   Downloads the latest public SARS-CoV-2 MAT file from UCSC:
-        ```bash
-        !wget http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/public-latest.all.masked.pb.gz
-        ```
-    *   Decompresses the file:
-        ```bash
-        !gunzip -f public-latest.all.masked.pb.gz
-        ```
-        This results in `public-latest.all.masked.pb`.
-4.  **Extract Summary Statistics (Optional Example):**
-    *   Demonstrates how to get clade information:
-        ```bash
-        !matUtils summary --input-mat public-latest.all.masked.pb --clades clades.tsv
-        ```
-5.  **Extract Mutation Paths for a Clade:**
-    *   This is the core function demonstrated by the script. It uses `matUtils extract` with the `--all-paths` option to output mutations along each path from a clade's common ancestor to every sample and internal node within that clade.
-        ```bash
-        !matUtils extract \
-            --input-mat public-latest.all.masked.pb \
-            --clade "YOUR_CLADE_OF_INTEREST" \
-            --all-paths mutations_for_clade.txt
-        ```
-    *   The user needs to replace `"YOUR_CLADE_OF_INTEREST"` with the specific clade they are analyzing. The output, `mutations_for_clade.txt`, will list nodes/samples followed by the mutations on the branch leading to them.
-6.  **(Optional) VCF to Fasta Conversion:**
-    *   The script includes commented-out example commands for installing `vcflib` and using `vcf2fasta` if conversion from VCF to Fasta is needed. This part is noted as potentially problematic in Colab/WSL environments.
-
-This script provides a template for users who need to extract detailed mutation lists for specific clades directly from the MAT file using `matUtils`.
-
-### Alternative (More Complex): Ancestral Reconstruction from Newick + VCF
-
-If direct branch mutation extraction were unavailable, or if one wished to use a different ancestral state reconstruction algorithm, it's conceptually possible to infer branch mutations by:
-1.  Parsing a Newick tree (`matUtils extract -t`).
-2.  Parsing a VCF file containing tip (sample) genotypes (`matUtils extract -v`).
-3.  Using libraries like `pysam` (for VCF) and `dendropy` (for tree traversal and parsimony algorithms like Fitch's algorithm) to reconstruct ancestral states at each internal node for each polymorphic site.
-4.  Comparing parent and child node genotypes along the tree to identify mutations on each branch.
-
-This approach is significantly more complex to implement correctly and is computationally far more intensive than using UShER's pre-computed parsimony inferences. For large trees like the global SARS-CoV-2 phylogeny, re-implementing this in Python would be impractical for routine use compared to leveraging UShER's optimized C++ functionalities.
+> **What is UShER?**
+> UShER (Ultrafast Sample placement on Existing tRee) is a high-performance toolkit essential for real-time genomic epidemiology. It excels at placing new pathogen sequences onto massive existing phylogenetic trees, making it invaluable for tracking viral evolution during outbreaks like the COVID-19 pandemic.
 
 ---
 
-## 8. References
+## Table of Contents
+1.  [The Mutation-Annotated Tree (MAT)](#1-the-mutation-annotated-tree-mat)
+2.  [`matUtils`: The MAT Power Tool](#2-matutils-the-mat-power-tool)
+3.  [Getting Started: The SARS-CoV-2 Dataset](#3-getting-started-the-sars-cov-2-dataset)
+4.  [Core `matUtils` Commands: A Practical Cookbook](#4-core-matutils-commands-a-practical-cookbook)
+    *   [Summarizing a Tree](#summarizing-a-tree)
+    *   [Extracting Subtrees & Converting Formats](#extracting-subtrees--converting-formats)
+    *   [Annotating a Tree](#annotating-a-tree)
+    *   [Advanced Analysis](#advanced-analysis)
+5.  [Advanced Topics and Key Concepts](#5-advanced-topics-and-key-concepts)
+6.  [References](#6-references)
 
-Primary UShER package papers:
+---
 
-*   Turakhia, Y., De Maio, N., Thornlow, B. et al. Ultrafast Sample placement on Existing tRees (UShER) enables real-time phylogenetics for structured pathogen surveillance. *Nat Genet* **53**, 839–846 (2021). [https://doi.org/10.1038/s41588-021-00862-7](https://doi.org/10.1038/s41588-021-00862-7)
-*   McBroome, J., Thornlow, B., Hinrichs, A.S. et al. A daily-updated database and tools for comprehensive SARS-CoV-2 mutation-annotated trees. *Mol Biol Evol* **38**, 5469–5474 (2021). [https://doi.org/10.1093/molbev/msab264](https://doi.org/10.1093/molbev/msab264) (matUtils)
+## 1. The Mutation-Annotated Tree (MAT)
 
-Further information:
+The MAT is the central data structure used by UShER. It's a phylogenetic tree where branches are annotated with the mutations that occurred along them.
 
-*   UShER Website: [https://usher.bio/](https://usher.bio/)
-*   UShER GitHub Repository & Wiki: [https://github.com/yatisht/usher](https://github.com/yatisht/usher)
+*   **Format:** Stored efficiently in a Protocol Buffers (`.pb`) file.
+*   **Content:** Compactly represents massive phylogenies (millions of samples) and the specific genetic changes defining each lineage.
+*   **Function:** Allows USher to rapidly identify the optimal placement for a new sequence based on shared mutations.
+
+---
+
+## 2. `matUtils`: The MAT Power Tool
+
+`matUtils` is the essential command-line utility for querying, interpreting, and manipulating MAT files. It is the primary tool for any downstream analysis of UShER trees. Its key functions include **extraction**, **conversion**, **annotation**, and **summarization**.
+
+---
+
+## 3. Getting Started: The SARS-CoV-2 Dataset
+
+A daily-updated MAT for public SARS-CoV-2 sequences is maintained by UCSC and serves as the standard public dataset.
+
+*   **Download Page:** [http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/](http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/)
+*   **Primary File:** `public-latest.all.masked.pb.gz`
+
+**Download and Decompression in a Linux/macOS terminal:**
+```bash
+# Download the latest tree
+wget http://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/public-latest.all.masked.pb.gz
+
+# Decompress the file
+gunzip public-latest.all.masked.pb.gz
+```
+The resulting `public-latest.all.masked.pb` file is the input for all `matUtils` commands.
+
+---
+
+## 4. Core `matUtils` Commands: A Practical Cookbook
+
+All commands follow the pattern: `matUtils <subcommand> -i your_tree.pb [options]`.
+
+### Summarizing a Tree
+
+Use `matUtils summary` to get a high-level overview of your MAT file.
+
+```bash
+# Get basic counts (nodes, samples, parsimony score)
+matUtils summary -i your_tree.pb
+
+# List all samples and their parsimony scores to a file
+matUtils summary -i your_tree.pb --samples samples.txt
+
+# List all clades and their sample counts to a file
+matUtils summary -i your_tree.pb --clades clades.tsv
+```
+
+### Extracting Subtrees & Converting Formats
+
+`matUtils extract` is the most versatile command. It allows you to create smaller, focused datasets and convert them to standard formats.
+
+```bash
+# --- Subtree Extraction ---
+
+# Extract all samples of a specific clade into a new MAT file
+matUtils extract -i your_tree.pb -c "B.1.1.7" -o B.1.1.7_subtree.pb
+
+# Extract samples containing a specific mutation (e.g., S:E484K)
+matUtils extract -i your_tree.pb -m S:E484K -o E484K_subtree.pb
+
+
+# --- Format Conversion ---
+
+# Convert an entire MAT or a subtree to Newick format (.nwk) for other phylogenetic tools
+matUtils extract -i your_tree.pb -t output_tree.nwk
+
+# Convert an entire MAT to VCF (Variant Call Format)
+matUtils extract -i your_tree.pb -v all_mutations.vcf
+
+# Extract mutations for just one clade to a VCF
+matUtils extract -i your_tree.pb -c "B.1.1.7" -v B.1.1.7_mutations.vcf
+
+# Extract a subtree for interactive visualization in Auspice (JSON format)
+# This gets "sample_X" and its 25 nearest neighbors
+matUtils extract -i your_tree.pb -k "sample_X:25" -j sample_X_context.json
+```
+
+> **Extracting Branch-Specific Mutations:**
+> For a detailed list of mutations on *every branch* within a clade (not just the final sample genotypes), use the `--all-paths` flag. This is useful for detailed evolutionary studies.
+> ```bash
+> matUtils extract -i your_tree.pb -c "B.1.1.7" --all-paths B.1.1.7_branch_muts.txt
+> ```
+
+### Annotating a Tree
+
+Use `matUtils annotate` to add or update clade definitions on your tree from a TSV file.
+
+```bash
+# The TSV file should have [clade_name] [representative_sample_id]
+# Example: B.1.1.7    England/204820464/2020
+
+matUtils annotate -i your_tree.pb -c clade_assignments.tsv -o annotated_tree.pb
+```
+
+### Advanced Analysis
+
+`matUtils` also includes subcommands for more specialized analyses.
+
+```bash
+# Assess placement certainty for a list of samples
+matUtils uncertainty -i your_tree.pb -s query_samples.txt -e uncertainty_scores.tsv
+
+# Infer phylogeographic introduction events (experimental)
+matUtils introduce -i your_tree.pb -s sample_regions.tsv -o introductions_report.tsv
+```
+
+---
+
+## 5. Advanced Topics and Key Concepts
+
+Mastering `matUtils` involves understanding these key ideas:
+
+*   **Placement Uncertainty:** The `uncertainty` command is crucial for assessing confidence. High **Equally Parsimonious Placements (EPPs)** for a sample means its position on the tree is ambiguous. This is vital for avoiding over-interpretation of transmission events.
+*   **Functional Context:** The `summary --translate` option links nucleotide mutations to amino acid changes, providing a window into the functional impact of evolution.
+*   **Recurrent Mutations:** The **RoHo (Ratio of Homoplasic Offspring)** score, also from `summary`, helps identify mutations that have appeared independently multiple times across the tree, a potential signal of positive selection.
+*   **Bridging Disciplines:** By integrating phylogenetic structure, mutations, and metadata, `matUtils` serves as a critical bridge between genomics, phylogenetics, and epidemiology.
+
+---
+
+## 6. References
+
+*   **UShER Main Paper:** Turakhia, Y., et al. (2021). Ultrafast Sample placement on Existing tRees (UShER) enables real-time phylogenetics... *Nature Genetics*. [doi:10.1038/s41588-021-00862-7](https://doi.org/10.1038/s41588-021-00862-7)
+*   **`matUtils` Paper:** McBroome, J., et al. (2021). A daily-updated database and tools for comprehensive SARS-CoV-2 mutation-annotated trees. *Molecular Biology and Evolution*. [doi:10.1093/molbev/msab264](https://doi.org/10.1093/molbev/msab264)
+*   **Official Wiki:** [https://usher-wiki.readthedocs.io/](https://usher-wiki.readthedocs.io/)
