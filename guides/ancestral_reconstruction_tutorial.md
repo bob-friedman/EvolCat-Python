@@ -251,7 +251,25 @@ This is not a minor detail; it's a fundamental limitation of ASR.
 This tutorial outlines a hybrid approach to ASR, leveraging Python libraries for flexibility and specialized command-line tools for performance. For large-scale viral datasets, strategies like subsampling or "divide and conquer" are essential. Whether using TreeTime for its integrated time-scaling or DendroPy for fine-grained programmatic control, the key is to choose tools appropriate for your research question and to critically assess the uncertainty inherent in any evolutionary inference.
 
 ## Further Reading
-For a list of key software, libraries, and tutorials, please refer to the "Further Reading/Resources" section in the original document.
+
+*   **Python Libraries:**
+    *   **BioPython:** [https://biopython.org/](https://biopython.org/) (Tutorial: [https://biopython.org/DIST/docs/tutorial/Tutorial.html](https://biopython.org/DIST/docs/tutorial/Tutorial.html))
+    *   **DendroPy:** [https://dendropy.org/](https://dendropy.org/) (Documentation: [https://dendropy.org/library/](https://dendropy.org/library/))
+    *   **ETE Toolkit:** [http://etetoolkit.org/](http://etetoolkit.org/) (Tutorials: [http://etetoolkit.org/docs/latest/tutorial/tutorial_trees.html](http://etetoolkit.org/docs/latest/tutorial/tutorial_trees.html))
+*   **ASR & Phylodynamics Tools:**
+    *   **TreeTime:** [https://treetime.readthedocs.io/](https://treetime.readthedocs.io/)
+    *   Sagulenko et al. (2018), TreeTime: Maximum-likelihood phylodynamic analysis. Virus Evolution.
+*   **Sequence Alignment & Clustering:**
+    *   **MAFFT:** [https://mafft.cbrc.jp/alignment/software/](https://mafft.cbrc.jp/alignment/software/)
+    *   **MMseqs2:** [https://github.com/soedinglab/MMseqs2](https://github.com/soedinglab/MMseqs2)
+    *   **CD-HIT:** [http://weizhongli-lab.org/cd-hit/](http://weizhongli-lab.org/cd-hit/)
+*   **Phylogenetic Inference:**
+    *   **IQ-TREE:** [http://www.iqtree.org/](http://www.iqtree.org/)
+    *   **FastTree:** [http://www.microbesonline.org/fasttree/](http://www.microbesonline.org/fasttree/)
+    *   **UShER:** [https://usher-wiki.readthedocs.io/](https://usher-wiki.readthedocs.io/)
+*   **Tree Visualization:**
+    *   **FigTree:** [http://tree.bio.ed.ac.uk/software/figtree/](http://tree.bio.ed.ac.uk/software/figtree/)
+    *   **iTOL (Interactive Tree Of Life):** [https://itol.embl.de/](https://itol.embl.de/)
 
 ## Credits
 This work is made possible by the collaborative efforts of Jules and Gemini Pro (Google).
