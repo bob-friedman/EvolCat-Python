@@ -1,10 +1,27 @@
-# Virus Biology and Analysis
+# Guides in the EvolCat-Python Project
 
-> Welcome to the documentation for Virus Biology and Analysis within the EvolCat-Python project. This section provides a collection of guides, reports, and tutorials covering everything from core virology concepts to advanced bioinformatic pipelines.
+> Welcome to the Guides page in the EvolCat-Python project. This section provides a collection of guides, reports, and tutorials covering everything from core virology concepts to advanced bioinformatic pipelines.
 
 ---
 
-## 📖 Foundational Guides and Reports
+## 📖 Main Guides
+
+These guides cover the core functionality and foundational concepts of the project.
+
+*   [**Usage and Command-Line Options**](../docs/USAGE.md)
+    *   *A comprehensive reference for all script arguments and options.*
+*   [**Accessing MHC Sequence Databases**](./mhc-database-guide.md)
+    *   *Step-by-step instructions for downloading and preparing MHC data.*
+*   [**Interpreting Phylogenetic Trees with Python**](./phylogenetic-tree-interpretation.md)
+    *   *A guide to using libraries like ETE3 and Biopython for tree analysis.*
+*   [**Understanding Transformer Core Concepts**](./transformer_core_concepts.md)
+    *   *An introduction to the attention mechanism and architecture used in the models.*
+*   [**PyTorch vs. Keras for Transformers: A Comparison**](./pytorch_keras_transformer_comparison.md)
+    *   *A discussion of the pros and cons of each framework for this project's goals.*
+ 
+---
+
+## 📖 Virus Biology Guides
 
 This section contains conceptual guides and reports on key topics in virology and bioinformatics.
 
