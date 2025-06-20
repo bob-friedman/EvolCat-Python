@@ -1,17 +1,37 @@
 # Virus Biology and Analysis
 
-This section of the EvolCat-Python documentation focuses on topics related to virus biology, evolution, genomics, and their bioinformatic analysis.
+> Welcome to the documentation for Virus Biology and Analysis within the EvolCat-Python project. This section provides a collection of guides, reports, and tutorials covering everything from core virology concepts to advanced bioinformatic pipelines.
 
-## Contents
-*   [**Virus Genomics, Diversity, and Analysis Guide**](./virus_genomics_guide.md): A comprehensive guide to understanding viral genomes, measuring diversity, performing phylogenetic analysis, and core bioinformatic tasks.
-*   [**Condensed Report on Virus Evolution and Biotechnological Innovation**](./condensed_virus_evolution_report.md): A summary of key advancements in the study of virus evolution, with a focus on the role of recombination and biotechnological innovations.
-*   [**Guide to Key Biotechnologies in Virology Research**](./biotechnologies_in_virology_guide.md): An overview of foundational and cutting-edge biotechnologies used in virology.
-*   [**Guide to Estimating Mutational Fitness Effects from Large-Scale Viral Sequence Data**](./estimating_mutation_fitness_effects_guide.md): Outlines a methodology for estimating mutation fitness effects based on observed vs. expected mutation counts from sequence data.
-*   [**UShER Toolkit and matUtils: A Condensed Guide**](./usher_toolkit_report.md): A guide to using the UShER toolkit and `matUtils` for phylogenetic placement and analysis of large viral datasets, particularly SARS-CoV-2.
-*   [**Ancestral Reconstruction Tutorial**](./ancestral_reconstruction_tutorial.md): A tutorial on performing ancestral sequence reconstruction using tools like TreeTime and Python libraries such as DendroPy.
-*   [**SARS-CoV-2 Genomic Data Processing and Transformer-Based Modeling Pipeline**](../pipelines/sars_cov2_transformer_pipeline.md): A tutorial on retrieving and processing SARS-CoV-2 genomic data for use in Transformer-based generative models.
-*   [**SARS-CoV-2 Lineage Classification Pipeline**](../pipelines/sars_cov2_lineage_classification/README.md): Documentation for the SARS-CoV-2 lineage classification pipeline.
+---
 
-=======
+## 📖 Foundational Guides and Reports
 
-Navigate back to the [main documentation page](../README.md) or the [EvolCat-Python project root](../../README.md).
+This section contains conceptual guides and reports on key topics in virology and bioinformatics.
+
+*   [**Virus Genomics, Diversity, and Analysis Guide**](./virus_genomics_guide.md)
+    *   *A comprehensive overview of viral genomes, diversity metrics, phylogenetic analysis, and core bioinformatic tasks.*
+*   [**Condensed Report on Virus Evolution and Biotechnological Innovation**](./condensed_virus_evolution_report.md)
+    *   *A summary of key advancements in virology, with a focus on recombination and biotechnology.*
+*   [**Guide to Key Biotechnologies in Virology Research**](./biotechnologies_in_virology_guide.md)
+    *   *An overview of the foundational and cutting-edge technologies used to study viruses.*
+*   [**Guide to Estimating Mutational Fitness Effects**](./estimating_mutation_fitness_effects_guide.md)
+    *   *A methodology for estimating mutation fitness effects from large-scale sequence data.*
+*   [**UShER Toolkit and matUtils: A Condensed Guide**](./usher_toolkit_report.md)
+    *   *A practical guide to using the UShER toolkit for analyzing massive viral phylogenies like SARS-CoV-2.*
+
+---
+
+## ⚙️ Practical Pipelines and Tutorials
+
+This section contains step-by-step tutorials and end-to-end pipelines for specific analyses.
+
+*   [**Ancestral Reconstruction Tutorial**](./ancestral_reconstruction_tutorial.md)
+    *   *A tutorial on performing ancestral sequence reconstruction using tools like TreeTime and DendroPy.*
+*   [**SARS-CoV-2 Transformer Modeling Pipeline**](../pipelines/sars_cov2_transformer_pipeline.md)
+    *   *A tutorial on processing SARS-CoV-2 data for use in Transformer-based generative models.*
+*   [**SARS-CoV-2 Lineage Classification Pipeline**](../pipelines/sars_cov2_lineage_classification/README.md)
+    *   *Documentation for the end-to-end pipeline that classifies SARS-CoV-2 lineages with a neural network and interprets the results.*
+
+---
+
+Navigate back to the [**main documentation page**](../README.md) or the [**project root**](../../README.md).
