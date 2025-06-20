@@ -345,7 +345,7 @@ Identifying known motifs within a set of sequences is a common requirement.
 </details>
 
 ### VCF File Analysis and Filtering
-[Background on VCF Analysis](../pylib/scripts/vcf_analysis_tools/README.md) and [`analyze_vcf.py` usage](docs/USAGE.md#pylibscriptsanalyze_vcfpy).
+[Background on VCF Analysis](pylib/scripts/vcf_analysis_tools/README.md) and [`analyze_vcf.py` usage](docs/USAGE.md#pylibscriptsanalyze_vcfpy).
 
 ### Extracting and Analyzing CDS Regions
 [extract_cds_region.py README](pylib/scripts/README.md)
