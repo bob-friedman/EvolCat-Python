@@ -4,10 +4,19 @@ This directory contains Python scripts for processing viral mutation data.
 
 ## `proof_of_concept/` Directory
 
-The `proof_of_concept/` subdirectory contains Python scripts related to a Transformer-based model for predicting viral mutations:
+This subdirectory contains an experimental implementation of a Transformer-based model for predicting viral mutations.
 
-*   `transformer_model.py`: Defines the Transformer model architecture.
+> **⚠️ Experimental Status**
+> These scripts are a **proof of concept** and are not fully operational for training. They are provided for architectural reference and to showcase the primary, stable functionality of this suite: FASTA sequence generation.
+
+### File Descriptions
+
+*   `prepare_transformer_data.py`: **(Stable)** Preprocesses FASTA files into a format suitable for the Transformer model. This is the primary stable script in this directory.
+*   `transformer_model.py`: Defines the Transformer model architecture using Keras.
 *   `train_transformer.py`: Script for training the Transformer model.
 *   `predict_mutations.py`: Script for using a trained model to make predictions.
 
-**Note:** These Transformer-related scripts were part of an experimental implementation. While the model architecture is defined, there were unresolved issues during the training phase (`ValueError` related to Keras argument passing). They are provided as a proof of concept and may require further debugging and development to be fully operational for training and reliable prediction. The primary, stable functionality offered by this suite is the FASTA sequence generation via `prepare_transformer_data.py`.
+### Known Issues & Areas for Development
+
+*   **Training Halts:** The training process in `train_transformer.py` currently fails with a `ValueError` related to Keras argument passing.
+*   **Contributions Welcome:** The model requires further debugging and development to be fully operational. We welcome contributions to resolve the training issues and improve the prediction pipeline.
