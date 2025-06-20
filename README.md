@@ -518,7 +518,7 @@ Identifying known motifs (e.g., transcription factor binding sites, short functi
 ## Virus Genomics, Diversity, and Analysis <a name="virus-genomics-diversity-and-analysis"></a>
 ### Special Topic: Virus Genomics, Diversity, and Analysis <a name="g-special-topic-virus-genomics-diversity-and-analysis"></a>
 
-[Guide to Virus Genomics, Diversity, and Analysis](docs/virus_biology_and_analysis/virus_genomics_guide.md)
+[Guide to Virus Genomics, Diversity, and Analysis](guides/virus_genomics_guide.md)
 
 
 [Back to Top](#top)
