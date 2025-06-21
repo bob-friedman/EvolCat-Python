@@ -383,7 +383,7 @@ This guide has been developed with significant assistance from the AI language m
 6.  Li, X., Giorgi, E. E., Marichannegowda, M. H., Foley, B., Xiao, C., Kong, X. P., ... & Gao, F. (2020). Emergence of SARS-CoV-2 through recombination and strong purifying selection. Science Advances, 6, eabb9153.
 7.  Uriu, K., Ito, J., Zahradnik, J., Fujita, S., Kosugi, Y., Schreiber, G. (2023). Enhanced transmissibility, infectivity, and immune resistance of the SARS-CoV-2 omicron XBB.1.5 variant. Lancet Infectious Diseases, 23, 280-281.
 8.  Callaway, E. (2023). Coronavirus variant XBB.1.5 rises in the United States — is it a global threat? *Nature News*. Published online January 9, 2023. doi: 10.1038/d41586-023-00014-3 (*Provides context on XBB emergence.*)
-9.  Friedman, R. (2025). The Elusive Genesis: Stochasticity and the Challenge of Reconstructing Viral Origins. *Preprints*. [https://doi.org/ 10.20944/preprints202505.2277.v2 ](https://doi.org/ 10.20944/preprints202505.2277.v2 )
+9.  Friedman, R. (2025). The Elusive Genesis: Stochasticity and the Challenge of Reconstructing Viral Origins. *Preprints*. [https://doi.org/10.20944/preprints202505.2277.v2 ](https://doi.org/10.20944/preprints202505.2277.v2 )
 10. Robertson, D. L., Anderson, J. P., Bradac, J. A., Carr, J. K., Foley, B., Funkhouser, R. K., ... & Korber, B. (2000). HIV-1 nomenclature proposal. Science, 288, 55-56.
 11. Hemelaar, J. (2012). The origin and diversity of the HIV-1 pandemic. *Trends in molecular medicine*, 18(3), 182-192.
 12. Garten, R. J., Davis, C. T., Russell, C. A., Shu, B., Lindstrom, S., Balish, A., ... & Cox, N. J. (2009). Antigenic and Genetic Characteristics of Swine-Origin 2009 A(H1N1) Influenza Viruses Circulating in Humans. Science, 325, 197-201.
