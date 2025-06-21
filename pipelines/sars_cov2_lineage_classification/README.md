@@ -52,6 +52,7 @@ This project is designed to be run as a single, comprehensive script within Goog
 *   `matutils_implementation.md`: A deep dive into advanced `matUtils` usage and strategies for full-scale data extraction.
 *   `proof_of_concept/`: Directory containing experimental Transformer models and related scripts.
 *   `README.md`: This file.
+*   `PAPER.md` : Technical report on this study.
 
 ---
 
