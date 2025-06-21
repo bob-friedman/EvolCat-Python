@@ -63,7 +63,7 @@ This pipeline has been successfully tested on the 23E (XBB.2.3) clade, demonstra
 *   **Performance:** The model achieved **97.98% accuracy** on the test set, successfully distinguishing between 95 different sublineages.
 *   **Insights:** The generated saliency reports successfully identified key mutations that define specific lineages. These computationally-derived markers often correspond to known biological markers documented in virology literature, validating the entire approach.
 
-For a detailed analysis of the results, including the confusion matrix and a deep dive into the saliency report for lineage `HH.1`, please see the **[Analysis and Interpretation of the 23E Clade Run](./CODE_RESULTS.md)**.
+For a detailed analysis of the results, including the confusion matrix and a deep dive into the saliency report for lineage `HH.1`, please see the **[Analysis and Interpretation of the 23E Clade Run](./CODE_RESULTS.md)** and **[Research Report](./PAPER.md)**.
 
 ---
 
