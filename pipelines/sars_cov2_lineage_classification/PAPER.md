@@ -36,7 +36,7 @@ To ensure the model's decisions are transparent and biologically relevant, a mod
 ## 3. Results
 
 ### 3.1. Application to the Highly Diverse XBB Clade
-Our end-to-end pipeline was successfully applied to a challenging, real-world dataset comprising genomes from the SARS-CoV-2 XBB 2.3 clade [8]. After preprocessing and the removal of one singleton lineage, the final dataset consisted of 16,367 unique viral samples distributed across 95 distinct Pango sublineages. The feature engineering process identified a total of 12,277 unique SNVs across these samples, which formed the feature space for our classification model. The scale and extreme class imbalance of this dataset represent a significant test of the pipeline's ability to perform fine-grained classification.
+Our end-to-end pipeline was successfully applied to a challenging, real-world dataset comprising genomes from the SARS-CoV-2 XBB 2.3 clade. After preprocessing and the removal of one singleton lineage, the final dataset consisted of 16,367 unique viral samples distributed across 95 distinct Pango sublineages. The feature engineering process identified a total of 12,277 unique SNVs across these samples, which formed the feature space for our classification model. The scale and extreme class imbalance of this dataset represent a significant test of the pipeline's ability to perform fine-grained classification.
 
 ### 3.2. High-Accuracy Lineage Classification Presents a Story of Extremes
 Upon evaluation with the held-out test set (n=3,274 samples), the FNN model demonstrated exceptional performance, achieving a final test accuracy of 97.98%. The model's robustness was further confirmed by a weighted average F1-score of 0.98, indicating high precision and recall across the diverse lineages.
@@ -74,7 +74,7 @@ In conclusion, this proof-of-concept demonstrates a scalable and insightful appr
 
 ## Credits
 
-This work is made possible by the collaborative efforts of Gemini Pro, including the data analysis, code, and draft of this paper.
+This work was developed by the author in collaboration with Google's Gemini Pro, which includes Python code generation, data analysis, and the initial drafting of this paper. The research is further built upon the foundational public data provided by the UShER project and the open-source software `matUtils`, `pysam`, and TensorFlow/Keras.
 
 ## References
 1. Lowen, A. C. (2017) Constraints, Drivers, and Implications of Influenza A Virus Reassortment. *Annual Review of Virology*, 4, 105-21. [https://doi.org/10.1146/annurev-virology-101416-041726](https://doi.org/10.1146/annurev-virology-101416-041726)
@@ -84,5 +84,4 @@ This work is made possible by the collaborative efforts of Gemini Pro, including
 5. Public SARS-CoV-2 sequence data. Available online: [https://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/](https://hgdownload.soe.ucsc.edu/goldenPath/wuhCor1/UShER_SARS-CoV-2/) (accessed in June 2025).
 6. Pysam is a lightweight wrapper of the HTSlib API. Available online: [https://github.com/pysam-developers/pysam](https://github.com/pysam-developers/pysam) (accessed in June 2025).
 7. Keras is a deep learning API written in Python. Available online: [https://keras.io/getting_started/about](https://keras.io/getting_started/about) (accessed on 17 June 2025).
-8. A Python Suite for Evolutionary and Comparative Genomics. Available online: [https://github.com/bob-friedman/EvolCat-Python](https://github.com/bob-friedman/EvolCat-Python) (accessed on 4 June 2025).
 ```
