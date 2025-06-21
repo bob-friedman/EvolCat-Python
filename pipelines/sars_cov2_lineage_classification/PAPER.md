@@ -72,6 +72,10 @@ This framework represents a significant step towards transparent and trustworthy
 
 In conclusion, this proof-of-concept demonstrates a scalable and insightful approach for monitoring viral evolution. This fusion of high-performance classification and model interpretability has the potential to become an indispensable component of future pandemic preparedness and response efforts, turning raw genomic data into actionable knowledge.
 
+## Credits
+
+This work is made possible by the collaborative efforts of Gemini Pro, including the data analysis, code, and draft of this paper.
+
 ## References
 1. Lowen, A. C. (2017) Constraints, Drivers, and Implications of Influenza A Virus Reassortment. *Annual Review of Virology*, 4, 105-21. [https://doi.org/10.1146/annurev-virology-101416-041726](https://doi.org/10.1146/annurev-virology-101416-041726)
 2. Domingo, E., Martin, V., Perales, C., Grande-Pérez, A., García-Arriaza, J., & Arias, A. (2006) Viruses as quasispecies: biological implications. *Current Topics in Microbiology and Immunology*, 299, 51-82. [https://doi.org/10.1007/3-540-26397-7_3](https://doi.org/10.1007/3-540-26397-7_3)
