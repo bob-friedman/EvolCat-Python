@@ -51,4 +51,4 @@ This section contains step-by-step tutorials and end-to-end pipelines for specif
 
 ---
 
-Navigate back to the [**main documentation page**](../README.md) or the [**project root**](../../README.md).
+Navigate back to the [**main documentation page**](../README.md).
