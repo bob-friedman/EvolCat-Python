@@ -307,14 +307,6 @@ A review by [8] explores the evolving landscape of predicting pathogen evolution
 
 A powerful approach to understand the fitness consequences of mutations involves leveraging vast amounts of public sequence data, as exemplified by [11] for SARS-CoV-2.
 
-### Ancestral Sequence Based Viral Evolution Modeling
-<details>
-<summary><b>Click for a detailed overview on this topic</b></summary>
-
-An end-to-end guided pipeline for training a Transformer-based sequence-to-sequence model on viral evolution data. It demonstrates data acquisition from UShER and NCBI, ancestral state reconstruction (ASR) with IQ-TREE, data preparation, model training with TensorFlow/Keras, and inference. The guide also discusses the computational and biological limitations encountered on standard cloud-based hardware and serves as a documented baseline for future research. (Credits: Jules AI for presentation of this work and Gemini Pro for assistance in pipeline design, code development and debugging, scientific explanation, and the drafting of this technical guide.
-
-Refer to the [Ancestral Sequence-Based Viral Evolution Modeling](./PIPELINE.md) guide.
-
 #### Core Methodology
 1.  **Calculate Expected Mutation Counts:** Determine how many times each possible mutation is *expected* to occur along a phylogeny assuming no selection.
 2.  **Count Observed Mutations:** Count how many times each mutation is *actually observed* on a large phylogenetic tree (~7 million sequences in the study).
@@ -328,6 +320,15 @@ Refer to the [Ancestral Sequence-Based Viral Evolution Modeling](./PIPELINE.md) 
 *   **Informing Public Health:** These maps are valuable for assessing the impact of new variants and guiding the design of antivirals or vaccines by targeting highly constrained regions.
 *   **Broad Applicability:** The method can be applied to any virus with sufficient sequence data.
 *   **Interactive Resource:** The study's findings for SARS-CoV-2 are explorable at [jbloomlab.github.io/SARS2-mut-fitness/](https://jbloomlab.github.io/SARS2-mut-fitness/).
+</details>
+
+### Ancestral Sequence Based Viral Evolution Modeling
+<details>
+<summary><b>Click for a detailed overview on this topic</b></summary>
+
+An end-to-end guided pipeline for training a Transformer-based sequence-to-sequence model on viral evolution data. It demonstrates data acquisition from UShER and NCBI, ancestral state reconstruction (ASR) with IQ-TREE, data preparation, model training with TensorFlow/Keras, and inference. The guide also discusses the computational and biological limitations encountered on standard cloud-based hardware and serves as a documented baseline for future research. (Credits: Jules AI for presentation of this work and Gemini Pro for assistance in pipeline design, code development and debugging, scientific explanation, and the drafting of this technical guide.
+
+Refer to the [Ancestral Sequence-Based Viral Evolution Modeling](./PIPELINE.md) guide.
 </details>
 
 [Back to Top](#top)
