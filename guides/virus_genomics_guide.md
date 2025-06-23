@@ -14,6 +14,7 @@ This guide provides a comprehensive overview of the core concepts, databases, an
     *   [Population Dynamics and Immunogenetics](#population-dynamics-and-immunogenetics)
     *   [Predictive Modeling of Viral Evolution](#predictive-modeling-of-viral-evolution)
     *   [Estimating Mutational Fitness Effects](#estimating-mutational-fitness-effects-from-large-scale-sequence-data)
+    *   [Ancestral Sequence Based Viral Evolution Modeling](#ancestral-sequence-based-viral-evolution-modeling)
 *   [Tools & Example Workflow](#tools-and-example-workflow)
 *   [Acknowledgements and References](#acknowledgements-and-references)
 
@@ -305,6 +306,14 @@ A review by [8] explores the evolving landscape of predicting pathogen evolution
 <summary><b>Click for a detailed overview of fitness effect estimation</b></summary>
 
 A powerful approach to understand the fitness consequences of mutations involves leveraging vast amounts of public sequence data, as exemplified by [11] for SARS-CoV-2.
+
+### Ancestral Sequence Based Viral Evolution Modeling
+<details>
+<summary><b>Click for a detailed overview on this topic</b></summary>
+
+An end-to-end guided pipeline for training a Transformer-based sequence-to-sequence model on viral evolution data. It demonstrates data acquisition from UShER and NCBI, ancestral state reconstruction (ASR) with IQ-TREE, data preparation, model training with TensorFlow/Keras, and inference. The guide also discusses the computational and biological limitations encountered on standard cloud-based hardware and serves as a documented baseline for future research. (Credits: Jules AI for presentation of this work and Gemini Pro for assistance in pipeline design, code development and debugging, scientific explanation, and the drafting of this technical guide.
+
+Refer to the [Ancestral Sequence-Based Viral Evolution Modeling](./PIPELINE.md) guide.
 
 #### Core Methodology
 1.  **Calculate Expected Mutation Counts:** Determine how many times each possible mutation is *expected* to occur along a phylogeny assuming no selection.
