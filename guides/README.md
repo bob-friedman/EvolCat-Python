@@ -49,7 +49,7 @@ This section contains step-by-step tutorials and end-to-end pipelines for specif
 *   [**SARS-CoV-2 Lineage Classification Pipeline**](../pipelines/sars_cov2_lineage_classification/README.md)
     *   *Documentation for the end-to-end pipeline that classifies SARS-CoV-2 lineages with a neural network and interprets the results.*
 *   [**Guided Pipeline: Ancestral Sequence-Based Viral Evolution Modeling**](./PIPELINE.md)
-    *   *An end-to-end guided pipeline for training a Transformer-based sequence-to-sequence model on viral evolution data. It demonstrates data acquisition from UShER and NCBI, ancestral state reconstruction (ASR) with IQ-TREE, data preparation, model training with TensorFlow/Keras, and inference. The guide also discusses the computational and biological limitations encountered on standard cloud-based hardware and serves as a documented baseline for future research. (Credits: User, Jules AI, Gemini)*
+    *   *An end-to-end guided pipeline for training a Transformer-based sequence-to-sequence model on viral evolution data. It demonstrates data acquisition from UShER and NCBI, ancestral state reconstruction (ASR) with IQ-TREE, data preparation, model training with TensorFlow/Keras, and inference. The guide also discusses the computational and biological limitations encountered on standard cloud-based hardware and serves as a documented baseline for future research. (Credits: Jules AI for presentation of this work and Gemini Pro for assistance in pipeline design, code development and debugging, scientific explanation, and the drafting of this technical guide.*
 
 ---
 
