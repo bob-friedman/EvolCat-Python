@@ -120,7 +120,7 @@ This section forms the core of the bioinformatics workflow. It takes the collect
 
 <br>
 
-![alt text](figure1.png "Phylogenetic Tree of The SARS-CoV-2 Spike protein")
+![alt text](./assets/figure1.png "Phylogenetic Tree of The SARS-CoV-2 Spike protein")
 
 **Figure 1: Phylogenetic Tree of The SARS-CoV-2 Spike protein.** The major clades are well-separated by nodes with high bootstrap support. For example, the Delta-like variants (`OM...` and `PQ...`) form a distinct group with high confidence (`94`, `100`), as do the Ancestral variants. This confirms the overall tree topology is robust.
 
@@ -504,7 +504,7 @@ The model parameters used in this study (`EMBED_DIM=64`, `NUM_HEADS=4`, `NUM_LAY
 
 <br>
 
-![alt text](figure2.png "Attention-Based Protein Visualization")
+![alt text](./assets/figure2.png "Attention-Based Protein Visualization")
 
 **Figure 2: Attention-Based Protein Visualization.** The SARS-CoV-2 Spike protein trimer (PDB ID: 6VXX) viewed from the top-down, with one monomer colored based on the Transformer model's attention scores. The scores, representing the sum of attention each residue received, were loaded into the B-factor field of the PDB file. The structure was rendered in PyMOL using the `spectrum b` command, where blue indicates regions of low attention and red/yellow indicates regions of high attention. The model has autonomously identified the Receptor-Binding Domain (RBD) and N-Terminal Domain (NTD) as the most important regions.
 
