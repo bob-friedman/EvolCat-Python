@@ -6,7 +6,7 @@
 ## 📖 Scripts in Extras/
 
 *   [**retrieve_attention_scores.py**](./extras/retrieve_attention_scores.py):
-    *   *This Python script retrieves attention scores from a pre-trained seq2seq Transformer model. It takes pairs of sequence data (ancestor-descendant) as input. The script outputs a CSV file containing these attention scores, which can then be utilized for further analyses, such as correlating them with other biological data.*
+    *   *This Python script retrieves attention scores from a pre-trained seq2seq Transformer model. It takes pairs of sequence data (ancestor-descendant) as input. The script outputs a CSV file containing these attention scores, which can then be utilized for further analyses, such as correlating them with other biological data. For a more detailed explanation of attention scores and their utility, please see the [Attention Scores Document](attention_scores.md).*
 	
 *   [**sasa_analysis.py**](./extras/sasa_analysis.py):
     *   *This Python script is designed to analyze data from the IEDB (Immune Epitope Database), with a specific focus on B cell epitopes. It performs statistical analyses, including correlating attention scores obtained from `retrieve_attention_scores.py` with [Solvent Accessible Surface Area (SASA)](SASA.md). This helps determine if residues located on the protein surface tend to receive more attention from the model.*
