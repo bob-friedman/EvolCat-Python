@@ -46,9 +46,35 @@ Dependencies:
 - matplotlib
 - seaborn
 - tqdm (for progress bars)
+- GitPython (if cloning repository from script)
+
+Data Source and Setup:
+The example data and some conceptual parts of this script are inspired by or may use resources
+from the `viral-mutation` project by Brian Hie: https://github.com/brianhie/viral-mutation.
+This repository contains data and models relevant to viral evolution and protein engineering.
+
+To use data from this repository, you would typically clone it first.
+You can clone it manually using git:
+  git clone https://github.com/brianhie/viral-mutation.git
+
+Or, you can clone it from within a Python script using the `GitPython` library:
+  import git
+  try:
+    git.Repo.clone_from("https://github.com/brianhie/viral-mutation.git", "viral-mutation")
+    print("Repository cloned successfully.")
+  except git.exc.GitCommandError as e:
+    print(f"Error cloning repository: {e}")
+    print("It might already exist, or there might be other issues.")
+
+The FASTA file paths (e.g., `DEFAULT_BASELINE_FILE`, `DEFAULT_TARGET_FILE`) might need
+to be adjusted to point to the correct locations within the cloned `viral-mutation`
+repository, or your own data files. For example, if `viral-mutation` is cloned into
+the same directory as this script, paths might be like:
+`os.path.join("viral-mutation", "examples", "example_wt.fa")`
 
 Note: The original script included shell commands for `git clone` and `pip install`.
-These should be handled outside of this script (e.g., in a setup script or manually).
+These should be handled outside of this script (e.g., in a setup script or manually
+if not using the Python cloning method described above).
 File paths for FASTA files are placeholders and may need to be adjusted.
 The heatmap generation part assumes a DataFrame `df` is already loaded with specific columns.
 """
