@@ -15,7 +15,7 @@ EvolCat-Python streamlines complex bioinformatics tasks. With this suite, you ca
 *   🚀 **BLAST Result Processing:** Parse raw BLAST output into clean, usable tables for downstream analysis (`parse_blast_text.py`, `blast_to_table.py`).
 *   🌳 **Phylogenetic Pipeline Assistance:** Prepare sequences, curate alignments, and calculate distance matrices for external tree-building software (`nogaps.py`, `calculate_k2p.py`).
 *   🔬 **Sequence Analysis & Extraction:** Extract CDS regions from GenBank files, translate them, and analyze specific nucleotide positions (`extract_cds_region.py`, `gbCDS.py`).
-*   🦠 **Virus Genomics:** Utilize dedicated pipelines and guides for viral analysis, including a full SARS-CoV-2 lineage classification pipeline.
+*   🦠 **Virus Genomics & Protein Analysis:** Utilize dedicated pipelines and guides for viral analysis, including a full SARS-CoV-2 lineage classification pipeline, protein language model analysis, and evolutionary data retrieval pipelines. See `pipelines/README.md` for details.
 *   🛠️ **Powerful Wrappers:** Simplify interaction with external tools like PAML and perform basic filtering on VCF files.
 
 ## Example Workflow: Phylogenetic Analysis
