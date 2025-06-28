@@ -1,3 +1,12 @@
 biopython
 matplotlib
 requests
+pandas
+torch
+transformers
+seaborn
+tqdm
+numpy
+# System dependencies (install separately, not via pip):
+# - mafft
+# - dssp (mkdssp)
