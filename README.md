@@ -359,7 +359,7 @@ Identifying known motifs within a set of sequences is a common requirement.
 ## Technical Guides <a name="technical-guides"></a>
 *   [Guide to Accessing MHC Sequence Databases](guides/mhc-database-guide.md)
 *   [Guide to Interpreting Phylogenetic Trees with Python](guides/phylogenetic-tree-interpretation.md)
-*   [Report on the Computational Prediction of Viral Evolution](docs/computational_prediction_of_viral_evolution_report.md)
+*   [Report on the Computational Prediction of Viral Evolution](guides/computational_prediction_of_viral_evolution_report.md)
 
 [Back to Top](#top)
 
