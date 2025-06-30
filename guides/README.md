@@ -35,6 +35,8 @@ This section contains conceptual guides and reports on key topics in virology an
     *   *A methodology for estimating mutation fitness effects from large-scale sequence data.*
 *   [**UShER Toolkit and matUtils: A Condensed Guide**](./usher_toolkit_report.md)
     *   *A practical guide to using the UShER toolkit for analyzing massive viral phylogenies like SARS-CoV-2.*
+*   [**Proposal: A Quantitative Analysis of SARS-CoV-2 Evolutionary Dynamics**](./sars_cov2_evolutionary_dynamics_proposal.md)
+    *   *A research proposal outlining methods to study viral evolution at scale by analyzing spatio-temporal patterns of nucleotide diversity.*
 
 ---
 
