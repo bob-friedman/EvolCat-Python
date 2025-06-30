@@ -46,11 +46,9 @@ This proposal seeks to **quantitatively test whether observed π patterns deviat
 
 **Nucleotide diversity (π)** is defined as the average number of nucleotide differences per site between two sequences randomly sampled from the population (Nei & Li, 1979).  Formally,
 
-$$
-\pi \;=\; \frac{1}{\binom{n}{2}} \sum_{i<j} \pi_{ij},
-$$
+![alt text](./assets/formula.png "")
 
-where \$\pi\_{ij}\$ is the per-site difference between sequences \$i\$ and \$j\$.  Under the **Neutral Theory of Molecular Evolution**, π reaches an equilibrium value determined by the product of the effective population size (\$N\_e\$) and the per-site mutation rate (\$\mu\$). For a haploid organism like a virus, the classical formula is
+where k\_{ij}\$ is the per-site difference between sequences \$i\$ and \$j\$.  Under the **Neutral Theory of Molecular Evolution**, π reaches an equilibrium value determined by the product of the effective population size (\$N\_e\$) and the per-site mutation rate (\$\mu\$). For a haploid organism like a virus, the classical formula is
 
 $$
 \pi = 2 N_e \mu,
