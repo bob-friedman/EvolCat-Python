@@ -1,6 +1,6 @@
 # Proposal: A Quantitative Analysis of SARS-CoV-2 Evolutionary Dynamics Through Spatio-Temporal Patterns of Nucleotide Diversity
 
-[This is an early draft of a proposal that serves as a reference for methods to study viral evolution at scale. Please confirm any details here before use in your research study. I will continue to update it as it is of interest to study the dynamics of a virus at its operational scale, both in a geographical and a temporal context, so that generalizations of findings are robust as possible. Much of the literature in this area seems narrower in scope, yet the sequence data is present, so it likely requires the kinds of approaches here with the known limitations related to heterogeneity among data sources and the difficulties in handling "noisy data". A particular area of interest are the frequency and formation of recombinants with a focus on viral variant distributions during their emergence and the corresponding genetic events that lead to their origins.]
+[This is a draft of a proposal that serves as a reference for methods to study viral evolution at scale. Please confirm any details here before use in your research study. I will continue to update it as it is of interest to study the dynamics of a virus at its operational scale, both in a geographical and a temporal context, so that generalizations of findings are robust as possible. Much of the literature in this area seems narrower in scope, yet the sequence data is present, so it likely requires the kinds of approaches here with the known limitations related to heterogeneity among data sources and the difficulties in handling "noisy data". A particular area of interest are the frequency and formation of recombinants with a focus on viral variant distributions during their emergence and the corresponding genetic events that lead to their origins.]
 
 ## Table of Contents
 
@@ -24,7 +24,7 @@
 
 ## 1. Introduction
 
-The evolutionary trajectory of SARS-CoV-2 is characterized by **dynamic shifts between adaptive regimes**, including gradual adaptation via point mutations, recombination-driven innovation, and antigenic “leaps” from cryptic older lineages.  This process is primarily driven by antagonistic coevolution with host immunity: novel variants acquire immune-escape mutations under selective pressure (Harvey *et al.*, 2021) and then spread through positive selection (e.g., in Spike RBD) as new strains. Key population-genetic forces shaping these dynamics include:
+The evolutionary trajectory of SARS-CoV-2 is characterized by **dynamic shifts between adaptive regimes**, including gradual adaptation via point mutations, recombination-driven innovation, and antigenic “leaps” from cryptic older lineages.  This process is primarily driven by antagonistic coevolution with host immunity: novel variants acquire immune-escape mutations under selective pressure (Harvey *et al.*, Nature Reviews Microbiology, 2021) and then spread through positive selection (e.g., in Spike RBD) as new strains. Key population-genetic forces shaping these dynamics include:
 
 * **Positive Selection:**  Rapid fixation of advantageous mutations (e.g., in Spike) enables immune evasion and increased transmissibility. When a highly-fit variant emerges, it can trigger a **global selective sweep** that replaces the viral population worldwide (as seen in the rise of Alpha, then Delta, and later the XBB lineage by JN.1).
 
@@ -34,7 +34,7 @@ The evolutionary trajectory of SARS-CoV-2 is characterized by **dynamic shifts b
 
 * **Genetic Drift and Founder Effects:**  Transmission bottlenecks during geographic spread amplify random drift.  For example, when the virus seeds a new region, only a subset of lineages founds the outbreak (a classical founder effect), reducing diversity.  Consistent with this, comparative studies have observed a *diversity gradient*: diversity tends to be highest in a variant’s region of origin and lower in downstream “sink” locations.
 
-* **Recombination:**  In periods of high diversity with multiple co-circulating lineages, recombination can create novel variant genomes.  A notable example is the XBB recombinant (from two BA.2 lineages) that became globally dominant in late 2022. Recombination has been shown to significantly shape SARS-CoV-2 evolution and fitness, and even momentarily serve as a mechanism for sweeping in new variants.
+* **Recombination:**  In periods of high diversity with multiple co-circulating lineages, recombination can create novel variant genomes.  A notable example is the XBB recombinant (from two BA.2 lineages) that became globally dominant in late 2022 (Planas *et al.*, Nature Communications, 2024). Recombination has been shown to significantly shape SARS-CoV-2 evolution and fitness, and even momentarily serve as a mechanism for sweeping in new variants.
 
 The net effect of these competing forces – selection, drift, recombination – is captured by a single fundamental metric: **nucleotide diversity (π)**.  By systematically measuring π across time and space, we can quantify the imprint of sweeps, drift, and recombination on the virus’s genetic variation.  Prior analyses have documented that each major variant (e.g. Alpha, Delta, Omicron) corresponded to a sharp global sweep, with diversity collapsing and then re-accumulating.  Conversely, phases like late 2022 saw many Omicron sublineages co-circulating, leading to sustained high π and enabling recombinant forms (XBB) to emerge.  Occasional “antigenic leaps” (e.g. Omicron BA.1 or the recent BA.2.86) appear to arise from long-unsampled lineages, reflecting unobserved evolutionary bursts. These observations suggest that SARS-CoV-2 alternates between sweep-dominated regimes and phases of mosaic diversity.
 
@@ -44,11 +44,11 @@ This proposal seeks to **quantitatively test whether observed π patterns deviat
 
 ### 2.1. Nucleotide Diversity (π) and Neutral Theory
 
-**Nucleotide diversity (π)** is defined as the average number of nucleotide differences per site between two sequences randomly sampled from the population (Nei & Li, 1979).  Formally,
+**Nucleotide diversity (π)** is defined as the average number of nucleotide differences per site between two sequences randomly sampled from the population (Nei & Li, Proc Natl Acad Sci USA, 1979).  Formally,
 
 ![alt text](./assets/formula.png "")
 
-where k(ij) is the per-site difference between sequences \$i\$ and \$j\$.  Under the **Neutral Theory of Molecular Evolution**, π reaches an equilibrium value determined by the product of the effective population size (\$N\_e\$) and the per-site mutation rate (\$\mu\$). For a haploid organism like a virus, the classical formula is
+where k(ij) is the per-site difference between sequences \$i\$ and \$j\$.  Under the **Neutral Theory of Molecular Evolution** (Kimura, The Neutral Theory of Molecular Evolution, 1983), π reaches an equilibrium value determined by the product of the effective population size (\$N\_e\$) and the per-site mutation rate (\$\mu\$). For a haploid organism like a virus, the classical formula is
 
 $$
 \pi = 2 N_e \mu,
@@ -61,11 +61,11 @@ because two lineages coalesce in an average time of \$2N\_e\$ generations and ac
 * A **high π** value indicates substantial genetic polymorphism, as expected when multiple lineages co-circulate under drift or balancing forces.
 * A **low π** indicates homogeneity (e.g. after a recent sweep has fixed one lineage).
 
-Under strict neutrality (no selection or demographic change), π would be relatively stable.  Significant departures – such as sharp temporal drops or systematic spatial gradients – signal non-neutral processes (Tajima, 1989).  In practice, we will compute π per region and time window.  For instance, a sudden global decrease in π coincident with the rise of a known variant would support the selective sweep hypothesis, whereas a spatial pattern of higher π at the variant’s origin and lower π at distant sites would support serial founder effects.
+Under strict neutrality (no selection or demographic change), π would be relatively stable.  Significant departures – such as sharp temporal drops or systematic spatial gradients – signal non-neutral processes (Tajima, Genetics, 1989).  In practice, we will compute π per region and time window.  For instance, a sudden global decrease in π coincident with the rise of a known variant would support the selective sweep hypothesis, whereas a spatial pattern of higher π at the variant’s origin and lower π at distant sites would support serial founder effects.
 
 ### 2.2. BEAST Software and Phylodynamic Inference
 
-While our primary focus is on measuring π directly, it is also important to connect π patterns to underlying population dynamics.  **BEAST (Bayesian Evolutionary Analysis by Sampling Trees)** is a leading software package for *phylodynamic inference*.  BEAST takes time-stamped sequence data (and optional metadata like sampling location) and jointly infers phylogenetic trees along with parameters of evolutionary and demographic models.  In particular, BEAST can estimate changes in effective population size (\$N\_e(t)\$) over time using coalescent-based models (e.g. Bayesian Skyline) and can fit structured or birth–death models to quantify spread and recombination rates.
+While our primary focus is on measuring π directly, it is also important to connect π patterns to underlying population dynamics.  **BEAST (Bayesian Evolutionary Analysis by Sampling Trees)** is a leading software package for *phylodynamic inference* (Suchard *et al.*, Virus Evolution, 2018).  BEAST takes time-stamped sequence data (and optional metadata like sampling location) and jointly infers phylogenetic trees along with parameters of evolutionary and demographic models.  In particular, BEAST can estimate changes in effective population size (\$N\_e(t)\$) over time using coalescent-based models (e.g. Bayesian Skyline) and can fit structured or birth–death models to quantify spread and recombination rates.
 
 Critically, BEAST does **not** *compute* π; rather, it *infers* the processes that cause π to change.  For example, BEAST will infer population expansions or contractions (via inferred \$N\_e(t)\$ trajectories) that theoretically underlie observed diversity fluctuations.  In coalescent terms, BEAST uses molecular sequences to reconstruct the genealogy and estimate how rapidly lineages coalesce; a long coalescent time (high inferred \$N\_e\$) corresponds to higher π, whereas a rapid coalescence (low \$N\_e\$) corresponds to reduced π.
 
@@ -85,11 +85,11 @@ SARS-CoV-2 evolution has alternated among several distinct “regimes” or mode
 
 * **Antigenic Leap (Deep-Branch Emergence):**  Occasionally, a variant appears from a phylogenetic “long branch,” indicating it evolved in an unsampled reservoir (e.g. in chronically infected hosts or an animal host). Omicron BA.1 is a prime example, arising with \~30 new spike mutations unexplained by gradual transmission chains. BA.2.86 (2023) is another such leap. These events effectively reset diversity by introducing a highly divergent lineage suddenly.
 
-By categorizing sampling windows into these ecological regimes, we can interpret π changes in context.  For instance, during a “mosaic” period we expect sustained π and evidence of recombination breakpoints, whereas in a “sweep” period we expect a crash in π.  Publications have documented these patterns: Wang *et al.* found successive sweep phases dividing the pandemic into epochs of low diversity. Arantes *et al.* note that recombination (as in XBB) significantly drove diversity during late 2022. We will annotate our spatio-temporal data with known variant timelines to align π trends with these regimes.
+By categorizing sampling windows into these ecological regimes, we can interpret π changes in context.  For instance, during a “mosaic” period we expect sustained π and evidence of recombination breakpoints, whereas in a “sweep” period we expect a crash in π.  Publications have documented these patterns: Wang *et al.* (Frontiers in Microbiology, 2022) found successive sweep phases dividing the pandemic into epochs of low diversity. Tamura *et al.* (Nature Communications, 2023) note that recombination (as in XBB) significantly drove diversity during late 2022. We will annotate our spatio-temporal data with known variant timelines to align π trends with these regimes.
 
 ### 2.4. Integration of Temporal Sweeps and Spatial Founder Effects
 
-The most comprehensive view of SARS-CoV-2 population dynamics comes from **integrating temporal and spatial patterns**.  In this framework, a global selective sweep is not an instantaneous global event but the culmination of a local sweep followed by worldwide spread.  For example, a novel variant first emerges and rises to high frequency in one region (driving local π down), then spreads to other regions via repeated founder events. Each “hop” seeds new outbreaks, each with a genetic bottleneck. Comparative studies have shown that as Alpha and Delta spread globally, the viral populations in distant regions converged to near-uniform sequence spectra. In other words, the global sweep was built by successive spatial founder events from the origin, each causing additional diversity loss.
+The most comprehensive view of SARS-CoV-2 population dynamics comes from **integrating temporal and spatial patterns**.  In this framework, a global selective sweep is not an instantaneous global event but the culmination of a local sweep followed by worldwide spread.  For example, a novel variant first emerges and rises to high frequency in one region (driving local π down), then spreads to other regions via repeated founder events. Each “hop” seeds new outbreaks, each with a genetic bottleneck. Comparative studies have shown that as Alpha and Delta spread globally, the viral populations in distant regions converged to near-uniform sequence spectra (Tasaki *et al.*, PLOS One, 2021). In other words, the global sweep was built by successive spatial founder events from the origin, each causing additional diversity loss.
 
 Formally, this suggests a **metapopulation epidemiological model** (coupled regions) linked to a **structured coalescent**.  Under this model, each subpopulation follows an SIR/SEIR dynamic, and migration among subpopulations introduces founder bottlenecks.  Coalescent theory then predicts that the tree of sampled genomes will show deep coalescence during global expansion (high \$N\_e\$ locally) interrupted by rapid coalescence during spread.  A sweep corresponds to one lineage overtaking others (pruning the tree), while founder effects appear as star-like expansions from one region to others.
 
@@ -99,7 +99,7 @@ In practice, we will test this integrated view by examining π in two ways: temp
 
 **Objective:** Test whether global SARS-CoV-2 genetic diversity deviates from neutral expectations in space and time. Specifically, does \$\pi\$ show non-random fluctuations corresponding to selective sweeps and founder events?
 
-* **Null Hypothesis (H₀):** The nucleotide diversity (π) of the global SARS-CoV-2 population is uniform across time and space, with any observed variance attributable to random sampling error under neutrality (Kimura, 1983).
+* **Null Hypothesis (H₀):** The nucleotide diversity (π) of the global SARS-CoV-2 population is uniform across time and space, with any observed variance attributable to random sampling error under neutrality (Kimura, The Neutral Theory of Molecular Evolution, 1983).
 
 * **Alternative Hypothesis (Hₐ):** The nucleotide diversity (π) exhibits statistically significant, structured variation across time and/or space, reflecting population-dynamic processes.  In particular, π will **decrease** sharply during the rise of highly-fit variants (selective sweeps) and will vary systematically with geographic spread (higher at source, lower at sink), as predicted by the sweep–founder model.
 
@@ -111,7 +111,7 @@ Our approach is to compile a balanced dataset of SARS-CoV-2 genomes stratified b
 
 ### 4.1. Data Source
 
-We will use the global, mutation-annotated phylogeny and metadata maintained by the UShER/Nextstrain consortium. This continuously-updated repository aggregates high-quality SARS-CoV-2 sequences from GISAID and other public databases, annotated with collection date and sampling location. It provides a standardized, time-resolved phylogenetic tree covering millions of genomes, from which we can efficiently select subsamples.
+We will use the global, mutation-annotated phylogeny and metadata maintained by the UShER/Nextstrain consortium (Turakhia *et al.*, Nature Genetics, 2021). This continuously-updated repository aggregates high-quality SARS-CoV-2 sequences from GISAID and other public databases (Shu & McCauley, Eurosurveillance, 2017), annotated with collection date and sampling location. It provides a standardized, time-resolved phylogenetic tree covering millions of genomes, from which we can efficiently select subsamples.
 
 ### 4.2. Sampling Strategy
 
@@ -133,7 +133,7 @@ For each spatio-temporal bin, we will extract the aligned sequences and perform 
 
 2. **Phylogenetic Tree Validation:** We will ensure that the sampled sequences match the UShER phylogeny by pruning the global tree. This allows comparing our diversity measures with global phylogenetic context.
 
-3. **Metadata Assignment:** Each bin will be labeled with the most likely dominant lineage(s) present (e.g. Omicron BA.5, XBB, JN.1) based on Pango lineage calls, to aid interpretation.
+3. **Metadata Assignment:** Each bin will be labeled with the most likely dominant lineage(s) present (e.g. Omicron BA.5, XBB, JN.1) based on Pango lineage calls (Rambaut *et al.*, Nature Microbiology, 2021), to aid interpretation.
 
 ### 4.4. Analysis (π calculation and phylodynamics)
 
@@ -151,7 +151,7 @@ All computational analyses will be scripted for reproducibility.  We will use Sn
 
 This study will yield an empirical, quantitative picture of SARS-CoV-2 genetic diversity dynamics.  Specifically, we expect to observe that **π is not uniform** but shows structured variation:
 
-* **Selective Sweeps:** We anticipate sharp decreases in π coinciding with the rise of new dominant lineages.  For example, as Suratekar *et al.* (2022) reported, the global diversity plunged when Alpha and Delta spread.  We expect to see similar signatures with JN.1’s emergence.
+* **Selective Sweeps:** We anticipate sharp decreases in π coinciding with the rise of new dominant lineages.  For example, as Suratekar *et al.* (Molecular Systems Biology, 2022) reported, the global diversity plunged when Alpha and Delta spread.  We expect to see similar signatures with JN.1’s emergence.
 
 * **Founder Effects:** Spatially, we expect to see diversity gradients.  Regions where a variant first appears (and where multiple introductions accumulate) should have higher π than remote regions initially seeded by few lineages. This pattern – consistent with serial founder events – has been documented in previous variant expansions.
 
