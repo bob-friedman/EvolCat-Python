@@ -1,4 +1,4 @@
-PROPOSAL: # Proposal: A Quantitative Analysis of SARS-CoV-2 Evolutionary Dynamics Through Spatio-Temporal Patterns of Nucleotide Diversity
+# Proposal: A Quantitative Analysis of SARS-CoV-2 Evolutionary Dynamics Through Spatio-Temporal Patterns of Nucleotide Diversity
 
 [This is an early draft of a proposal that serves as a reference for methods to study viral evolution at scale. Please confirm any details here before use in your research study. I will continue to update it as it is of interest to study the dynamics of a virus at its operational scale, both in a geographical and a temporal context, so that generalizations of findings are robust as possible. Much of the literature in this area seems narrower in scope, yet the sequence data is present, so it likely requires the kinds of approaches here with the known limitations related to heterogeneity among data sources and the difficulties in handling "noisy data". A particular area of interest are the frequency and formation of recombinants with a focus on viral variant distributions during their emergence and the corresponding genetic events that lead to their origins.]
 
