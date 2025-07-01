@@ -73,6 +73,13 @@ Critically, BEAST does **not** *compute* π; rather, it *infers* the processes t
 
 **Limitations:** The principal limitations of BEAST are computational and model-dependent.  Analyses are extremely CPU-intensive, requiring that only subsampled data (e.g. \~hundreds to thousands of genomes) can be analyzed.  Results also depend heavily on the chosen models and priors: if the coalescent or migration model is poorly specified, inferred parameters (and thus their implied effects on π) may be incorrect.  Therefore, BEAST inferences must be validated by extensive sensitivity analyses (testing multiple model forms, priors, and subsamples).  In summary, BEAST is a *statistical inference* tool: it will yield posterior distributions for \$N\_e(t)\$, tree topologies, and migration rates, but it does not output π directly. Instead, we interpret BEAST’s inferred dynamics as the causative factors of our measured diversity.
 
+**Power Analysis:** A specific numerical calculation of sampling power to detect a true event is not presented since the models required for the calculation have not yet been parameterized. A power analysis for this experiment requires, at a minimum, specific numerical values for the following parameters:
+
+1.  For the Selective Sweep Model: The selection coefficient (*s*) of the variant being tested.
+2.  For the Demographic Bottleneck Model: The magnitude and duration of the reduction in effective population size.
+
+Without these parameter values, the effect size—the quantitative difference in the expected value of π between the two scenarios—is unknown. It is therefore not possible to calculate the probability of detecting that difference. 
+
 ### 2.3. Ecological Regimes of SARS-CoV-2 Evolution
 
 SARS-CoV-2 evolution has alternated among several distinct “regimes” or modes of variation:
@@ -114,6 +121,12 @@ Our approach is to compile a balanced dataset of SARS-CoV-2 genomes stratified b
 We will use the global, mutation-annotated phylogeny and metadata maintained by the UShER/Nextstrain consortium (Turakhia *et al.*, Nature Genetics, 2021). This continuously-updated repository aggregates high-quality SARS-CoV-2 sequences from GISAID and other public databases (Shu & McCauley, Eurosurveillance, 2017), annotated with collection date and sampling location. It provides a standardized, time-resolved phylogenetic tree covering millions of genomes, from which we can efficiently select subsamples.
 
 ### 4.2. Sampling Strategy
+
+For the initial analysis for calculating nucleotide diversity, we will implement the following design.
+
+*  **Clade Selection:** Select a large initial set of clades (e.g., the top 250 or 500 based on `exclusive_count`) to serve as a candidate pool. This pool would then be subjected to a subsequent filtering step to retain only those clades that are active within the 2022–2024 timeframe, thereby mitigating the chance of missing relevant lineages.
+
+*  **Sample Size per Clade:** Select a large initial set of samples per clade (e.g. 1000). This would be implemented as taking the minimum of either 1000 or the total number of available exclusive samples for that clade.
 
 To avoid biases from uneven sequencing effort, we will implement a **stratified random sampling** design.
 
@@ -159,7 +172,9 @@ This study will yield an empirical, quantitative picture of SARS-CoV-2 genetic d
 
 * **Founder Effects:** Spatially, we expect to see diversity gradients.  Regions where a variant first appears (and where multiple introductions accumulate) should have higher π than remote regions initially seeded by few lineages. This pattern – consistent with serial founder events – has been documented in previous variant expansions.
 
-* **Recombination Eras:** In phases where multiple lineages co-exist (e.g. late 2022 Omicron subvariants), we expect persistently elevated π and evidence of mosaic haplotypes.  The XBB recombinant itself should appear in our data as an abrupt reshuffling of diversity, corroborating findings that recombination contributed a new, fitter lineage.
+* **Recombination Eras:** In phases where multiple lineages co-exist, such as the late-2022 period characterized by various Omicron subvariants, we expect to observe persistently elevated global nucleotide diversity. The emergence of the XBB recombinant itself is not expected to cause an immediate drop in π. Instead, its addition to the pool of co-circulating lineages should contribute to maintaining a high level of genetic variation. This sustained high π serves as a quantitative signature of a "mosaic" evolutionary regime, which stands in direct contrast to the diversity-purging signature of a selective sweep.
+
+To test this hypothesis directly, we will conduct a post-hoc analysis that partitions the diversity. We will compare the total nucleotide diversity (π_total) in a given time bin against the diversity calculated *within* each major co-circulating lineage (e.g., π_XBB, π_BQ.1). The expected result is that π_total will be significantly higher than the diversity of any individual sub-group, providing quantitative evidence that the high overall diversity was driven by the large genetic distance between these co-circulating lineages.
 
 Validating these patterns will have both theoretical and practical significance.  Theoretically, it will **confirm the integrated model** that SARS-CoV-2 evolution is driven by recurrent sweeps and founder events.  This integrates population-genetics principles (selection and drift) into a coherent framework for pandemics, extending classic neutral theory to a complex viral scenario.  Practically, understanding how π behaves during sweeps vs. co-circulation can aid real-time surveillance: a sudden dip in π in sequencing data could serve as an early warning of an imminent global sweep. In summary, by moving from qualitative narrative to quantitative analysis, this work will provide a deeper, evidence-based understanding of SARS-CoV-2 population dynamics, building on major findings in Science and Nature that have documented variant-associated diversity changes.
 
