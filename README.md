@@ -367,6 +367,18 @@ Identifying known motifs within a set of sequences is a common requirement.
 
 [Guide to Virus Genomics, Diversity, and Analysis](guides/virus_genomics_guide.md)
 
+### SARS-CoV-2 Genome Analysis Technical Report and Dataset
+
+A related repository, [data-sarscov2-genomes](https://github.com/bob-friedman/data-sarscov2-genomes), hosts a technical report and the associated dataset for "A Pipeline for Scalable Analysis of SARS-CoV-2 Nucleotide Diversity." This report details the `nucdiv_v4.py` pipeline, which processes data from the UShER mutation-annotated phylogeny to generate a curated dataset of SARS-CoV-2 genome sequences. The dataset is designed to support scalable analysis of nucleotide diversity (π) and other population genetic studies. Researchers interested in SARS-CoV-2 evolution, variant dynamics, and the impact of selective sweeps will find this resource valuable.
+
+The technical report provides:
+*   An in-depth explanation of the `nucdiv_v4.py` script.
+*   Details on the `nucdiv_stats.py` script for calculating nucleotide diversity.
+*   Theoretical background on nucleotide diversity and its interpretation in SARS-CoV-2.
+*   Information on software dependencies, output formats, and data hosting.
+
+Access the technical report and dataset here: [https://github.com/bob-friedman/data-sarscov2-genomes](https://github.com/bob-friedman/data-sarscov2-genomes)
+
 
 [Back to Top](#top)
 
