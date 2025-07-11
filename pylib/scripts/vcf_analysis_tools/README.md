@@ -61,7 +61,7 @@ VCF files and the variant data they contain are crucial for a wide range of rese
 
 ### The `analyze_vcf.py` Script
 
-The `analyze_vcf.py` script provided in this directory is a basic tool for working with VCF files. It allows users to filter variants based on two common criteria:
+The `analyze_vcf.py` script provided in the scripts/ directory is a basic tool for working with VCF files. It allows users to filter variants based on two common criteria:
 *   **Variant Quality (QUAL):** The minimum confidence score for a variant call.
 *   **Read Depth (DP):** The minimum number of sequence reads covering a variant position.
 
