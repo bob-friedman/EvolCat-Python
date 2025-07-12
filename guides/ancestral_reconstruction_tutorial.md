@@ -240,6 +240,7 @@ This is not a minor detail; it's a fundamental limitation of ASR.
 *   **Why is deep ASR so uncertain?**
     1.  **Signal Erosion (Mutational Saturation):** Over long evolutionary times, a single site can mutate multiple times (e.g., A→G→C→T). We only see the start (A) and end (T) states, losing the intermediate information. This makes it statistically difficult to be certain about the ancestral state.
     2.  **Propagated Error:** ASR is only as good as its inputs. Deep branches in a tree are the hardest to resolve correctly. If the tree topology or branch lengths are wrong at a deep level, the ASR for that ancestor will be built on a flawed foundation.
+    3.  **The "Cloud of Unknowing":** The very nature of viral evolution, with its high mutation rates and vast, often-unsampled reservoirs, means that the concept of a single, identifiable ancestral genotype can be a statistical and biological near-impossibility. Friedman (2025) explores this "cloud of unknowing" surrounding ancient viral ancestors, arguing for a shift from seeking definitive ancestors to understanding the probabilistic nature of viral emergence.
 
 *   **What This Means for Our Strategy:**
     *   ASR on a **backbone tree** of representatives (Strategy 1) provides a valuable, but hypothetical, view of deep evolution. Treat these deep ancestors with skepticism.
@@ -270,6 +271,8 @@ This tutorial outlines a hybrid approach to ASR, leveraging Python libraries for
 *   **Tree Visualization:**
     *   **FigTree:** [http://tree.bio.ed.ac.uk/software/figtree/](http://tree.bio.ed.ac.uk/software/figtree/)
     *   **iTOL (Interactive Tree Of Life):** [https://itol.embl.de/](https://itol.embl.de/)
+*   **On the Challenge of Viral Origin Reconstruction:**
+    *   Friedman, R. (2025). "The Elusive Genesis: Stochasticity and the Challenge of Reconstructing Viral Origins." Preprints. [https://doi.org/10.20944/preprints202505.2277.v2](https://doi.org/10.20944/preprints202505.2277.v2)
 
 ## Credits
 This work is made possible by the collaborative efforts of Jules and Gemini Pro (Google).
