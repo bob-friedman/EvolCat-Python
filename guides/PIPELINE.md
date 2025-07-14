@@ -2,6 +2,8 @@
 
 **Objective:** This notebook provides a complete, end-to-end pipeline for training a Transformer-based sequence-to-sequence model on viral evolution data. It demonstrates the process of data acquisition, ancestral state reconstruction, data preparation, model training, and inference, while documenting the inherent computational and biological limitations encountered when using standard cloud-based hardware.
 
+***Note: These are complex pipelines of code, while the parsing of sequence data for the ancestral reconstructions and its association with sequence names is problematic without extensive verification. Therefore, it would be necessary to add additional logging if either of these pipelines are used for your studies.***
+
 **Methodology:** The pipeline utilizes data from UShER and NCBI. It employs IQ-TREE for phylogenetic inference and Ancestral State Reconstruction (ASR) to generate ancestor-descendant sequence pairs. A Transformer model, implemented in TensorFlow/Keras, is then trained on this data to learn mutational patterns. The guide is structured to be executed sequentially in a non-Google Colab environment and requires adaptation to your development environment. Colab does not have sufficient shell support yet, so the following is closer to a conceptual, but verified, implementation of this pipeline. There is another [version](../pipelines/virus_evolution_model_v3.py) (Python code) of this document that is less organized and structured, but it is tested and adaptable for the Colab development environment.
 
 ---
