@@ -4,6 +4,8 @@
 
 ## 1. Abstract
 
+***Note: These are complex pipelines of code, while the parsing of sequence data for the ancestral reconstructions and its association with sequence names is problematic without extensive verification. Therefore, it would be necessary to add additional logging if either of these pipelines are used for your studies.***
+
 This report documents a complete bioinformatics and machine learning pipeline designed to model the evolution of the SARS-CoV-2 Spike protein. The primary objective was to train a Transformer-based deep learning model to predict a descendant viral sequence given its immediate ancestor. The methodology involved a multi-step process: (1) targeted data acquisition of diverse viral clades from NCBI; (2) phylogenetic analysis using IQ-TREE to perform Ancestral State Reconstruction (ASR), thereby generating a high-quality dataset of ancestor-descendant sequence pairs; (3) training a sequence-to-sequence Transformer model on these pairs; and (4) interpreting the trained model's internal mechanisms using attention visualization.
 
 The final result, visualized in Figure 2, successfully demonstrated that the model, without any prior biological knowledge, learned to focus its attention on the most evolutionarily significant and immunologically relevant regions of the Spike protein, specifically the Receptor-Binding Domain (RBD) and N-Terminal Domain (NTD). This confirms the validity of the pipeline and showcases the ability of Transformer models to uncover meaningful biological patterns directly from sequence data.
