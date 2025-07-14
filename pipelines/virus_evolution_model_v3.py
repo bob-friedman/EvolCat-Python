@@ -1,4 +1,7 @@
-***Note: These are complex pipelines of code, while the parsing of sequence data for the ancestral reconstructions and its association with sequence names is problematic without extensive verification. Therefore, it would be necessary to add additional logging if either of these pipelines are used for your studies.***
+# Note: These are complex pipelines of code, while the parsing of sequence data for the ancestral 
+# reconstructions and its association with sequence names is problematic without extensive verification.
+# Therefore, it would be necessary to add additional logging if either of these pipelines are used for
+# your studies.
 
 # ==============================================================================
 # Part 1: Environment Setup
