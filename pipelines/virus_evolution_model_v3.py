@@ -282,14 +282,16 @@ import pandas as pd
 # --- File Definitions ---
 IQTREE_PREFIX = "iqtree_asr_run" # prefix to all iqtree output files
 TREE_FILE = f"{IQTREE_PREFIX}.treefile"
-STATE_FILE = f"{IQTREE_PREFIX}.state" # This is a FASTA file of all node sequences
+STATE_FILE = f"{IQTREE_PREFIX}.state" # This is a tab-delimited text file of all node sequences
 OUTPUT_PAIRS_FILE = "ancestor_descendant_pairs.tsv"
 
 print(f"\nParsing tree from '{TREE_FILE}' and sequences from '{STATE_FILE}'...")
 
 # 1. Load all sequences (tips and ancestral nodes) into a dictionary.
 # The .state file contains sequences for both terminal leaves and internal nodes.
-sequences = {record.id: str(record.seq) for record in SeqIO.parse(STATE_FILE, "fasta")}
+#### verify the format of the .state file and adapt the sequence names for your study
+#### this file has been updated for parsing although not confirmed as robust to error
+#### sequences = {record.id: str(record.seq) for record in SeqIO.parse(STATE_FILE, "fasta")}
 print(f"Loaded {len(sequences)} total sequences (leaves + internal nodes).")
 
 # 2. Load the phylogenetic tree.
