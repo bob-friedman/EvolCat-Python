@@ -262,7 +262,7 @@ Recombination occurs when the viral polymerase switches templates during replica
 > Extensive recombination in HIV-1 has led to numerous CRFs (e.g., CRF01_AE, CRF02_AG), which are mosaic viruses derived from different parental subtypes. These CRFs now account for a significant proportion of global infections and impact diagnostics and drug resistance patterns [6].
 
 ### Reassortment: Segment Shuffling in Segmented Viruses
-Reassortment is the shuffling of entire genome segments between segmented viruses co-infecting the same host cell.
+Reassortment is the shuffling of entire genome segments between segmented viruses co-infecting the same host cell [13].
 > **Case Study: Origin of Pandemic Influenza Strains**
 > Reassortment is the primary driver of antigenic shift in influenza A viruses, which can lead to pandemics. The 2009 H1N1 pandemic virus was a complex "quadruple reassortant" containing segments derived from swine, human, and avian influenza viruses, likely assembled in swine "mixing vessels" [7].
 
@@ -305,7 +305,7 @@ A review by [8] explores the evolving landscape of predicting pathogen evolution
 <details>
 <summary><b>Click for a detailed overview of fitness effect estimation</b></summary>
 
-A powerful approach to understand the fitness consequences of mutations involves leveraging vast amounts of public sequence data, as exemplified by [11] for SARS-CoV-2.
+A powerful approach to understand the fitness consequences of mutations involves leveraging vast amounts of public sequence data, as exemplified by [11] for SARS-CoV-2. See also [12].
 
 #### Core Methodology
 1.  **Calculate Expected Mutation Counts:** Determine how many times each possible mutation is *expected* to occur along a phylogeny assuming no selection.
@@ -396,7 +396,7 @@ This guide has been developed with significant assistance from the AI language m
 9.  Friedman, R. (2025). The Viral Chase: Outsmarting Evolution with Data Trees and AI Predictions. *Preprints*. [https://doi.org/10.20944/preprints202506.0456.v1 ](https://doi.org/10.20944/preprints202506.0456.v1 )
 10. Friedman, R. (2025). Anatomy of a Transformer: An Essay on the Code and Concepts for Biological Sequence Analysis. *Preprints*. [https://doi.org/10.20944/preprints202506.0623.v1 ](https://doi.org/10.20944/preprints202506.0623.v1 )
 11. Bloom, J. D., & Neher, R. A. (2023). Fitness effects of mutations to SARS-CoV-2 proteins. *Virus Evolution*, *9*(2), vead055. [https://doi.org/10.1093/ve/vead055](https://doi.org/10.1093/ve/vead055)
-12. Dadonaite B, Ahn JJ, Ort JT, Yu J, Furey C, Dosey A, et al. (2024) Deep mutational scanning of H5 hemagglutinin to inform influenza virus surveillance. *PLoS Biol*, 22(11): e3002916. [https://doi.org/10.1371/journal.pbio.3002916](https://doi.org/10.1371/journal.pbio.3002916)
-13. Peacock TP, Moncla L, Dudas G, VanInsberghe D, Sukhova K, Lloyd-Smith JO, Worobey M, Lowen AC, Nelson MI. (2025). The global H5N1 influenza panzootic in mammals. *Nature*, 637(8045):304-13.
+12. Dadonaite, B., Ahn, J. J., Ort, J. T., Yu, J., Furey, C., Dosey, A., ... & Bloom, J. D. (2024). Deep mutational scanning of H5 hemagglutinin to inform influenza virus surveillance. *PLoS biology*, *22*(11), e3002916. [https://doi.org/10.1371/journal.pbio.3002916](https://doi.org/10.1371/journal.pbio.3002916)
+13. Peacock, T. P., Moncla, L., Dudas, G., VanInsberghe, D., Sukhova, K., Lloyd-Smith, J. O., ... & Nelson, M. I. (2025). The global H5N1 influenza panzootic in mammals. *Nature*, *637*(8045), 304-313. [https://doi.org/10.1038/s41586-024-08054-z](https://doi.org/10.1038/s41586-024-08054-z)
 
 [Back to Top](#top)
