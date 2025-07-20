@@ -396,5 +396,7 @@ This guide has been developed with significant assistance from the AI language m
 9.  Friedman, R. (2025). The Viral Chase: Outsmarting Evolution with Data Trees and AI Predictions. *Preprints*. [https://doi.org/10.20944/preprints202506.0456.v1 ](https://doi.org/10.20944/preprints202506.0456.v1 )
 10. Friedman, R. (2025). Anatomy of a Transformer: An Essay on the Code and Concepts for Biological Sequence Analysis. *Preprints*. [https://doi.org/10.20944/preprints202506.0623.v1 ](https://doi.org/10.20944/preprints202506.0623.v1 )
 11. Bloom, J. D., & Neher, R. A. (2023). Fitness effects of mutations to SARS-CoV-2 proteins. *Virus Evolution*, *9*(2), vead055. [https://doi.org/10.1093/ve/vead055](https://doi.org/10.1093/ve/vead055)
+12. Dadonaite B, Ahn JJ, Ort JT, Yu J, Furey C, Dosey A, et al. (2024) Deep mutational scanning of H5 hemagglutinin to inform influenza virus surveillance. *PLoS Biol*, 22(11): e3002916. [https://doi.org/10.1371/journal.pbio.3002916](https://doi.org/10.1371/journal.pbio.3002916)
+13. Peacock TP, Moncla L, Dudas G, VanInsberghe D, Sukhova K, Lloyd-Smith JO, Worobey M, Lowen AC, Nelson MI. (2025). The global H5N1 influenza panzootic in mammals. *Nature*, 637(8045):304-13.
 
 [Back to Top](#top)
