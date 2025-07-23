@@ -40,28 +40,6 @@ graph TD
 **User Responsibility:**
 The scripts and library components provided here are for research and informational purposes. Users are responsible for validating the results obtained using this software, interpreting them correctly, and ensuring they are appropriate for their specific application. The original authors and the converters of this code disclaim any liability for its use or misuse. It is recommended to test the tools with known datasets and compare results with other established bioinformatics software where appropriate. Users may need to adapt or modify the code to suit their specific research needs and computational environment.
 
-## Sampling Bias and Type II Error
-
-Statistical analysis is a cornerstone of scientific research, but its validity can be undermined by common yet often overlooked issues: sampling bias and Type II errors. Understanding these concepts is crucial for drawing accurate conclusions from data.
-
-**Sampling bias** occurs when the data collected is not representative of the population or phenomenon being studied. This can happen if certain individuals or groups are more likely to be included in the sample than others, leading to skewed results that do not generalize to the broader population. For example, a study on the effectiveness of a new drug that only includes young, healthy participants may not be applicable to older individuals or those with chronic illnesses.
-
-A **Type II error**, also known as a "false negative," occurs when a study fails to detect an effect that is actually present. This can happen if the sample size is too small, the effect size is small, or the statistical power of the study is low. In the context of the provided reference, a Type II error would be concluding that a particular fishing practice has no impact on the ecosystem when, in fact, it does. As the author notes, the consequences of Type II errors in environmental science can be severe and long-lasting, as they can lead to the failure to protect vulnerable ecosystems from harm.
-
-The provided reference highlights a critical issue in fisheries management, where the focus is often on avoiding **Type I errors** (concluding there is an effect when there is not one) to prevent short-term economic losses. However, this approach often ignores the more severe long-term consequences of Type II errors, such as the collapse of fisheries and environmental destruction.
-
-To mitigate these issues, researchers should:
-
-*   **Ensure representative sampling:** Use random sampling techniques and ensure that the sample is representative of the population of interest.
-*   **Conduct power analysis:** Before conducting a study, perform a power analysis to determine the appropriate sample size needed to detect an effect of a certain size.
-*   **Acknowledge limitations:** Be transparent about the limitations of the study, including any potential sources of bias or the possibility of a Type II error.
-
-By being mindful of these issues, researchers can improve the quality and reliability of their findings and ensure that their conclusions are based on sound statistical principles.
-
-**Reference:**
-
-Dayton, P. K. (1998). Reversal of the burden of proof in fisheries management. *Science*, *279*(5352), 821-822.
-
 ## Table of Contents
 
 1.  [Overview](#overview)
@@ -74,8 +52,9 @@ Dayton, P. K. (1998). Reversal of the burden of proof in fisheries management. *
 8.  [Virus Genomics, Diversity, and Analysis](#virus-genomics-diversity-and-analysis)
 9.  [Technical Guides](#technical-guides)
 10. [Detailed Script Usage](#detailed-script-usage)
-11. [Development and Contributions](#development-and-contributions)
-12. [Citation](#citation)
+11. [Sampling Bias and Type II Error](#sampling-bias-and-type-ii-error)
+12. [Development and Contributions](#development-and-contributions)
+13. [Citation](#citation)
 
 
 [Back to Top](#top)
@@ -413,6 +392,31 @@ You can also use the `-h` or `--help` flag with any script:
 ```bash
 python3 pylib/scripts/script_name.py -h
 ```
+
+
+[Back to Top](#top)
+
+## Sampling Bias and Type II Error
+
+Statistical analysis is a cornerstone of scientific research, but its validity can be undermined by common yet often overlooked issues: sampling bias and Type II errors. Understanding these concepts is crucial for drawing accurate conclusions from data.
+
+**Sampling bias** occurs when the data collected is not representative of the population or phenomenon being studied. This can happen if certain individuals or groups are more likely to be included in the sample than others, leading to skewed results that do not generalize to the broader population. For example, a study on the effectiveness of a new drug that only includes young, healthy participants may not be applicable to older individuals or those with chronic illnesses.
+
+A **Type II error**, also known as a "false negative," occurs when a study fails to detect an effect that is actually present. This can happen if the sample size is too small, the effect size is small, or the statistical power of the study is low. In the context of the provided reference, a Type II error would be concluding that a particular fishing practice has no impact on the ecosystem when, in fact, it does. As the author notes, the consequences of Type II errors in environmental science can be severe and long-lasting, as they can lead to the failure to protect vulnerable ecosystems from harm.
+
+The provided reference highlights a critical issue in fisheries management, where the focus is often on avoiding **Type I errors** (concluding there is an effect when there is not one) to prevent short-term economic losses. However, this approach often ignores the more severe long-term consequences of Type II errors, such as the collapse of fisheries and environmental destruction.
+
+To mitigate these issues, researchers should:
+
+*   **Ensure representative sampling:** Use random sampling techniques and ensure that the sample is representative of the population of interest.
+*   **Conduct power analysis:** Before conducting a study, perform a power analysis to determine the appropriate sample size needed to detect an effect of a certain size.
+*   **Acknowledge limitations:** Be transparent about the limitations of the study, including any potential sources of bias or the possibility of a Type II error.
+
+By being mindful of these issues, researchers can improve the quality and reliability of their findings and ensure that their conclusions are based on sound statistical principles.
+
+**Reference:**
+
+Dayton, P. K. (1998). Reversal of the burden of proof in fisheries management. *Science*, *279*(5352), 821-822.
 
 
 [Back to Top](#top)
