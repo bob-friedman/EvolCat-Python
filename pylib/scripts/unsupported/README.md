@@ -33,6 +33,13 @@ Merges multiple FASTA files. Sequences with identical headers are concatenated.
 python merge_fastas.py <file1.fasta> <file2.fasta> ... > <merged.fasta>
 ```
 
+### `pal2nal_enforce.py`
+Enforces an amino acid sequence alignment onto corresponding unaligned nucleotide sequences, producing a codon-aware nucleotide alignment. Gaps in the AA alignment are converted to '---' in the nucleotide output. Sample data files `test_aa_aligned.fasta`, `test_nt_unaligned.fasta`, and `test_nt_aligned_output.fasta` (reference output) are provided for testing.
+**Usage:**
+```bash
+python pal2nal_enforce.py -a <aligned_aa.fasta> -n <unaligned_nt.fasta> -o <output_nt_aligned.fasta>
+```
+
 ### `nogaps.py`
 Removes columns containing non-alphabetic characters (gaps, etc.) from an aligned FASTA file.
 **Usage:**
