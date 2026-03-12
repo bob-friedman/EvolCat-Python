@@ -25,33 +25,33 @@ def infer_alphabet_from_msa(alignment, sample_size=5, col_sample_size=20):
         return 'Unknown'
 
     sequences_to_sample = alignment.sequences[:min(sample_size, len(alignment.sequences))]
-    
+
     all_chars = Counter()
     for record in sequences_to_sample:
         seq_str = str(record.seq).upper()
         # Sample columns to avoid very long sequences slowing this down
         cols_to_sample = min(len(seq_str), col_sample_size)
         sampled_seq_chars = seq_str[:cols_to_sample] + seq_str[-cols_to_sample:] # Check beginning and end
-        
+
         for char in sampled_seq_chars:
             if char not in ['-', '.']: # Ignore gaps
                 all_chars[char] += 1
-    
+
     if not all_chars:
         return 'Unknown' # All gaps or empty
 
     # Heuristic thresholds
     dna_chars = set(['A', 'C', 'G', 'T'])
     rna_chars = set(['A', 'C', 'G', 'U'])
-    
+
     total_alpha_chars = sum(all_chars.values())
-    
+
     # Check for RNA (presence of U, absence of T)
     if 'U' in all_chars and 'T' not in all_chars:
         non_rna_chars = sum(count for char, count in all_chars.items() if char not in rna_chars)
         if (non_rna_chars / total_alpha_chars) < 0.1: # Allow for some non-standard chars
             return 'RNA'
-            
+
     # Check for DNA (presence of T, absence of U)
     if 'T' in all_chars and 'U' not in all_chars:
         non_dna_chars = sum(count for char, count in all_chars.items() if char not in dna_chars)
@@ -89,24 +89,24 @@ def calculate_consensus(alignment, threshold, ambiguous_char, require_multiple, 
     for i in range(alignment_len):
         column_str = alignment[:, i]
         counts = Counter(char.upper() for char in column_str)
-        
+
         valid_chars_counts = Counter()
         for char, count in counts.items():
             if char not in ['-', '.']:
                 valid_chars_counts[char] += count
-        
+
         if not valid_chars_counts:
             consensus_sequence.append('-') # Or effective_ambiguous_char based on preference
             continue
 
         total_valid = sum(valid_chars_counts.values())
-        
+
         best_char = None
         best_freq = 0.0
-        
+
         # Find the character with the highest frequency
         sorted_chars = sorted(valid_chars_counts.items(), key=lambda item: item[1], reverse=True)
-        
+
         best_char_candidate, best_char_count = sorted_chars[0]
         best_freq = best_char_count / total_valid
 
@@ -120,7 +120,7 @@ def calculate_consensus(alignment, threshold, ambiguous_char, require_multiple, 
 
         else: # Threshold not met by any single character
             consensus_sequence.append(effective_ambiguous_char)
-            
+
     return "".join(consensus_sequence)
 
 # --- Main Statistics Logic ---
@@ -164,10 +164,10 @@ def calculate_stats(alignment, inferred_alphabet):
             cols_all_gaps += 1
         if has_any_gaps:
             cols_any_gaps += 1
-    
+
     stats["Columns entirely gaps (%)"] = f"{(cols_all_gaps / alignment_length * 100):.2f}"
     stats["Columns with any gap (%)"] = f"{(cols_any_gaps / alignment_length * 100):.2f}"
-    
+
     return stats
 
 # --- Main Function ---
@@ -185,7 +185,7 @@ def main():
         required=True,
         help="Format of the input MSA (e.g., 'fasta', 'clustal', 'phylip', 'nexus', 'stockholm')."
     )
-    
+
     # Task flags
     parser.add_argument(
         "--get_consensus",
@@ -212,13 +212,13 @@ def main():
                    # If 2+ char types exist AND best is > threshold, it becomes ambiguous. This is the spec's example.
         help="Minimum number of distinct characters in a column to use the ambiguous character, even if one character meets the threshold. (default: 1, meaning this rule is less restrictive by default. Set >1 to make it more likely to use ambiguous_char if diversity is high)."
     )
-    
+
     parser.add_argument(
         "--get_stats",
         action="store_true",
         help="Calculate and output basic MSA statistics."
     )
-    
+
     parser.add_argument(
         "--convert_to",
         type=str,
@@ -231,7 +231,7 @@ def main():
         metavar="CONVERTED_MSA_FILEPATH",
         help="Output file for converted MSA (required if --convert_to is used)."
     )
-    
+
     parser.add_argument(
         "--output_report",
         type=str,
@@ -258,7 +258,7 @@ def main():
             sys.stderr.write(f"Warning: Multiple alignments found in '{args.msa_file}'. Only processing the first one.\n")
         except StopIteration:
             pass # Expected if only one alignment
-            
+
     except FileNotFoundError:
         sys.stderr.write(f"Error: MSA file '{args.msa_file}' not found.\n")
         sys.exit(1)
@@ -281,7 +281,7 @@ def main():
         except IOError as e:
             sys.stderr.write(f"Error: Could not open report file '{args.output_report}' for writing: {e}\n")
             sys.exit(1)
-    
+
     # --- Infer Alphabet ---
     inferred_alphabet = infer_alphabet_from_msa(alignment)
     if args.get_consensus or args.get_stats: # Only print if relevant
@@ -292,9 +292,9 @@ def main():
     if args.get_consensus:
         if report_stream != sys.stdout: sys.stderr.write(f"Calculating consensus sequence...\n")
         consensus_seq = calculate_consensus(
-            alignment, 
-            args.consensus_threshold, 
-            args.consensus_ambiguous_char, 
+            alignment,
+            args.consensus_threshold,
+            args.consensus_ambiguous_char,
             args.consensus_require_multiple,
             inferred_alphabet
         )
@@ -315,7 +315,7 @@ def main():
             sys.stderr.write("Error: --outfile is required when --convert_to is specified.\n")
             if report_stream != sys.stdout: report_stream.close()
             sys.exit(1)
-        
+
         sys.stderr.write(f"Converting MSA to '{args.convert_to}' format, saving to '{args.outfile}'...\n")
         try:
             # Bio.Align.write expects an iterable of alignments
