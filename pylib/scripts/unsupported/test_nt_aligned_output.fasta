@@ -1,0 +1,6 @@
+>seq1 Homo sapiens
+ATGGCTAGCACT---ATCCAGCGT
+>seq2 Mus musculus
+ATGGCT---AGCACTATCCAGCGT
+>seq3 Danio rerio
+------ATGGCTAGCACTATCCAGCGT
