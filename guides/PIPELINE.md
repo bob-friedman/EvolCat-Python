@@ -153,6 +153,15 @@ ensure_file_exists(SIMPLIFIED_SEQS, f"awk '/^>/ {{print \">seq\" ++i; next}} {{p
 ensure_file_exists(ALIGNED_SEQS, f"mafft --auto {SIMPLIFIED_SEQS} > {ALIGNED_SEQS}")
 ensure_file_exists(f"{IQTREE_PREFIX}.state", f"iqtree -s {ALIGNED_SEQS} -m MFP -asr -pre {IQTREE_PREFIX} -nt AUTO -redo")
 ```
+
+### **Alternative: Dependency-Free Parsimony Reconstruction**
+For cases where external tools like IQ-TREE are not available or for rapid baseline generation, a standalone Python script `parsimony_reconstruction.py` (found in `pylib/scripts/`) can be used. It performs a two-pass Fitch parsimony reconstruction on branch-annotated Newick trees (such as those produced by UShER).
+
+```bash
+# Example usage of the standalone parsimony script
+python pylib/scripts/parsimony_reconstruction.py usher_tree_with_mutations.txt --pairs
+```
+
 ---
 ## **Part 5: Data Bridge - Parsing ASR Output**
 **Objective:** Convert the tabular ASR output from IQ-TREE into a structured DataFrame of ancestor-descendant pairs.

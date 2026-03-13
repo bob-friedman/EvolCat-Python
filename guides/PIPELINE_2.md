@@ -151,6 +151,10 @@ print(f"\nRunning IQ-TREE for phylogenetic inference and ASR...")
 !iqtree -s sequence_aligned.fas -t sequence_aligned.fas.treefile -asr --redo
 
 print("\nIQ-TREE run complete.")
+
+# NOTE: For a dependency-free alternative to IQ-TREE ASR, the standalone
+# parsimony_reconstruction.py script in pylib/scripts/ can be used
+# to reconstruct ancestral sequences from annotated Newick trees.
 !ls -lh sequence_aligned.fas*
 ```
 
