@@ -1,6 +1,6 @@
-# Unsupported Tools
+# Standalone Tools
 
-This directory contains standalone, unsupported Python scripts for various sequence analysis tasks. These tools are organized into functional categories.
+This directory contains standalone Python scripts for various sequence analysis tasks. These tools are organized into functional categories.
 
 ## Directory Structure
 
