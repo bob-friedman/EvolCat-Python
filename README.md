@@ -67,7 +67,7 @@ The library is organized into:
 *   `pylib/scripts/`: Contains executable Python scripts that replicate and extend the functionality of original bioinformatics command-line tools. Many of these scripts depend on the `pylib/utils/` core utility modules. The scripts are designed to find these modules by default when EvolCat-Python is structured with `pylib/utils/` as a subdirectory. Some scripts may have their own detailed `README.md` files within this directory (e.g., `extract_cds_region.py`).
     *   `pylib/scripts/ncbi/`: Contains tools specifically for interacting with NCBI.
     *   `pylib/scripts/paml_tools/`: Contains tools specifically for PAML genomics analysis.
-    *   `pylib/scripts/standalone/`: Contains standalone tools for various sequence analysis tasks, organized by category (e.g., metrics, FASTA utilities, MSA utilities).
+    *   `pylib/scripts/standalone/`: Contains standalone tools for evolutionary metrics, FASTA manipulation, and MSA utilities.
 
 
 [Back to Top](#top)
