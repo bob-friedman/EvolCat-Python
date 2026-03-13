@@ -218,6 +218,11 @@ Choose the tool that best fits your needs. TreeTime is excellent for integrating
     print("Running Maximum Parsimony ASR...")
     tree.reconstruct_ancestral_states(character_matrix=char_matrix, method="parsimony")
 
+    # NOTE: A specialized standalone tool, parsimony_reconstruction.py
+    # (available in pylib/scripts/), is specifically designed for UShER-style
+    # branch-annotated trees and can generate ancestor-descendant pairs
+    # directly for machine learning pipelines.
+
     # For Maximum Likelihood ASR (more accurate but complex), you would specify a model:
     # from dendropy.model.discrete import Gtr
     # sub_model = Gtr() # Configure model parameters
