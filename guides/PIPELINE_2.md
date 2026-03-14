@@ -524,7 +524,19 @@ The analysis of the model's self-attention mechanism yielded a profound biologic
 
 In essence, the model independently re-discovered a central tenet of SARS-CoV-2 virology: the battle between the virus and the immune system is fought primarily on the surfaces of the RBD and NTD.
 
-## 4. Conclusion and Future Directions
+## 4. Technical Challenges and Architectural Decisions
+
+The development of the seq2seq transformer pipeline involved navigating significant computational and architectural constraints. Several sophisticated approaches were evaluated but ultimately discarded to maintain pipeline viability and reliability:
+
+*   **Memory Scaling Constraints:** Standard sequence-to-sequence transformers exhibit $O(N^2)$ memory scaling due to their attention mechanisms. Processing 3,837-token sequences (the full length of the Spike protein nucleotide sequence)—even with quantized 0.3B parameter models—is estimated to require VRAM far exceeding the 16GB available in standard environments. This necessitated the use of shorter, truncated sequences and smaller embedding dimensions for the demonstration pipeline.
+
+*   **Longformer/Sparse Attention Limitations:** While sparse attention (like the Longformer) conceptually addresses quadratic memory scaling, the Hugging Face `TFLongformer` implementation is an encoder-only architecture. It lacks the autoregressive decoder capabilities required for sequence-to-sequence tasks, such as predicting descendants from ancestral states.
+
+*   **Failure of Isolated Mutation Modeling:** Training exclusively on isolated mutation pairs proved unsuccessful. Sequence modeling literature suggests that the absence of conserved regions (non-mutated background) deprives the model of the structural context and evolutionary baseline (negative samples) required to learn why specific sites remain unchanged.
+
+*   **Architectural Complexity of Chunked Encoders:** Splitting 3,837-token sequences into smaller, independently encoded chunks was explored but rejected. Implementing this routing in Keras requires substantial custom engineering to modify the standard seq2seq cross-attention mechanism to accept chunked or pooled hidden states, adding excessive development overhead for standard pipeline integration.
+
+## 5. Conclusion and Future Directions
 
 This project successfully developed and executed an end-to-end pipeline to model viral evolution using a Transformer architecture. While the training set of 35 pairs is small, its power comes from the strategic diversity of the initial samples. The selection of clades spanning the entire pandemic ensures the dataset contains maximal evolutionary distance and captures the most significant antigenic shifts. The final results, where the model's attention focused on the RBD and NTD, provide strong evidence that even this limited dataset contained sufficient diversity to learn a meaningful biological signal.
 
