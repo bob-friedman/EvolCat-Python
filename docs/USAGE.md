@@ -35,6 +35,49 @@ python3 pylib/scripts/gb2fasta.py my_sequences.gb > my_sequences.fasta
 
 ---
 
+## `pylib/scripts/standalone/metrics/dsdn_dist.py`
+
+Estimates dS/dN (synonymous to non-synonymous substitution rate) metrics using the Nei & Gojobori (1986) method.
+
+**Usage:**
+```bash
+python3 pylib/scripts/standalone/metrics/dsdn_dist.py <input_fasta> [ratio|R]
+```
+- `<input_fasta>`: Path to a FASTA file containing aligned sequences (complete gap deletion required).
+- `ratio`: Optional transition/transversion ratio (default 0.5). Pass `R` to estimate the ratio from 3rd codon positions.
+
+**Example:**
+```bash
+python3 pylib/scripts/standalone/metrics/dsdn_dist.py my_alignment.fasta R > dsdn_results.tsv
+```
+For more information on the dS/dN method, see the [Evolutionary Metrics Guide](../guides/evolutionary_metrics_guide.md).
+
+[Back to Top](#top)
+
+---
+
+## `pylib/scripts/standalone/metrics/pnc_pnr_dist.py`
+
+Estimates pNC/pNR (conservative to radical non-synonymous substitution rate) metrics using the Hughes et al. (1990) method.
+
+**Usage:**
+```bash
+python3 pylib/scripts/standalone/metrics/pnc_pnr_dist.py <input_fasta> <property_file> [ratio|R]
+```
+- `<input_fasta>`: Path to a FASTA file containing aligned sequences (complete gap deletion required).
+- `<property_file>`: Tab-delimited file defining amino acid properties (e.g., `pylib/scripts/standalone/test_data/property_charge`).
+- `ratio`: Optional transition/transversion ratio (default 0.5). Pass `R` to estimate the ratio from 3rd codon positions.
+
+**Example:**
+```bash
+python3 pylib/scripts/standalone/metrics/pnc_pnr_dist.py my_alignment.fasta property_charge 0.5 > pnc_pnr_results.tsv
+```
+For more information on the pNC/pNR method, see the [Evolutionary Metrics Guide](../guides/evolutionary_metrics_guide.md).
+
+[Back to Top](#top)
+
+---
+
 ## `pylib/scripts/translate_seq.py`
 
 Translates nucleotide sequences from a FASTA file to protein sequences.

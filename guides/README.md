@@ -33,6 +33,8 @@ This section contains conceptual guides and reports on key topics in virology an
     *   *An overview of the foundational and cutting-edge technologies used to study viruses.*
 *   [**Guide to Estimating Mutational Fitness Effects**](./estimating_mutation_fitness_effects_guide.md)
     *   *A methodology for estimating mutation fitness effects from large-scale sequence data.*
+*   [**Evolutionary Metrics: dS/dN and pNC/pNR Methods**](./evolutionary_metrics_guide.md)
+    *   *Detailed documentation of the dS/dN (Nei & Gojobori 1986) and pNC/pNR (Hughes et al. 1990) methods for detecting natural selection.*
 *   [**UShER Toolkit and matUtils: A Condensed Guide**](./usher_toolkit_report.md)
     *   *A practical guide to using the UShER toolkit for analyzing massive viral phylogenies like SARS-CoV-2.*
 *   [**Proposal: A Quantitative Analysis of SARS-CoV-2 Evolutionary Dynamics**](./sars_cov2_evolutionary_dynamics_proposal.md)

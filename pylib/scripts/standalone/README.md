@@ -16,14 +16,16 @@ This directory contains standalone, supported Python scripts for various sequenc
 These scripts estimate substitution rates and other metrics. They have been tested with theoretical data but require further validation for empirical use.
 
 ### `dsdn_dist.py`
-Estimates dS/dN (synonymous to non-synonymous substitution rate) metrics.
+Estimates dS/dN (synonymous to non-synonymous substitution rate) metrics using the Nei & Gojobori (1986) method. See the [Evolutionary Metrics Guide](../../../guides/evolutionary_metrics_guide.md) for more details.
+
 **Usage:**
 ```bash
 python metrics/dsdn_dist.py <input_fasta> [ratio|R]
 ```
 
 ### `pnc_pnr_dist.py`
-Estimates pNC/pNR (conservative to radical non-synonymous substitution rate) metrics.
+Estimates pNC/pNR (conservative to radical non-synonymous substitution rate) metrics using the Hughes et al. (1990) method. See the [Evolutionary Metrics Guide](../../../guides/evolutionary_metrics_guide.md) for more details on the method and its application.
+
 **Usage:**
 ```bash
 python metrics/pnc_pnr_dist.py <input_fasta> <property_file> [ratio|R]
