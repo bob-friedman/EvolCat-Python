@@ -14,6 +14,8 @@ These guides cover the core functionality and foundational concepts of the proje
     *   *Step-by-step instructions for downloading and preparing MHC data.*
 *   [**Interpreting Phylogenetic Trees with Python**](./phylogenetic-tree-interpretation.md)
     *   *A guide to using libraries like ETE3 and Biopython for tree analysis.*
+*   [**Selection Metrics in Evolutionary Genetics**](./selection_metrics_guide.md)
+    *   *An overview of dN/dS and pNC/pNR methods for detecting natural selection.*
 *   [**Understanding Transformer Core Concepts**](./transformer_core_concepts.md)
     *   *An introduction to the attention mechanism and architecture used in the models.*
 *   [**PyTorch vs. Keras for Transformers: A Comparison**](./pytorch_keras_transformer_comparison.md)
