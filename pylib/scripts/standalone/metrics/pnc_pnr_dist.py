@@ -1,8 +1,48 @@
+"""
+pnc_pnr_dist.py — Conservative (pNC) and Radical (pNR) Substitution Rate Calculator
+===================================================================================
+Implementation of the method by Hughes, Ota, and Nei (1990) to test for positive
+selection by comparing the rates of conservative and radical nonsynonymous
+substitutions with respect to amino acid properties (e.g., charge).
+
+This method extends the Nei & Gojobori (1986) framework by categorizing
+nonsynonymous sites and substitutions as either 'conservative' or 'radical'
+based on a provided amino acid property classification.
+
+Reference:
+    Hughes, A. L., Ota, T., & Nei, M. (1990). Positive Darwinian selection
+    promotes charge profile diversity in the antigen-binding cleft of class I
+    major-histocompatibility-complex molecules. Molecular Biology and
+    Evolution, 7(6), 515-524.
+
+Usage:
+    python pnc_pnr_dist.py <input_fasta> <property_file> [ratio | R]
+
+Arguments:
+    input_fasta   : FASTA file containing a pairwise or multiple pairwise
+                    sequence alignment after complete gap deletion.
+    property_file : Tab-delimited file defining amino acid categories.
+                    A sample 'property_charge' file is provided in test_data.
+    ratio         : Transition/transversion ratio (default 0.5).
+                    Pass R to estimate the ratio from 3rd codon positions.
+
+Input requirements:
+    1. FASTA format: each sequence on a SINGLE line following its header.
+    2. All sequences must be the same length (complete gap deletion enforced).
+    3. Sequence length must be divisible by 3 (complete codons only).
+    4. Only the bases A, C, G, T are permitted.
+    5. No internal stop codons are permitted.
+
+Output (tab-delimited):
+    gene1  gene2  ratio  pnc  SE_pnc  pnr  SE_pnr
+    (where pnc is the proportion of conservative nonsynonymous substitutions
+    and pnr is the proportion of radical nonsynonymous substitutions).
+"""
+
 import sys
 import math
 import re
 
-# run python pnc_pnr_dist.py <input file> <property file> [R or ratio]
 # default ratio is 0.5; pass R to estimate from 3rd codon positions
 
 AA_NUMBER = [

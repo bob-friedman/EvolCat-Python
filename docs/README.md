@@ -14,6 +14,8 @@ In-depth documentation on specific biological applications and analyses.
 
 *   [**Virus Biology and Analysis**](../guides/README.md)
     *   *Documentation related to the SARS-CoV-2 lineage classification pipeline.*
+*   [**Selection Metrics in Evolutionary Genetics**](../guides/selection_metrics_guide.md)
+    *   *An overview of dN/dS and pNC/pNR methods for detecting natural selection.*
 *   [**Report on the Computational Prediction of Viral Evolution**](../guides/computational_prediction_of_viral_evolution.md)
     *   *A technical report on using computational methods to predict viral evolution.*
 *   [**Proposal: A Quantitative Analysis of SARS-CoV-2 Evolutionary Dynamics**](../guides/sars_cov2_evolutionary_dynamics_proposal.md)

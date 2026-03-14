@@ -14,6 +14,57 @@ This document provides usage instructions for the converted Python scripts.
 
 ---
 
+## `pylib/scripts/standalone/metrics/dsdn_dist.py`
+
+Estimates dS/dN (synonymous to nonsynonymous substitution rate) metrics between pairs of aligned DNA sequences using the Nei & Gojobori (1986) method.
+
+**Usage:**
+```bash
+python3 pylib/scripts/standalone/metrics/dsdn_dist.py <input_fasta> [ratio | R]
+```
+- `<input_fasta>`: Path to a FASTA file containing aligned DNA sequences. Sequences must be of equal length and divisible by 3.
+- `[ratio | R]`: Optional. The transition/transversion ratio (default: 0.5). If `R` is specified, the script will estimate this ratio from 3rd codon positions across all sequences.
+
+**Output (Tab-delimited):**
+`gene1  gene2  ratio  ps  SEps  pn  SEpn  ds  SEds  dn  SEdn`
+- `ds`: Estimate of synonymous substitutions per synonymous site.
+- `dn`: Estimate of nonsynonymous substitutions per nonsynonymous site.
+
+**Example:**
+```bash
+python3 pylib/scripts/standalone/metrics/dsdn_dist.py sequences.fasta R
+```
+
+[Back to Top](#top)
+
+---
+
+## `pylib/scripts/standalone/metrics/pnc_pnr_dist.py`
+
+Estimates pNC/pNR (conservative to radical nonsynonymous substitution rate) metrics between pairs of aligned DNA sequences based on a provided amino acid property classification (Hughes et al., 1990).
+
+**Usage:**
+```bash
+python3 pylib/scripts/standalone/metrics/pnc_pnr_dist.py <input_fasta> <property_file> [ratio | R]
+```
+- `<input_fasta>`: Path to a FASTA file containing aligned DNA sequences.
+- `<property_file>`: Path to a tab-delimited file defining amino acid categories (e.g., charge). See `pylib/scripts/standalone/test_data/property_charge` for an example.
+- `[ratio | R]`: Optional. Transition/transversion ratio (default: 0.5) or `R` to estimate from 3rd codon positions.
+
+**Output (Tab-delimited):**
+`gene1  gene2  ratio  pnc  SE_pnc  pnr  SE_pnr`
+- `pnc`: Proportion of conservative nonsynonymous substitutions.
+- `pnr`: Proportion of radical nonsynonymous substitutions.
+
+**Example:**
+```bash
+python3 pylib/scripts/standalone/metrics/pnc_pnr_dist.py sequences.fasta property_charge R
+```
+
+[Back to Top](#top)
+
+---
+
 ## `pylib/scripts/gb2fasta.py`
 
 Converts a GenBank file to FASTA format.

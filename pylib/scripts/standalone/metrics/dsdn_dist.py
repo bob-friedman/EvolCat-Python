@@ -1,11 +1,16 @@
 """
-dsdn.py — Synonymous (dS) and Non-synonymous (dN) Substitution Rate Calculator
-===============================================================================
-Translation of dsdn_dist.pl (Nei & Gojobori 1986 method).
+dsdn_dist.py — Synonymous (dS) and Non-synonymous (dN) Substitution Rate Calculator
+===================================================================================
+Implementation of the Nei & Gojobori (1986) method for estimating the numbers of
+synonymous and nonsynonymous nucleotide substitutions per site.
+
+Reference:
+    Nei, M., & Gojobori, T. (1986). Simple methods for estimating the numbers of
+    synonymous and nonsynonymous nucleotide substitutions. Molecular Biology
+    and Evolution, 3(4), 418-426.
 
 Usage:
-    python dsdn.py <input_fasta> [ratio]
-    python dsdn.py <input_fasta> R
+    python dsdn_dist.py <input_fasta> [ratio | R]
 
 Arguments:
     input_fasta  : FASTA file containing a pairwise or multiple pairwise
