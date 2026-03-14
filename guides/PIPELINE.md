@@ -218,7 +218,7 @@ print(f"Final training set '{FINAL_TRAINING_FILE}' created with {len(df_final_tr
 
 ### **Technical Note: The "Depth" Bottleneck (Sequence Length)**
 *   **Architectural Limitation:** The Transformer's self-attention mechanism has a memory complexity of `O(N²)`, where N is the sequence length. This quadratic scaling makes it computationally expensive for long sequences.
-*   **Empirical Evidence:** An initial design with `MAX_SEQ_LENGTH = 4000` resulted in memory allocation failure on the 12GB RAM Colab instance. A reduction to **1024** was required for successful execution. This means that **all input sequences longer than 1024 characters are truncated**, and the model is trained on partial gene data. This is a significant limitation on the biological context available to the model.
+*   **Empirical Evidence:** Processing fixed 3,837-token sequences—even with a smaller model, such as at 0.3B parameters and quantization—is estimated to require VRAM well beyond the 16GB available in standard environments. An initial design with `MAX_SEQ_LENGTH = 4000` resulted in memory allocation failure on the 12GB RAM Colab instance. A reduction to **1024** was required for successful execution. This means that **all input sequences longer than 1024 characters are truncated**, and the model is trained on partial gene data. This is a significant limitation on the biological context available to the model.
 
 ```python
 import tensorflow as tf
@@ -327,6 +327,14 @@ ancestor_seq, actual_descendant_seq = df["ancestor_seq"].iloc[idx], df["descenda
 predicted_descendant_seq = decode_sequence(ancestor_seq)
 compare_sequences(ancestor_seq, actual_descendant_seq, predicted_descendant_seq)
 ```
+---
+## **Lessons Learned: Evaluating Alternative Modeling Strategies**
+Before finalizing the current pipeline, several alternative architectures and training strategies were evaluated and subsequently discarded due to technical or conceptual limitations:
+
+*   **Longformer/Sparse Attention:** While sparse attention conceptually addresses quadratic memory scaling, the Hugging Face `TFLongformer` implementation is an encoder-only architecture. It lacks the autoregressive decoder capabilities required for sequence-to-sequence tasks such as predicting descendant sequences from ancestors.
+*   **Modeling Isolated Mutations:** Training exclusively on isolated mutation pairs (rather than full sequences) did not produce viable results. In established sequence modeling literature, this outcome is generally attributed to the removal of the non-mutated background. Without these conserved regions serving as "negative samples," the model is deprived of the structural context and evolutionary baseline required to learn why certain sites remain unchanged.
+*   **Chunked Encoder Architecture:** The approach of splitting 3,837-token sequences into smaller, independently encoded chunks was discarded. Implementing this routing in Keras requires substantial custom engineering to modify the standard seq2seq cross-attention mechanism to accept chunked or pooled hidden states. The resulting architectural complexity and development overhead rendered this approach practically unviable for standard pipeline integration.
+
 ---
 ## **Part 10: Discussion and Future Directions**
 This guide has detailed a complete, functional pipeline for applying a Transformer model to ASR-derived viral evolution data. It successfully demonstrates the entire workflow on resource-constrained hardware and quantitatively documents the resulting limitations in dataset breadth and sequence depth. The results form a critical baseline for future work. A researcher who has successfully run this pipeline is now equipped with the "shovel" to pursue more advanced research questions. Potential future directions include:
