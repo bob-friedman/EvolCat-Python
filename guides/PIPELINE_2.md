@@ -158,6 +158,8 @@ print("\nIQ-TREE run complete.")
 !ls -lh sequence_aligned.fas*
 ```
 
+***Note: Phylogenetic reconstruction of viral ancestral lineages is subject to methodological limitations. Stochastic processes of molecular evolution, combined with sampling biases from an inability to survey all extant viral populations, can lead to uncertainty in the identification of ancestral lineages and their associated mutations. These findings represent a robust interpretation based on empirical inquiry rather than a set of certainties (Friedman, 2026).***
+
 #### 2.4. Data Preparation for Machine Learning
 
 This module acts as the bridge between the bioinformatics output and the deep learning input. A critical bug was discovered during the project: the `.state` file produced by IQ-TREE is not a standard FASTA file, but rather a tab-separated table where each row represents a single site in an ancestral sequence. Standard FASTA parsers fail on this format. The definitive solution uses the `pandas` library to correctly parse this table, reconstruct the full ancestral sequences by grouping by node name, and then combine them with the tip (descendant) sequences. The final script then traverses the tree from the `.treefile` (which contains the correct node names) to create the final list of `(ancestor, descendant)` pairs.

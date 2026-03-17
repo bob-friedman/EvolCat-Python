@@ -387,7 +387,7 @@ This guide has been developed with significant assistance from the AI language m
 ### References
 1.  Friedman, R. (2022). A Hierarchy of Interactions between Pathogenic Virus and Vertebrate Host. *Symmetry*, 14(11), 2274. [https://doi.org/10.3390/sym14112274](https://doi.org/10.3390/sym14112274)
 2.  Friedman, R. (2024). Techniques for Theoretical Prediction of Immunogenic Peptides. *Encyclopedia*, 4(1), 600-621. [https://doi.org/10.3390/encyclopedia4010038](https://doi.org/10.3390/encyclopedia4010038)
-3.  Friedman, R. (2025). The Elusive Genesis: Stochasticity and the Challenge of Reconstructing Viral Origins. *Preprints*. [https://doi.org/10.20944/preprints202505.2277.v2 ](https://doi.org/10.20944/preprints202505.2277.v2 )
+3.  Friedman, R. (2026). Scientific belief in determining the origins of viruses. *Microbes & Immunity*. [https://doi.org/10.36922/MI025500130](https://doi.org/10.36922/MI025500130)
 4.  Andersen, K. G., Rambaut, A., Lipkin, W. I., Holmes, E. C., & Garry, R. F. (2020). The proximal origin of SARS-CoV-2. *Nature Medicine*, 26, 450-452.
 5.  Uriu, K., Ito, J., Zahradnik, J., Fujita, S., Kosugi, Y., Schreiber, G. (2023). Enhanced transmissibility, infectivity, and immune resistance of the SARS-CoV-2 omicron XBB.1.5 variant. *Lancet Infectious Diseases*, 23, 280-281.
 6.  Robertson, D. L., Anderson, J. P., Bradac, J. A., Carr, J. K., Foley, B., Funkhouser, R. K., ... & Korber, B. (2000). HIV-1 nomenclature proposal. *Science*, 288, 55-56.

@@ -154,6 +154,11 @@ ensure_file_exists(ALIGNED_SEQS, f"mafft --auto {SIMPLIFIED_SEQS} > {ALIGNED_SEQ
 ensure_file_exists(f"{IQTREE_PREFIX}.state", f"iqtree -s {ALIGNED_SEQS} -m MFP -asr -pre {IQTREE_PREFIX} -nt AUTO -redo")
 ```
 
+### **Technical Note: Epistemological and Methodological Limits of ASR**
+While phylogenetic reconstruction is a cornerstone of evolutionary analysis, it is subject to several inherent limitations that impact the reliability of inferred viral origins and ancestral states. One major challenge is data sampling bias; because it is impossible to sample every extant viral population, any survey of phylogenetic relationships has the potential for future revision as novel data is collected. Furthermore, the reconstruction of ancient lineages is significantly more difficult than that of more recent ones. This is due to the compounding effect of errors in both empirical data sampling and the analytical methodologies used to infer past histories.
+
+Another complicating factor is the presence of genetic recombination and reassortment. When viral lineages exchange genetic material, different portions of the genome may reflect different evolutionary histories, leading to non-concordant phylogenetic trees across the genome. This lack of stationarity can confound the identification of shared traits and ancestral lineages. Consequently, scientific knowledge of viral origins should be viewed as a robust interpretation based on stochastic models of molecular evolution rather than a deterministic set of certainties (Friedman, 2026).
+
 ### **Alternative: Dependency-Free Parsimony Reconstruction**
 For cases where external tools like IQ-TREE are not available or for rapid baseline generation, a standalone Python script `parsimony_reconstruction.py` (found in `pylib/scripts/`) can be used. It performs a two-pass Fitch parsimony reconstruction on branch-annotated Newick trees (such as those produced by UShER).
 
