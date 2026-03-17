@@ -140,7 +140,7 @@ Measuring viral diversity is crucial for understanding adaptability, immune esca
 Phylogenetic analysis uses genetic sequences to infer the evolutionary history and relationships of viruses, depicted in an evolutionary tree.
 
 ### Applications in Virology
-*   **Tracking Outbreak Origins and Spread (Phylodynamics):** A major application for monitoring epidemics, identifying origins, and tracking transmission in real-time. However, reconstructing these origins can be highly challenging due to stochastic events and incomplete data, a problem central to the study of viral genesis [3].
+*   **Tracking Outbreak Origins and Spread (Phylodynamics):** A major application for monitoring epidemics, identifying origins, and tracking transmission in real-time. However, reconstructing these origins can be highly challenging due to stochastic events, incomplete data, and methodological limits, a problem central to the study of viral genesis [3, 14].
 *   **Identifying Transmission Chains:** Helps in contact tracing and targeted public health measures.
 *   **Understanding Evolutionary Relationships:** Clarifies relationships between viral strains and aids in classification [1].
 *   **Studying Evolution of Virulence or Drug Resistance:** Correlates genetic changes with phenotypic traits.
@@ -398,5 +398,6 @@ This guide has been developed with significant assistance from the AI language m
 11. Bloom, J. D., & Neher, R. A. (2023). Fitness effects of mutations to SARS-CoV-2 proteins. *Virus Evolution*, *9*(2), vead055. [https://doi.org/10.1093/ve/vead055](https://doi.org/10.1093/ve/vead055)
 12. Dadonaite, B., Ahn, J. J., Ort, J. T., Yu, J., Furey, C., Dosey, A., ... & Bloom, J. D. (2024). Deep mutational scanning of H5 hemagglutinin to inform influenza virus surveillance. *PLoS biology*, *22*(11), e3002916. [https://doi.org/10.1371/journal.pbio.3002916](https://doi.org/10.1371/journal.pbio.3002916)
 13. Peacock, T. P., Moncla, L., Dudas, G., VanInsberghe, D., Sukhova, K., Lloyd-Smith, J. O., ... & Nelson, M. I. (2025). The global H5N1 influenza panzootic in mammals. *Nature*, *637*(8045), 304-313. [https://doi.org/10.1038/s41586-024-08054-z](https://doi.org/10.1038/s41586-024-08054-z)
+14. Friedman, R. (2026). Scientific belief in determining the origins of viruses. *Microbes & Immunity*. doi: 10.36922/MI025500130. [https://doi.org/10.36922/MI025500130](https://doi.org/10.36922/MI025500130)
 
 [Back to Top](#top)

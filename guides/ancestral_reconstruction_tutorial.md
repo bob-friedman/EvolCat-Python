@@ -246,6 +246,8 @@ This is not a minor detail; it's a fundamental limitation of ASR.
     1.  **Signal Erosion (Mutational Saturation):** Over long evolutionary times, a single site can mutate multiple times (e.g., A→G→C→T). We only see the start (A) and end (T) states, losing the intermediate information. This makes it statistically difficult to be certain about the ancestral state.
     2.  **Propagated Error:** ASR is only as good as its inputs. Deep branches in a tree are the hardest to resolve correctly. If the tree topology or branch lengths are wrong at a deep level, the ASR for that ancestor will be built on a flawed foundation.
     3.  **The "Cloud of Unknowing":** The very nature of viral evolution, with its high mutation rates and vast, often-unsampled reservoirs, means that the concept of a single, identifiable ancestral genotype can be a statistical and biological near-impossibility. Friedman (2025) explores this "cloud of unknowing" surrounding ancient viral ancestors, arguing for a shift from seeking definitive ancestors to understanding the probabilistic nature of viral emergence.
+    4.  **Compounding Errors:** The greater the divergence in a genetic region, the higher the rate of error inherent in its estimation. This effect propagates to the reconstruction of evolutionary history, leading to the expectation that ancient lineages are not as reliably constructed. Compounding errors over evolutionary time results in a high rate of error and low reliability for the construction of ancestral character states (Friedman, 2026).
+    5.  **Data Sparsity and Sampling Bias:** A lack of data for ancient lineages (data sparsity) leads to sampling bias, which significantly hampers the reliability of predicting distant ancestors compared to more recent ones (Friedman, 2026).
 
 *   **What This Means for Our Strategy:**
     *   ASR on a **backbone tree** of representatives (Strategy 1) provides a valuable, but hypothetical, view of deep evolution. Treat these deep ancestors with skepticism.
@@ -278,6 +280,7 @@ This tutorial outlines a hybrid approach to ASR, leveraging Python libraries for
     *   **iTOL (Interactive Tree Of Life):** [https://itol.embl.de/](https://itol.embl.de/)
 *   **On the Challenge of Viral Origin Reconstruction:**
     *   Friedman, R. (2025). "The Elusive Genesis: Stochasticity and the Challenge of Reconstructing Viral Origins." Preprints. [https://doi.org/10.20944/preprints202505.2277.v2](https://doi.org/10.20944/preprints202505.2277.v2)
+    *   Friedman, R. (2026). Scientific belief in determining the origins of viruses. *Microbes & Immunity*. doi: 10.36922/MI025500130. [https://doi.org/10.36922/MI025500130](https://doi.org/10.36922/MI025500130)
 
 ## Credits
 This work is made possible by the collaborative efforts of Jules and Gemini Pro (Google).

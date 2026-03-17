@@ -547,3 +547,6 @@ The key outcome is the demonstration that such a model can, without any explicit
 * **Therapeutic and Vaccine Design:** By identifying the most conserved regions of the protein (the "blue" areas in Figure 2 that the model ignores), researchers can better target these stable sites for the design of broad-spectrum vaccines or antibody therapies that are less likely to be rendered ineffective by future mutations. The model's attention scores provide a data-driven map of the protein's evolutionary vulnerabilities and strengths, which could guide and accelerate rational drug and vaccine design.
 
 In conclusion, the successful integration of phylogenetics and state-of-the-art deep learning provides a powerful new paradigm for studying and potentially forecasting molecular evolution.
+
+## 6. References
+* Friedman R. Scientific belief in determining the origins of viruses. *Microbes & Immunity*. 2026; doi: 10.36922/MI025500130
