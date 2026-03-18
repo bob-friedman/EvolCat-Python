@@ -140,6 +140,10 @@ if not os.path.isfile(GENE_S_FASTA):
 *   **Computational Limitation:** Phylogenetic inference is an NP-hard problem. The number of possible unrooted trees for *n* sequences scales factorially (`O((2n-5)!!)`), making analysis of large datasets computationally intensive. **Empirical Finding:** Processing the full set of >5,000 sequences for the selected clade exceeded the resource limits of the execution environment. Subsampling to 300 sequences was required for the pipeline to complete.
 *   **Biological Limitation:** Rapidly radiating clades, such as XBB.2.3, can exhibit low inter-sequence diversity. This may result in phylogenetic trees with branches of low statistical support. This introduces uncertainty into the inferred ancestral states, a limitation inherent to the nature of the biological data itself, independent of hardware.
 
+### **Technical Note: Caveats on Reconstructing Viral Origins**
+*   **Deep Lineage Inference:** It is known that the deeper and more ancient evolutionary relationships (ancestral lineages) across a phylogenetic tree are not as tractable for reconstruction as compared to the more recent ones. This is an expectation from the errors inherent in both the methods and sampling of empirical data and the methodology of evolutionary analysis. Compounding effects of these errors over evolutionary time leads to a high rate of error and low reliability for the construction of ancestral character states (Friedman, 2026).
+*   **Data Sampling and Methodology:** Robust empirical analysis of virus populations relies on robust data sampling at the molecular level. A major source of sampling bias is the lack of data for ancient lineages (data sparsity). Additionally, the models of genetic data analysis are subject to the same problem of compounding error in the estimation of past histories in ancestral lineages. Therefore, it is necessary that any communication on the mechanisms of the natural world is grounded in the tenets of empiricism and a reasonable level of skepticism toward novel conclusions (Friedman, 2026).
+
 ```python
 SAMPLED_SEQS = f"spike_sampled_{SAMPLE_SIZE}.fas"
 SIMPLIFIED_SEQS = f"spike_simplified_{SAMPLE_SIZE}.fas"
@@ -350,3 +354,7 @@ This guide has detailed a complete, functional pipeline for applying a Transform
 *   **Refining Scientific Evaluation:**
     *   **Advanced Metrics:** Moving beyond simple per-token accuracy, future work should implement mutation-specific metrics. Calculating the Precision, Recall, and F1-score for correctly identifying mutated sites would provide a much more rigorous evaluation of the model's predictive power.
     *   ***In-Silico* Forward Evolution:** A powerful validation experiment would be to use the model iteratively. By predicting a descendant, then using that prediction as the new input, one could simulate an evolutionary trajectory over multiple generations and compare this simulated path to real-world surveillance data.
+
+---
+## **References**
+*   Friedman R. Scientific belief in determining the origins of viruses. *Microbes & Immunity*. 2026; doi: 10.36922/MI025500130
