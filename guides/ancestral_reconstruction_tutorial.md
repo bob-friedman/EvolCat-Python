@@ -279,7 +279,7 @@ This tutorial outlines a hybrid approach to ASR, leveraging Python libraries for
     *   **FigTree:** [http://tree.bio.ed.ac.uk/software/figtree/](http://tree.bio.ed.ac.uk/software/figtree/)
     *   **iTOL (Interactive Tree Of Life):** [https://itol.embl.de/](https://itol.embl.de/)
 *   **On the Challenge of Viral Origin Reconstruction:**
-    *   Friedman, R. (2025). "The Elusive Genesis: Stochasticity and the Challenge of Reconstructing Viral Origins." Preprints. [https://doi.org/10.20944/preprints202505.2277.v2](https://doi.org/10.20944/preprints202505.2277.v2)
+    *   Friedman, R. (2025). The Elusive Genesis: Stochasticity and the Challenge of Reconstructing Viral Origins. Preprints. [https://doi.org/10.20944/preprints202505.2277.v2](https://doi.org/10.20944/preprints202505.2277.v2)
     *   Friedman, R. (2026). Scientific belief in determining the origins of viruses. *Microbes & Immunity*. doi: 10.36922/MI025500130. [https://doi.org/10.36922/MI025500130](https://doi.org/10.36922/MI025500130)
 
 ## Credits
