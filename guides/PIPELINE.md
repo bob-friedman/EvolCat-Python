@@ -1,14 +1,60 @@
-# **Guided Pipeline: Ancestral Sequence-Based Viral Evolution Modeling**
+<a name="top"></a>
+
+# Guided Pipeline: Ancestral Sequence-Based Viral Evolution Modeling
+
+![alt text](https://img.shields.io/badge/python-3.7+-blue.svg)
+![alt text](https://img.shields.io/badge/TensorFlow-2.x-orange.svg)
+![alt text](https://img.shields.io/badge/Platform-Google_Colab-F9AB00.svg)
+![alt text](https://img.shields.io/badge/Status-Experimental-red.svg)
 
 **Objective:** This notebook provides a complete, end-to-end pipeline for training a Transformer-based sequence-to-sequence model on viral evolution data. It demonstrates the process of data acquisition, ancestral state reconstruction, data preparation, model training, and inference, while documenting the inherent computational and biological limitations encountered when using standard cloud-based hardware.
 
-***Note: These are complex pipelines of code, while the parsing of sequence data for the ancestral reconstructions and its association with sequence names is problematic without extensive verification. Therefore, it would be necessary to add additional logging if either of these pipelines are used for your studies.***
+⚠️ **IMPORTANT USAGE NOTE**
+These are complex pipelines of code. The parsing of sequence data for ancestral reconstructions and its association with sequence names is problematic without extensive verification. Therefore, it is strictly necessary to add additional logging and validation steps if either of these pipelines are adapted for production studies.
 
-**Methodology:** The pipeline utilizes data from UShER and NCBI. It employs IQ-TREE for phylogenetic inference and Ancestral State Reconstruction (ASR) to generate ancestor-descendant sequence pairs. A Transformer model, implemented in TensorFlow/Keras, is then trained on this data to learn mutational patterns. The guide is structured to be executed sequentially in a non-Google Colab environment and requires adaptation to your development environment. Colab does not have sufficient shell support yet, so the following is closer to a conceptual, but verified, implementation of this pipeline.
+**Methodology:** The pipeline utilizes data from UShER and NCBI. It employs IQ-TREE for phylogenetic inference and Ancestral State Reconstruction (ASR) to generate ancestor-descendant sequence pairs. A Transformer model, implemented in TensorFlow/Keras, is then trained on this data to learn mutational patterns. The guide is structured to be executed sequentially in a non-Google Colab environment and requires adaptation to your development environment (as Colab shell support has limitations).
 
----
-## **Part 0: Central Configuration**
-*This block contains all key parameters for the pipeline. The current parameters are set to a "survival mode" configuration designed to ensure successful completion within the resource limits of a standard, free Google Colab instance.*
+## Pipeline Architecture Overview
+
+Visually understand how data flows from public repositories through phylogenetic reconstruction and into the deep learning model.
+
+```mermaid
+graph TD
+    A[Public Repositories: UShER & NCBI] -->|Data Collection| B(Spike Gene FASTA);
+    B -->|MAFFT| C(Aligned Sequences);
+    C -->|IQ-TREE ASR| D(Phylogenetic Tree & Ancestral States);
+    D -->|Data Bridge| E(Ancestor-Descendant Pairs);
+    E -->|Filtering & Balancing| F(Balanced Training Dataset);
+    F -->|Tokenization & Padding| G(TensorFlow Dataset);
+    G -->|Model Training| H(Transformer Seq2Seq Model);
+    H -->|Autoregressive Decoding| I(Predicted Descendant Sequence);
+
+    style A fill:#cde4ff,stroke:#333,stroke-width:2px
+    style D fill:#d5e8d4,stroke:#333,stroke-width:2px
+    style H fill:#ffe6cc,stroke:#333,stroke-width:2px
+```
+
+## Table of Contents
+
+1.  [Central Configuration](#part-0)
+2.  [Environment Setup](#part-1)
+3.  [Install Dependencies & Mount Drive](#part-2)
+4.  [Data Collection & Gene Retrieval](#part-3)
+5.  [Phylogenetics and Ancestral State Reconstruction (ASR)](#part-4)
+6.  [Data Bridge - Parsing ASR Output](#part-5)
+7.  [Data Filtering and Balancing](#part-6)
+8.  [Transformer Model - Setup & Data Preparation](#part-7)
+9.  [Transformer Model - Definition & Training](#part-8)
+10. [Inference and Prediction](#part-9)
+11. [Lessons Learned & Alternative Strategies](#lessons-learned)
+12. [Discussion and Future Directions](#part-10)
+13. [References](#references)
+
+<a name="part-0"></a>
+
+## ⚙️ Part 0: Central Configuration
+
+This block contains all key parameters for the pipeline. The current parameters are set to a "survival mode" configuration designed to ensure successful completion within the resource limits of a standard, free Google Colab instance.
 
 ```python
 # --- Pipeline Configuration ---
@@ -33,22 +79,32 @@ IQTREE_PREFIX = f"spike_aligned_{SAMPLE_SIZE}"
 FINAL_TRAINING_FILE = "final_training_pairs.tsv"
 MODEL_CHECKPOINT_FILE = "viral_transformer_checkpoint.weights.h5"
 ```
----
-## **Part 1: Environment Setup**
-**Objective:** Install the `conda` package manager into the Colab environment.
 
-**Methodology:** The `condacolab` library is used. **Note:** The kernel will automatically restart after this cell completes. This is expected. Manually execute the subsequent cells after the restart.
+[Back to Top](#top)
+
+<a name="part-1"></a>
+
+## 🛠️ Part 1: Environment Setup
+
+**Objective:** Install the conda package manager into the Colab environment.
+
+**Methodology:** The condacolab library is used. Note: The kernel will automatically restart after this cell completes. This is expected. Manually execute the subsequent cells after the restart.
 
 ```python
 !pip install -q condacolab
 import condacolab
 condacolab.install()
 ```
----
-## **Part 2: Install Dependencies & Mount Drive**
+
+[Back to Top](#top)
+
+<a name="part-2"></a>
+
+## 📂 Part 2: Install Dependencies & Mount Drive
+
 **Objective:** Mount Google Drive for persistent storage and install necessary bioinformatics software.
 
-**Methodology:** Google Drive is mounted at `/content/drive`. The working directory is changed to a user-specified project folder. The `conda` package manager is used to install `mafft`, `iqtree`, `entrez-direct`, and `bcftools`.
+**Methodology:** Google Drive is mounted at /content/drive. The working directory is changed to a user-specified project folder. The conda package manager is used to install mafft, iqtree, entrez-direct, and bcftools.
 
 ```python
 import os
@@ -56,11 +112,8 @@ from google.colab import drive
 
 # Mount Google Drive
 drive.mount('/content/drive')
+
 # IMPORTANT: Change this to a dedicated project directory in your Google Drive.
-# Example:
-# project_path = '/content/drive/MyDrive/Viral_Evolution_Project'
-# os.makedirs(project_path, exist_ok=True)
-# os.chdir(project_path)
 os.chdir('/content/drive/MyDrive') # Using root of MyDrive for this example
 print(f"Current working directory: {os.getcwd()}")
 
@@ -74,18 +127,22 @@ print("\nVerifying installations...")
 !iqtree --version
 !bcftools --version
 ```
----
-## **Part 3: Data Collection & Gene Retrieval**
+
+[Back to Top](#top)
+
+<a name="part-3"></a>
+
+## 🧬 Part 3: Data Collection & Gene Retrieval
+
 **Objective:** Acquire raw data and isolate the target gene sequences for analysis.
 
-**Methodology:** A helper function ensures idempotent file generation. The UShER public protobuf and metadata files are downloaded. `matUtils` extracts a VCF for the specified clade. `bcftools` and `pandas` are used to create a list of GenBank accessions. A robust shell script then retrieves the Spike (S) gene sequences for these accessions in batches from NCBI.
+**Methodology:** A helper function ensures idempotent file generation. The UShER public protobuf and metadata files are downloaded. matUtils extracts a VCF for the specified clade. bcftools and pandas are used to create a list of GenBank accessions. A robust shell script then retrieves the Spike (S) gene sequences for these accessions in batches from NCBI.
 
 ```python
 import os
 import pandas as pd
 import gc
 import sys
-import matplotlib.pyplot as plt
 
 def ensure_file_exists(file_path, command_to_run):
     if os.path.isfile(file_path): return
@@ -130,19 +187,32 @@ if not os.path.isfile(GENE_S_FASTA):
     """
     !bash -c '{ncbi_fetch_script}'
 ```
----
-## **Part 4: Phylogenetics and Ancestral State Reconstruction (ASR)**
-**Objective:** To generate the core dataset of (ancestor, descendant) pairs.
+
+[Back to Top](#top)
+
+<a name="part-4"></a>
+
+## 🌳 Part 4: Phylogenetics and Ancestral State Reconstruction (ASR)
+
+**Objective:** Generate the core dataset of (ancestor, descendant) pairs.
 
 **Methodology:** A subsample of sequences is taken for computational tractability. Headers are simplified, and the sequences are aligned with MAFFT. IQ-TREE is then used to build a phylogenetic tree and infer the sequences of all ancestral nodes.
 
-### **Technical Note: The "Breadth" Bottleneck (Number of Sequences)**
-*   **Computational Limitation:** Phylogenetic inference is an NP-hard problem. The number of possible unrooted trees for *n* sequences scales factorially (`O((2n-5)!!)`), making analysis of large datasets computationally intensive. **Empirical Finding:** Processing the full set of >5,000 sequences for the selected clade exceeded the resource limits of the execution environment. Subsampling to 300 sequences was required for the pipeline to complete.
-*   **Biological Limitation:** Rapidly radiating clades, such as XBB.2.3, can exhibit low inter-sequence diversity. This may result in phylogenetic trees with branches of low statistical support. This introduces uncertainty into the inferred ancestral states, a limitation inherent to the nature of the biological data itself, independent of hardware.
+<details>
+<summary><b>Technical Note: The "Breadth" Bottleneck (Number of Sequences)</b></summary>
 
-### **Technical Note: Caveats on Reconstructing Viral Origins**
-*   **Deep Lineage Inference:** It is known that the deeper and more ancient evolutionary relationships (ancestral lineages) across a phylogenetic tree are not as tractable for reconstruction as compared to the more recent ones. This is an expectation from the errors inherent in both the methods and sampling of empirical data and the methodology of evolutionary analysis. Compounding effects of these errors over evolutionary time leads to a high rate of error and low reliability for the construction of ancestral character states (Friedman, 2026).
-*   **Data Sampling and Methodology:** Robust empirical analysis of virus populations relies on robust data sampling at the molecular level. A major source of sampling bias is the lack of data for ancient lineages (data sparsity). Additionally, the models of genetic data analysis are subject to the same problem of compounding error in the estimation of past histories in ancestral lineages. Therefore, it is necessary that any communication on the mechanisms of the natural world is grounded in the tenets of empiricism and a reasonable level of skepticism toward novel conclusions (Friedman, 2026).
+Computational Limitation: Phylogenetic inference is an NP-hard problem. The number of possible unrooted trees for n sequences scales factorially (O((2n-5)!!)), making analysis of large datasets computationally intensive. Empirical Finding: Processing the full set of >5,000 sequences for the selected clade exceeded the resource limits of the execution environment. Subsampling to 300 sequences was required for the pipeline to complete.
+
+Biological Limitation: Rapidly radiating clades, such as XBB.2.3, can exhibit low inter-sequence diversity. This may result in phylogenetic trees with branches of low statistical support, introducing uncertainty into the inferred ancestral states—a limitation inherent to the biological data itself, independent of hardware.
+</details>
+
+<details>
+<summary><b>Technical Note: Caveats on Reconstructing Viral Origins</b></summary>
+
+Deep Lineage Inference: Deeper and more ancient evolutionary relationships across a phylogenetic tree are not as tractable for reconstruction as more recent ones. The compounding effects of errors over evolutionary time lead to a high rate of error and low reliability for the construction of ancestral character states (Friedman, 2026).
+
+Data Sampling and Methodology: Robust empirical analysis relies on robust molecular data sampling. A major source of sampling bias is the lack of data for ancient lineages (data sparsity). Therefore, it is necessary that any communication on the mechanisms of the natural world is grounded in empiricism and a reasonable level of skepticism toward novel conclusions (Friedman, 2026).
+</details>
 
 ```python
 SAMPLED_SEQS = f"spike_sampled_{SAMPLE_SIZE}.fas"
@@ -158,19 +228,24 @@ ensure_file_exists(ALIGNED_SEQS, f"mafft --auto {SIMPLIFIED_SEQS} > {ALIGNED_SEQ
 ensure_file_exists(f"{IQTREE_PREFIX}.state", f"iqtree -s {ALIGNED_SEQS} -m MFP -asr -pre {IQTREE_PREFIX} -nt AUTO -redo")
 ```
 
-### **Alternative: Dependency-Free Parsimony Reconstruction**
-For cases where external tools like IQ-TREE are not available or for rapid baseline generation, a standalone Python script `parsimony_reconstruction.py` (found in `pylib/scripts/`) can be used. It performs a two-pass Fitch parsimony reconstruction on branch-annotated Newick trees (such as those produced by UShER).
+### Alternative: Dependency-Free Parsimony Reconstruction
+
+For cases where external tools like IQ-TREE are not available, a standalone Python script `parsimony_reconstruction.py` (found in `pylib/scripts/`) can be used. It performs a two-pass Fitch parsimony reconstruction on branch-annotated Newick trees.
 
 ```bash
 # Example usage of the standalone parsimony script
 python pylib/scripts/parsimony_reconstruction.py usher_tree_with_mutations.txt --pairs
 ```
 
----
-## **Part 5: Data Bridge - Parsing ASR Output**
+[Back to Top](#top)
+
+<a name="part-5"></a>
+
+## 🌉 Part 5: Data Bridge - Parsing ASR Output
+
 **Objective:** Convert the tabular ASR output from IQ-TREE into a structured DataFrame of ancestor-descendant pairs.
 
-**Methodology:** The `.state` file is read using `pandas`. Sequences are reconstructed by grouping the table by node name. The `.treefile` is parsed with `ete3`, and the tree topology is traversed to create pairs.
+**Methodology:** The .state file is read using pandas. Sequences are reconstructed by grouping the table by node name. The .treefile is parsed with ete3, and the tree topology is traversed to create pairs.
 
 ```python
 !pip install -q ete3 pandas
@@ -190,11 +265,17 @@ for node in t.traverse("preorder"):
         ancestor_name, descendant_name = node.up.name, node.name
         if ancestor_name in sequences and descendant_name in sequences:
             pairs.append({"ancestor_seq": sequences[ancestor_name], "descendant_seq": sequences[descendant_name]})
+
 df_pairs = pd.DataFrame(pairs)
 df_pairs.to_csv(OUTPUT_PAIRS_FILE, sep='\t', index=False)
 ```
----
-## **Part 6: Data Filtering and Balancing**
+
+[Back to Top](#top)
+
+<a name="part-6"></a>
+
+## ⚖️ Part 6: Data Filtering and Balancing
+
 **Objective:** Create a balanced training set to prevent model bias towards stasis.
 
 **Methodology:** The generated pairs are separated into "mutated" and "identical" sets. A random subsample of the "identical" set, equal in size to the "mutated" set, is taken. These are then combined and shuffled to form the final training data.
@@ -214,15 +295,22 @@ df_final_training = pd.concat([df_mutated, df_identical_sample]).sample(frac=1, 
 df_final_training.to_csv(FINAL_TRAINING_FILE, sep='\t', index=False)
 print(f"Final training set '{FINAL_TRAINING_FILE}' created with {len(df_final_training)} pairs.")
 ```
----
-## **Part 7: Transformer Model - Setup & Data Preparation**
+
+[Back to Top](#top)
+
+<a name="part-7"></a>
+
+## 🧩 Part 7: Transformer Model - Setup & Data Preparation
+
 **Objective:** Prepare the sequence data for ingestion by the Keras model.
 
-**Methodology:** The balanced training data is loaded. A vocabulary is created from all unique characters. Sequences are tokenized and then padded or truncated to a fixed `MAX_SEQ_LENGTH`. A `tf.data.Dataset` is created for efficient training.
+**Methodology:** The balanced training data is loaded. A vocabulary is created from all unique characters. Sequences are tokenized and then padded or truncated to a fixed MAX_SEQ_LENGTH. A tf.data.Dataset is created for efficient training.
 
-### **Technical Note: The "Depth" Bottleneck (Sequence Length)**
-*   **Architectural Limitation:** The Transformer's self-attention mechanism has a memory complexity of `O(N²)`, where N is the sequence length. This quadratic scaling makes it computationally expensive for long sequences.
-*   **Empirical Evidence:** Processing fixed 3,837-token sequences—even with a smaller model, such as at 0.3B parameters and quantization—is estimated to require VRAM well beyond the 16GB available in standard environments. An initial design with `MAX_SEQ_LENGTH = 4000` resulted in memory allocation failure on the 12GB RAM Colab instance. A reduction to **1024** was required for successful execution. This means that **all input sequences longer than 1024 characters are truncated**, and the model is trained on partial gene data. This is a significant limitation on the biological context available to the model.
+**Technical Note: The "Depth" Bottleneck (Sequence Length)**
+
+Architectural Limitation: The Transformer's self-attention mechanism has a memory complexity of O(N²), where N is sequence length.
+
+Empirical Evidence: Processing fixed 3,837-token sequences requires VRAM well beyond the 16GB available in standard environments. An initial design with MAX_SEQ_LENGTH = 4000 resulted in memory allocation failure. A reduction to 1024 was required for successful execution, meaning all sequences longer than 1024 characters are truncated.
 
 ```python
 import tensorflow as tf
@@ -251,23 +339,33 @@ dataset = tf.data.Dataset.from_tensor_slices(
     ((ancestor_vectors, decoder_inputs), decoder_outputs)
 ).batch(BATCH_SIZE).shuffle(buffer_size=1024).prefetch(tf.data.AUTOTUNE)
 ```
----
-## **Part 8: Transformer Model - Definition, Training & Visualization**
+
+[Back to Top](#top)
+
+<a name="part-8"></a>
+
+## 🧠 Part 8: Transformer Model - Definition, Training & Visualization
+
 **Objective:** Define, build, and train the Transformer model.
 
-**Methodology:** Custom Keras layers are defined for Positional Embedding, Transformer Encoder, and Transformer Decoder. These are assembled into a sequence-to-sequence model, compiled with an Adam optimizer, and trained. A `ModelCheckpoint` callback saves the model weights corresponding to the lowest training loss. Finally, training history is plotted.
+**Methodology:** Custom Keras layers are defined for Positional Embedding, Transformer Encoder, and Transformer Decoder. These are assembled into a sequence-to-sequence model, compiled with an Adam optimizer, and trained. A ModelCheckpoint callback saves the model weights corresponding to the lowest training loss.
 
 ```python
+import matplotlib.pyplot as plt
+
 class PositionalEmbedding(layers.Layer):
     def __init__(self, v, d, m, **kwargs): super().__init__(**kwargs);self.e=layers.Embedding(v,d);p=np.arange(m)[:,np.newaxis];t=np.exp(np.arange(0,d,2)*-(np.log(10000.0)/d));e=np.zeros((m,d));e[:,0::2]=np.sin(p*t);e[:,1::2]=np.cos(p*t);self.p=tf.cast(e[np.newaxis,...],tf.float32)
     def call(self, x): return self.e(x) + self.p[:, :tf.shape(x)[-1], :]
+
 class TransformerEncoder(layers.Layer):
     def __init__(self,d,f,h,**kwargs):super().__init__(**kwargs);self.a=layers.MultiHeadAttention(h,d);self.f=keras.Sequential([layers.Dense(f,activation="relu"),layers.Dense(d)]);self.n1=layers.LayerNormalization(1e-6);self.n2=layers.LayerNormalization(1e-6);self.d1=layers.Dropout(DROPOUT_RATE);self.d2=layers.Dropout(DROPOUT_RATE)
     def call(self, i, training=False): o=self.a(i,i);o=self.d1(o,training=training);o1=self.n1(i+o);fo=self.f(o1);fo=self.d2(fo,training=training);return self.n2(o1+fo)
+
 class TransformerDecoder(layers.Layer):
     def __init__(self,d,f,h,**kwargs):super().__init__(**kwargs);self.sa=layers.MultiHeadAttention(h,d);self.ca=layers.MultiHeadAttention(h,d);self.f=keras.Sequential([layers.Dense(f,activation="relu"),layers.Dense(d)]);self.n1=layers.LayerNormalization(1e-6);self.n2=layers.LayerNormalization(1e-6);self.n3=layers.LayerNormalization(1e-6);self.d1=layers.Dropout(DROPOUT_RATE);self.d2=layers.Dropout(DROPOUT_RATE);self.d3=layers.Dropout(DROPOUT_RATE)
     def call(self, i, eo, training=False): m=1-tf.linalg.band_part(tf.ones((tf.shape(i)[1],tf.shape(i)[1])),-1,0);so=self.sa(i,i,attention_mask=m);so=self.d1(so,training=training);o1=self.n1(i+so);co=self.ca(o1,eo);co=self.d2(co,training=training);o2=self.n2(o1+co);fo=self.f(o2);fo=self.d3(fo,training=training);return self.n3(o2+fo)
 
+# Model Assembly
 encoder_inputs = keras.Input(shape=(None,), dtype="int32", name="ancestor")
 decoder_inputs = keras.Input(shape=(None,), dtype="int32", name="descendant")
 x = PositionalEmbedding(VOCAB_SIZE, EMBED_DIM, MAX_SEQ_LENGTH)(encoder_inputs)
@@ -276,29 +374,38 @@ encoder_outputs = x
 x = PositionalEmbedding(VOCAB_SIZE, EMBED_DIM, MAX_SEQ_LENGTH)(decoder_inputs)
 for _ in range(NUM_DECODER_LAYERS): x = TransformerDecoder(EMBED_DIM, FF_DIM, NUM_HEADS)(x, encoder_outputs)
 output_logits = layers.Dense(VOCAB_SIZE, name="logits")(x)
+
 transformer = keras.Model([encoder_inputs, decoder_inputs], output_logits)
 transformer.compile(optimizer="adam", loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=["sparse_categorical_accuracy"])
 transformer.summary()
 
+# Training Execution
 model_checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath=MODEL_CHECKPOINT_FILE, save_weights_only=True, monitor='loss', mode='min', save_best_only=True)
 history = transformer.fit(dataset, epochs=EPOCHS, callbacks=[model_checkpoint_callback], verbose=1)
 
-# --- Visualize Training ---
+# Visualize Training
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
 ax1.plot(history.history['loss']); ax1.set_title('Model Loss'); ax1.set_xlabel('Epoch')
 ax2.plot(history.history['sparse_categorical_accuracy']); ax2.set_title('Model Accuracy'); ax2.set_xlabel('Epoch')
 plt.show()
 ```
----
-## **Part 9: Inference and Prediction**
+
+[Back to Top](#top)
+
+<a name="part-9"></a>
+
+## 🔮 Part 9: Inference and Prediction
+
 **Objective:** Use the trained model to predict a descendant sequence from an ancestor and evaluate its performance.
 
-**Methodology:** The best saved model weights are loaded. A `decode_sequence` function performs autoregressive decoding, generating an output sequence one token at a time. This function is called with a sample from the dataset, and the predicted sequence is compared to the actual descendant.
+**Methodology:** The best saved model weights are loaded. A decode_sequence function performs autoregressive decoding, generating an output sequence one token at a time.
 
 **Analysis of Results:**
-*   **Training Performance:** The training log shows the model successfully learned from the data. The training loss consistently decreased from 2.20 to 1.32, while per-token accuracy increased from 21% to 38.2%. This accuracy is significantly above the 12.5% random-chance baseline, indicating that the model identified meaningful patterns.
-*   **Inference Performance:** The sample prediction demonstrates a key challenge. The model failed to reproduce an identical sequence, instead falling into a low-complexity, repetitive pattern (`AAAAA...`). This phenomenon, where the model produces the same output regardless of the input, is a classic symptom of **mode collapse** in an under-trained generative model.
-*   **Conclusion:** The pipeline is mechanically sound and the model demonstrates a capacity to learn. However, the inference results show that the combination of a small dataset (122 pairs), few training epochs (10), and truncated sequence data (1024 bp) is insufficient to produce a model capable of accurate, structurally-correct sequence generation. This is not a failure of the method, but a quantitative measurement of its performance under severe resource constraints.
+
+*   **Training Performance:** Training loss consistently decreased, while per-token accuracy increased significantly above random-chance baselines.
+*   **Inference Performance (Mode Collapse):** The model often fails to reproduce identical sequences, falling into a low-complexity, repetitive pattern. This phenomenon is a classic symptom of mode collapse in an under-trained generative model.
+
+**Conclusion:** The pipeline is mechanically sound. However, the inference results quantitatively measure the severe limitations imposed by a small dataset (122 pairs), few epochs (10), and truncated sequences (1024 bp).
 
 ```python
 if os.path.exists(MODEL_CHECKPOINT_FILE):
@@ -321,7 +428,7 @@ def compare_sequences(ancestor, actual, predicted):
     print(f"ACTUAL:    {actual[:80]}...")
     print(f"PREDICTED: {predicted[:80]}...")
     discrepancies = [f"Pos {i+1}:{a}->{p}" for i, (a, p) in enumerate(actual) if i < len(predicted) and a != predicted[i]]
-    if discrepancies: print(f"\nDiscrepancies between Actual and Predicted ({len(discrepancies)}): {', '.join(discrepancies[:5])}...")
+    if discrepancies: print(f"\nDiscrepancies ({len(discrepancies)}): {', '.join(discrepancies[:5])}...")
     else: print("\nPredicted sequence is identical to the actual descendant.")
     print("-" * 80)
 
@@ -331,30 +438,48 @@ ancestor_seq, actual_descendant_seq = df["ancestor_seq"].iloc[idx], df["descenda
 predicted_descendant_seq = decode_sequence(ancestor_seq)
 compare_sequences(ancestor_seq, actual_descendant_seq, predicted_descendant_seq)
 ```
----
-## **Lessons Learned: Evaluating Alternative Modeling Strategies**
-Before finalizing the current pipeline, several alternative architectures and training strategies were evaluated and subsequently discarded due to technical or conceptual limitations:
 
-*   **Longformer/Sparse Attention:** While sparse attention conceptually addresses quadratic memory scaling, the Hugging Face `TFLongformer` implementation is an encoder-only architecture. It had lacked the autoregressive decoder capabilities required for sequence-to-sequence tasks such as predicting descendant sequences from ancestors.
-*   **Modeling Isolated Mutations:** Training exclusively on isolated mutation pairs (rather than full sequences) did not produce viable results. In established sequence modeling literature, this outcome is generally attributed to the removal of the non-mutated background. Without these conserved regions serving as negative samples, the model is deprived of the structural context and evolutionary baseline required to learn why certain sites remain unchanged.
-*   **Chunked Encoder Architecture:** Splitting 3,837-token sequences into smaller, independently encoded chunks was initially explored but discarded as an option. Implementing this routing in Keras required custom engineering to modify the standard seq2seq cross-attention mechanism to accept chunked or pooled hidden states, adding excessive development overhead for standard pipeline integration.
+[Back to Top](#top)
 
----
-## **Part 10: Discussion and Future Directions**
-This guide has detailed a complete, functional pipeline for applying a Transformer model to ASR-derived viral evolution data. It successfully demonstrates the entire workflow on resource-constrained hardware and quantitatively documents the resulting limitations in dataset breadth and sequence depth. The results form a critical baseline for future work. A researcher who has successfully run this pipeline is now equipped with the "shovel" to pursue more advanced research questions. Potential future directions include:
+<a name="lessons-learned"></a>
 
-*   **Addressing Computational Scale:**
-    *   **Hardware:** Migrating this pipeline to a high-RAM, multi-GPU environment (cloud instances or HPC clusters) is the most direct way to overcome the documented bottlenecks. This would allow for training on thousands of sequences (addressing breadth) and using the full gene length (addressing depth).
-    *   **Architecture:** For extremely long sequences (e.g., full viral genomes), investigating more memory-efficient Transformer architectures, such as the Longformer or other models employing sparse attention mechanisms, would be a logical next step.
+## 💡 Lessons Learned: Evaluating Alternative Modeling Strategies
 
-*   **Enhancing Biological Fidelity:**
-    *   **Codon-Aware Modeling:** A significant enhancement would be to modify the tokenization to operate on codons instead of individual nucleotides. This would train the model in the native unit of translation, potentially improving its ability to learn patterns related to protein structure and function while reducing sequence length by a factor of three.
-    *   **Predicting Amino Acid Changes:** The model could be re-engineered to predict high-level biological events, such as a list of amino acid substitutions (e.g., "S:N501Y"), rather than a full nucleotide sequence. This would produce a more interpretable and directly useful output for virologists.
+Before finalizing the current pipeline, several alternative architectures and training strategies were evaluated and discarded:
 
-*   **Refining Scientific Evaluation:**
-    *   **Advanced Metrics:** Moving beyond simple per-token accuracy, future work should implement mutation-specific metrics. Calculating the Precision, Recall, and F1-score for correctly identifying mutated sites would provide a much more rigorous evaluation of the model's predictive power.
-    *   ***In-Silico* Forward Evolution:** A powerful validation experiment would be to use the model iteratively. By predicting a descendant, then using that prediction as the new input, one could simulate an evolutionary trajectory over multiple generations and compare this simulated path to real-world surveillance data.
+*   **Longformer/Sparse Attention:** While conceptually addressing quadratic memory scaling, the Hugging Face TFLongformer lacks the autoregressive decoder capabilities required for sequence-to-sequence generation tasks.
+*   **Modeling Isolated Mutations:** Training exclusively on isolated mutation pairs (removing conserved sequences) failed. Without the non-mutated background acting as negative samples, the model is deprived of the structural context required to learn why certain sites remain unchanged.
+*   **Chunked Encoder Architecture:** Splitting sequences into smaller, independently encoded chunks required complex custom Keras engineering to modify the standard seq2seq cross-attention mechanism, adding excessive overhead for standard pipeline integration.
 
----
-## **References**
-*   Friedman R. Scientific belief in determining the origins of viruses. *Microbes & Immunity*. 2026; doi: 10.36922/MI025500130
+[Back to Top](#top)
+
+<a name="part-10"></a>
+
+## 🚀 Part 10: Discussion and Future Directions
+
+This guide has detailed a functional pipeline for applying a Transformer model to ASR-derived viral evolution data. It successfully demonstrates the workflow on resource-constrained hardware and quantitatively documents the resulting limitations. Potential future directions include:
+
+**Addressing Computational Scale:**
+
+*   **Hardware Expansion:** Migrating this pipeline to a multi-GPU HPC environment to train on thousands of full-length sequences.
+*   **Architecture:** Investigating memory-efficient Transformer architectures employing sparse attention mechanisms for full viral genomes.
+
+**Enhancing Biological Fidelity:**
+
+*   **Codon-Aware Modeling:** Modifying tokenization to operate on codons instead of nucleotides, reducing sequence length and aligning with the native unit of translation.
+*   **Predicting Substitutions:** Re-engineering the model to output a biological event list (e.g., "S:N501Y") rather than full sequences.
+
+**Refining Scientific Evaluation:**
+
+*   **Advanced Metrics:** Implementing Precision, Recall, and F1-scores for mutated sites specifically.
+*   **In-Silico Forward Evolution:** Simulating evolutionary trajectories over multiple generations by feeding predictions back into the model recursively.
+
+[Back to Top](#top)
+
+<a name="references"></a>
+
+## 📚 References
+
+*   Friedman R. (2026). Scientific belief in determining the origins of viruses. Microbes & Immunity; doi: 10.36922/MI025500130
+
+[Back to Top](#top)
