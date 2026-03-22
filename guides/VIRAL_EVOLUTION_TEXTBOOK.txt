@@ -365,30 +365,105 @@ CHAPTER 6: ADVANCED GENOMIC SURVEILLANCE AND LARGE-SCALE DIVERSITY ANALYSIS
 
 The global scale of the SARS-CoV-2 pandemic necessitated the development of high-throughput bioinformatic pipelines capable of processing millions of viral genomes. To link these genetic data to population-genetic processes, we must scale our calculations of nucleotide diversity (π) while maintaining statistical rigor and computational efficiency.
 
-The UShER-Based Diversity Pipeline
+The UShER-Based Diversity Pipeline: Methodology and Architecture
 
-Our advanced workflow utilizes the UShER mutation-annotated tree (MAT) as a centralized data structure. The pipeline operates in two primary stages:
-1. Clade-Based Subsampling and Alignment Generation: To mitigate geographic and temporal sampling biases, the pipeline performs stratified subsampling of the global MAT. Using tools like matUtils and bcftools, it extracts variants for up to 1,000 genomes per Pango lineage and reconstructs full consensus sequences. This produces a representative multiple sequence alignment (MSA) that balances computational feasibility with statistical power.
-2. Memory-Efficient Diversity Calculation: Calculating π for multi-gigabyte MSAs exceeds the RAM capacity of standard hardware. To address this, our nucdiv_stats logic converts text-based FASTA files into memory-mapped NumPy binary arrays. This allows the script to perform random-access calculations on specific genomic slices without loading the entire dataset into memory.
+Our advanced workflow utilizes the UShER mutation-annotated tree (MAT) as a centralized data structure. This pipeline, detailed in the data-sarscov2-genomes project (Friedman, 2025), operates in two primary stages designed for scalability and precision.
 
-Robustness in these calculations is achieved through a per-site estimator of π. By calculating the average pairwise differences at each individual genomic position and averaging only over sites with sufficient valid data, we ensure that missing data (ambiguous 'N' characters) do not artificially inflate diversity estimates.
+Part I: Clade-Based Subsampling and Alignment Generation
+
+To mitigate geographic and temporal sampling biases inherent in public sequence repositories, the pipeline performs stratified subsampling of the global MAT. This ensures that the analysis is not dominated by regions with high sequencing capacity.
+
+```bash
+# Consensus Sequence Generation Loop (Simplified Engine)
+while read -r safe_clade_name; do
+    CLADE_SAMPLE_FILE="samples_${safe_clade_name}.txt"
+    TEMP_VCF="temp_${safe_clade_name}.vcf"
+    # Extract variants from the mutation-annotated tree
+    matUtils extract -i "$PB_FILE" --samples "$CLADE_SAMPLE_FILE" -v "$TEMP_VCF"
+    bgzip --force "$TEMP_VCF"
+    bcftools index --force --tbi "${TEMP_VCF}.gz"
+    while read -r sample_id; do
+        # Reconstruct consensus by applying variants to the reference
+        bcftools consensus -f "$REF_FASTA" --sample "$sample_id" "${TEMP_VCF}.gz" \
+          | sed "1s#.*#>${sample_id}|${safe_clade_name}#" >> "$FINAL_ALIGNED_FASTA"
+    done < "$CLADE_SAMPLE_FILE"
+    rm "${TEMP_VCF}.gz" "${TEMP_VCF}.gz.tbi"
+done < "$CLADES_CONTROL_FILE"
+```
+
+This stage uses `matUtils` for rapid variant extraction and `bcftools` for consensus generation. By selecting up to 1,000 genomes per Pango lineage across the 250 most prevalent clades, the pipeline produces a representative multiple sequence alignment (MSA) that balances computational feasibility with statistical power.
+
+Part II: Memory-Efficient Diversity Calculation
+
+Calculating π for multi-gigabyte MSAs exceeds the RAM capacity of standard hardware. To address this, the pipeline converts text-based FASTA files into memory-mapped NumPy binary arrays. This allows the script to perform random-access calculations on specific genomic slices without loading the entire dataset into memory.
+
+```python
+# Robust, Per-Site Nucleotide Diversity (π) Calculation
+def calculate_pi_robust(alignment_slice):
+    """Calculates π using a Tajima-based per-site estimator."""
+    n_seq, n_sites = alignment_slice.shape
+    if n_seq < 2: return 0.0
+    pi_sum_at_valid_sites, sites_compared = 0.0, 0
+    for i in range(n_sites):
+        col = alignment_slice[:, i]
+        valid_bases = col[col < 4] # Ignore 'N's (mapped to 4)
+        n_k = len(valid_bases)
+        if n_k < 2: continue
+        sites_compared += 1
+        counts = np.bincount(valid_bases, minlength=4)
+        sum_freq_sq = np.sum((counts / n_k)**2)
+        pi_site = (n_k / (n_k - 1)) * (1 - sum_freq_sq)
+        pi_sum_at_valid_sites += pi_site
+    return pi_sum_at_valid_sites / sites_compared if sites_compared > 0 else 0.0
+```
+
+Robustness is achieved through this per-site estimator, which ensures that regions with missing data do not artificially inflate diversity estimates—a critical improvement over simpler pairwise methods.
 
 Evolutionary Regimes and the Signature of Sweeps
 
-The analysis of large-scale diversity data reveals that viral populations alternate among distinct evolutionary regimes:
-1. Selective Sweep Regime: One lineage acquires a significant fitness advantage and rapidly replaces all others. This "prunes" the genealogy, resulting in a precipitous collapse of global π.
-2. Co-circulation (Mosaic) Regime: Multiple divergent lineages persist simultaneously. During these periods, global π remains high and relatively stable, providing the opportunity for genetic exchange via recombination.
-3. Post-Sweep Diversification: Following a sweep, diversity within the newly dominant lineage steadily increases as new mutations accumulate on the successful genetic background.
+Large-scale diversity analysis reveals that viral populations alternate among distinct regimes:
+1. Selective Sweep Regime: One lineage acquires a significant fitness advantage, replaces others, and "prunes" the genealogy, causing a precipitous collapse in global π.
+2. Co-circulation (Mosaic) Regime: Multiple divergent lineages persist simultaneously. During these periods, global π remains high and stable, fostering recombination.
+3. Post-Sweep Diversification: Following a sweep, diversity within the dominant lineage increases as new mutations accumulate.
+
+![Figure 3: Historical Nucleotide Diversity Heatmap](assets/sarscov2_data/heatmap_nucdiv.png)
+Figure 3: Nucleotide Diversity (π) for the Top 20 Lineages Over Time. This heatmap shows the π values for major lineages from late 2020 to early 2022. The emergence of the Delta and Omicron variants is marked by distinct shifts in diversity patterns.
 
 Case Study: The JN.1 Selective Sweep
 
-The emergence of the SARS-CoV-2 JN.1 lineage in late 2023 provides a classic example of a selective sweep. Global surveillance data revealed a period of high mosaic diversity dominated by XBB sublineages, followed by a sharp and sustained collapse in weighted-average global π as JN.1 achieved dominance. Comparative genomic analysis identified the L455S mutation in the Spike Receptor-Binding Domain (RBD) as a primary driver of this shift. This mutation was nearly fixed (99.7%) in JN.1 but present only at low frequencies in its ancestral BA.2.86 population, demonstrating positive selection acting on standing genetic variation.
+The emergence of the SARS-CoV-2 JN.1 lineage in late 2023 provides a classic example of a selective sweep. Global data revealed a high-diversity "mosaic" era dominated by XBB sublineages, followed by a sharp collapse in global π as JN.1 achieved dominance.
 
-The Problem of Sampling Bias
+![Figure 4: Global Sweep Visualization](assets/sarscov2_data/global_sweep.png)
+Figure 4: Global SARS-CoV-2 Nucleotide Diversity During the JN.1 Sweep. The sharp decline in weighted-average global π (November 2023 - February 2024) signals the rapid rise of the JN.1 lineage.
 
-A critical challenge in genomic surveillance is distinguishing genuine global trends from artifacts of sampling bias. In early 2024, uncorrected global data suggested a new selective sweep of the F456L mutation within the JN.1 lineage. However, stratified analysis revealed that this was a statistical illusion caused by a localized outbreak in the United States. Because the USA contributed a disproportionately large volume of sequences to the public repositories, its local evolutionary dynamics skewed the global average. This case study underscores the necessity of methodological diligence, such as geographic stratification, to ensure the accuracy of evolutionary inferences.
+![Figure 5: Post-Sweep Diversification](assets/sarscov2_data/intra_lineage_diversification.png)
+Figure 5: Post-Sweep Diversification within the JN.1 Lineage. Following its fixation, the internal genetic diversity of the JN.1 family shows a steady, linear increase as it accumulates new variation.
 
-By integrating these scalable computational methods with the theoretical frameworks of population genetics, we can transform raw genomic data into actionable knowledge about viral evolution and its global dynamics.
+Comparative Genomics: JN.1 vs. BA.2.86
+
+Comparing JN.1 with its immediate ancestor, BA.2.86, reveals the genetic basis of its success. While JN.1 shows a lower baseline diversity (consistent with a sweep), it exhibits amplified peaks in specific regions like the Spike protein.
+
+![Figure 6: Comparative Sliding Window Analysis](assets/sarscov2_data/jn1_ba286_sliding_window.png)
+Figure 6: Comparative Nucleotide Diversity in JN.1 and BA.2.86. Sliding window analysis (500 bp) highlights diversity peaks in the Spike gene, indicating intense diversifying selection.
+
+Codon-level analysis pinpointed the L455S mutation in the Spike Receptor-Binding Domain (RBD) as the primary driver. This mutation was nearly fixed (99.7%) in JN.1 but present at lower frequencies in BA.2.86, providing a clear example of selection acting on standing genetic variation.
+
+The Problem of Sampling Bias: A Tale of Two Sweeps
+
+A critical challenge in surveillance is distinguishing global trends from artifacts of sampling bias. In early 2024, uncorrected global data suggested a new selective sweep of the F456L mutation.
+
+![Figure 7: Apparent F456L Sweep](assets/sarscov2_data/f456l_frequency.png)
+Figure 7: Frequency of the Emerging F456L Allele. Uncorrected global data shows a classic S-shaped trajectory, suggesting an ongoing global sweep.
+
+However, stratified analysis revealed this was a statistical illusion caused by a localized outbreak in the United States. When the contribution of any single country was capped, the signal disappeared.
+
+![Figure 8: Stratified F456L Frequency](assets/sarscov2_data/f456l_stratified.png)
+Figure 8: Stratified F456L Frequency. Controlling for sampling bias by capping country contributions eliminates the sweep signal, demonstrating it was not a global phenomenon.
+
+![Figure 9: Localized USA Sweep](assets/sarscov2_data/f456l_stratified_2.png)
+Figure 9: F456L Frequency in the USA Only. Restricted analysis confirms that a strong, localized evolutionary event in the United States skewed the global data.
+
+This case study underscores the necessity of geographic stratification. Failing to account for such biases can lead to incorrect inferences about viral fitness and misdirection of public health resources. By integrating scalable computational methods with population genetic theory, we can transform raw genomic data into actionable knowledge about the true dynamics of viral evolution.
 
 
 CONCLUSION: EPISTEMOLOGY AND THE FUTURE OF VIRAL SURVEILLANCE
