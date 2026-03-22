@@ -11,6 +11,7 @@ Chapter 2: Quantitative Selection Metrics: dN/dS and pNC/pNR
 Chapter 3: The Architecture of Viral Phylogenetics: Trees and Ancestral States
 Chapter 4: Deep Learning and Sequence-to-Sequence Modeling in Evolution
 Chapter 5: Ecological and Spatio-Temporal Dynamics of Viral Populations
+Chapter 6: Advanced Genomic Surveillance and Large-Scale Diversity Analysis
 Conclusion: Epistemology and the Future of Viral Surveillance
 Bibliography
 
@@ -299,7 +300,7 @@ Nucleotide diversity is defined as the average number of nucleotide differences 
 
 Selective Sweeps and Diversity Collapse
 
-A selective sweep occurs when a highly-fit variant rapidly dominates a population worldwide. A sweep on a largely non-recombining genome—as is the case for most of the SARS-CoV-2 genome between recombination events—drags along linked sites through "genetic hitchhiking." This process purges nearly all pre-existing variation, causing a population-wide collapse in genetic diversity.
+A selective sweep occurs when a highly-fit variant rapidly dominates a population worldwide. A sweep on a largely non-recombining genome—as is the case for most of the SARS-CoV-2 genome between recombination events—dragged along linked sites through "genetic hitchhiking." This process purges nearly all pre-existing variation, causing a population-wide collapse in genetic diversity.
 
 The history of the COVID-19 pandemic is a series of such sweeps:
 1. The rise of the D614G mutation early in 2020.
@@ -360,6 +361,36 @@ By integrating temporal and spatial diversity patterns, we can develop a more co
 Through these quantitative approaches, we can move beyond describing viral events to testing whether observed diversity patterns deviate from a neutral expectation, providing a more robust foundation for forming beliefs about viral origins and their subsequent dynamics.
 
 
+CHAPTER 6: ADVANCED GENOMIC SURVEILLANCE AND LARGE-SCALE DIVERSITY ANALYSIS
+
+The global scale of the SARS-CoV-2 pandemic necessitated the development of high-throughput bioinformatic pipelines capable of processing millions of viral genomes. To link these genetic data to population-genetic processes, we must scale our calculations of nucleotide diversity (π) while maintaining statistical rigor and computational efficiency.
+
+The UShER-Based Diversity Pipeline
+
+Our advanced workflow utilizes the UShER mutation-annotated tree (MAT) as a centralized data structure. The pipeline operates in two primary stages:
+1. Clade-Based Subsampling and Alignment Generation: To mitigate geographic and temporal sampling biases, the pipeline performs stratified subsampling of the global MAT. Using tools like matUtils and bcftools, it extracts variants for up to 1,000 genomes per Pango lineage and reconstructs full consensus sequences. This produces a representative multiple sequence alignment (MSA) that balances computational feasibility with statistical power.
+2. Memory-Efficient Diversity Calculation: Calculating π for multi-gigabyte MSAs exceeds the RAM capacity of standard hardware. To address this, our nucdiv_stats logic converts text-based FASTA files into memory-mapped NumPy binary arrays. This allows the script to perform random-access calculations on specific genomic slices without loading the entire dataset into memory.
+
+Robustness in these calculations is achieved through a per-site estimator of π. By calculating the average pairwise differences at each individual genomic position and averaging only over sites with sufficient valid data, we ensure that missing data (ambiguous 'N' characters) do not artificially inflate diversity estimates.
+
+Evolutionary Regimes and the Signature of Sweeps
+
+The analysis of large-scale diversity data reveals that viral populations alternate among distinct evolutionary regimes:
+1. Selective Sweep Regime: One lineage acquires a significant fitness advantage and rapidly replaces all others. This "prunes" the genealogy, resulting in a precipitous collapse of global π.
+2. Co-circulation (Mosaic) Regime: Multiple divergent lineages persist simultaneously. During these periods, global π remains high and relatively stable, providing the opportunity for genetic exchange via recombination.
+3. Post-Sweep Diversification: Following a sweep, diversity within the newly dominant lineage steadily increases as new mutations accumulate on the successful genetic background.
+
+Case Study: The JN.1 Selective Sweep
+
+The emergence of the SARS-CoV-2 JN.1 lineage in late 2023 provides a classic example of a selective sweep. Global surveillance data revealed a period of high mosaic diversity dominated by XBB sublineages, followed by a sharp and sustained collapse in weighted-average global π as JN.1 achieved dominance. Comparative genomic analysis identified the L455S mutation in the Spike Receptor-Binding Domain (RBD) as a primary driver of this shift. This mutation was nearly fixed (99.7%) in JN.1 but present only at low frequencies in its ancestral BA.2.86 population, demonstrating positive selection acting on standing genetic variation.
+
+The Problem of Sampling Bias
+
+A critical challenge in genomic surveillance is distinguishing genuine global trends from artifacts of sampling bias. In early 2024, uncorrected global data suggested a new selective sweep of the F456L mutation within the JN.1 lineage. However, stratified analysis revealed that this was a statistical illusion caused by a localized outbreak in the United States. Because the USA contributed a disproportionately large volume of sequences to the public repositories, its local evolutionary dynamics skewed the global average. This case study underscores the necessity of methodological diligence, such as geographic stratification, to ensure the accuracy of evolutionary inferences.
+
+By integrating these scalable computational methods with the theoretical frameworks of population genetics, we can transform raw genomic data into actionable knowledge about viral evolution and its global dynamics.
+
+
 CONCLUSION: EPISTEMOLOGY AND THE FUTURE OF VIRAL SURVEILLANCE
 
 The study of viral genomics is a testament to the power and limitations of the scientific method. As we have explored throughout this volume, the formation of a robust scientific belief about the origins and evolution of viruses depends on a careful integration of empirical data, stochastic modeling, and probabilistic inference.
@@ -405,6 +436,8 @@ Friedman, R. (2026). Scientific belief in determining the origins of viruses. Mi
 
 Hamelin, D.J., Scicluna, M., Saadie, I., Mostefai, F., Grenier, J.C., Baron, C., ... & Hussin, J.G. (2024). Predicting pathogen evolution and immune evasion in the age of artificial intelligence. Computational and Structural Biotechnology Journal, 23, 1370-1382. https://doi.org/10.1016/j.csbj.2024.03.044
 
+Harvey, W. T., et al. (2021). SARS-CoV-2 variants, spike mutations and immune escape. Nature Reviews Microbiology, 19, 409-424. doi: 10.1038/s41579-021-00573-0
+
 Hennig, W. (1950). Grundzüge Einer Theorie Der Phylogenetischen Systematik. Berlin, Germany: Deutscher Zentralverlag.
 
 Hennig, W. (1999). In: Davis, D. D., & Zangerl, R., editors. Phylogenetic Systematics. Urbana, IL, USA: University of Illinois Press.
@@ -420,6 +453,8 @@ Kant, I. (1998). In: Paul, G., & Wood, A. W., editors. Critique of Pure Reason. 
 Kimura, M. (1983). The Neutral Theory of Molecular Evolution. Cambridge, UK: Cambridge University Press.
 
 Li, X., Giorgi, E. E., Marichannegowda, M. H., et al. (2020). Emergence of SARS-CoV-2 through recombination and strong purifying selection. Science Advances, 6, eabb9153. doi: 10.1126/sciadv.abb9153
+
+Markov, P. V., et al. (2023). The evolution of SARS-CoV-2. Nature Reviews Microbiology, 21, 361-379. doi: 10.1038/s41579-023-00878-2
 
 McBroome, J., et al. (2021). A daily-updated database and tools for comprehensive SARS-CoV-2 mutation-annotated trees. Molecular Biology and Evolution, 38(12), 5819–5824. doi: 10.1093/molbev/msab264
 
@@ -440,6 +475,10 @@ Sharp, P. M., & Hahn, B. H. (2011). Origins of HIV and the AIDS pandemic. Cold S
 Shu, Y., & McCauley, J. (2017). GISAID: Global initiative on sharing all influenza data - from vision to reality. Eurosurveillance, 22, 30494.
 
 Suchard, M. A., et al. (2018). Bayesian phylogenetic and phylodynamic data integration using BEAST 1.10. Virus Evolution, 4(1), vey016. doi: 10.1093/ve/vey016
+
+Suratekar, R., et al. (2022). High-diversity regimes and the role of recombination in the evolution of SARS-CoV-2. Molecular Systems Biology, 18, e10950. doi: 10.15252/msb.202110950
+
+Tasaki, T., et al. (2021). Genetic diversity and founder effects in the early global dissemination of SARS-CoV-2. PLOS One, 16(11), e0260214. doi: 10.1371/journal.pone.0260214
 
 Taylor, W. R. (1986). The classification of amino acid conservation. Journal of Theoretical Biology, 119(2), 205-218.
 
